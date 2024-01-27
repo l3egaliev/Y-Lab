@@ -1,12 +1,31 @@
+/**
+ * Класс {@code MeterReadingService} предоставляет сервис для управления регистрацией пользователей,
+ * входом в систему и выполнением команд пользователей и администраторов в отношении показаний счетчиков.
+ * <p>
+ * Зависит от классов {@link Storage}, {@link RegisterService}, {@link UsersActions}, {@link AdminActions}.
+ * </p>
+ *
+ * @author Рахим Нуралиев
+ * @version 1.0
+ * @since 2024-01-26
+ * @see Storage
+ * @see RegisterService
+ * @see UsersActions
+ * @see AdminActions
+ */
 package kg.rakhim.classes.in;
 
 import kg.rakhim.classes.database.Storage;
+import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 
 import java.util.Scanner;
 
-
+/**
+ * Класс {@code MeterReadingService} предоставляет сервис для управления регистрацией пользователей,
+ * входом в систему и выполнением команд пользователей и администраторов в отношении показаний счетчиков.
+ */
 public class MeterReadingService {
     private final static Storage storage = new Storage();
     private final static Scanner scanner = new Scanner(System.in);
@@ -15,7 +34,9 @@ public class MeterReadingService {
     private final static AdminActions adminActions = new AdminActions(storage, scanner);
     private static boolean loop = true;
 
-
+    /**
+     * Запускает систему регистрации и входа в систему.
+     */
     public static void start() {
         while (loop) {
             System.out.println("Регистрация - 1");
@@ -26,17 +47,22 @@ public class MeterReadingService {
                 if (res.equals("")) {
                     loop = false;
                     break;
-                }else commandList(res);
+                } else commandList(res);
             } else if (button == 2) {
                 String res = login();
                 if (res.equals("")) {
                     loop = false;
                     break;
-                }else commandList(res);
+                } else commandList(res);
             }
         }
     }
 
+    /**
+     * Основной список команд для пользователя или администратора.
+     *
+     * @param username имя пользователя или администратора
+     */
     static void commandList(String username) {
         int command;
         UserRole role = storage.getUser(username).getRole();
@@ -86,7 +112,11 @@ public class MeterReadingService {
         }
     }
 
-
+    /**
+     * Регистрация нового пользователя.
+     *
+     * @return имя зарегистрированного пользователя
+     */
     static String registration() {
         String res = "";
         System.out.println("Ваше имя: ");
@@ -108,7 +138,11 @@ public class MeterReadingService {
         return res;
     }
 
-
+    /**
+     * Вход в систему существующего пользователя.
+     *
+     * @return имя вошедшего в систему пользователя
+     */
     static String login() {
         String res = "";
         System.out.println("Введите имя: ");
@@ -128,6 +162,9 @@ public class MeterReadingService {
         return res;
     }
 
+    /**
+     * Выход из системы.
+     */
     public static void exit() {
         System.out.println("""
                 Вы вышли из системы.
