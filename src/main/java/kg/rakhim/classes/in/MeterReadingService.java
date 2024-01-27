@@ -12,6 +12,7 @@ public class MeterReadingService {
     private final static Scanner scanner = new Scanner(System.in);
     private final static RegisterService registerService = new RegisterService(storage);
     private final static UsersActions usersActions = new UsersActions(scanner, storage);
+    private final static AdminActions adminActions = new AdminActions(storage, scanner);
     private static boolean loop = true;
 
 
@@ -38,21 +39,50 @@ public class MeterReadingService {
 
     static void commandList(String username) {
         int command;
-        System.out.println("--------------\n");
-        System.out.println("""
-                Список команд:\s
-                - Подать показание - 1
-                - Просмотр актуального показания - 2
-                - Просмотр поданных показаний за конкретный месяц - 3
-                - Просмотр всю историю поданных показаний - 4
-                - Выйти - 5""");
-        command = scanner.nextInt();
-        switch (command) {
-            case 1 -> usersActions.submitCounterReading(username);
-            case 2 -> usersActions.viewCurrentReadings(username);
-            case 3 -> usersActions.viewReadingHistoryForMonth(username);
-            case 4 -> usersActions.viewReadingHistory(username);
-            case 5 -> exit();
+        UserRole role = storage.getUser(username).getRole();
+        // У админа другие возможности, поэтому список команд отличается
+        if (role.equals(UserRole.ADMIN)) {
+            System.out.println("--------------\n");
+            System.out.println("""
+                    Список команд:\s
+                    - Просмотр актуальных показаний пользователей - 1
+                    - Просмотр поданных показаний всех пользователей за конкретный месяц - 2
+                    - Просмотр всю историю поданных показаний конкретного пользователя - 3
+                    - Добавить новый тип показаний - 4
+                    - Выйти - 5""");
+            command = scanner.nextInt();
+            switch (command) {
+                case 1 -> adminActions.viewActualReadingsOfUsers(username);
+                case 2 -> {
+                    System.out.println("Выберите месяц: ");
+                    int m = scanner.nextInt();
+                    adminActions.viewReadingsHistoryForMonth(m, username);
+                }
+                case 3 -> {
+                    System.out.println("Имя пользователя: ");
+                    String searchUser = scanner.next();
+                    adminActions.viewReadingsHistoryOfUser(searchUser, username);
+                }
+                case 4 ->  adminActions.setNewType(username);
+                case 5 -> exit();
+            }
+        } else {
+            System.out.println("--------------\n");
+            System.out.println("""
+                    Список команд:\s
+                    - Подать показание - 1
+                    - Просмотр актуального показания - 2
+                    - Просмотр поданных показаний за конкретный месяц - 3
+                    - Просмотр всю историю поданных показаний - 4
+                    - Выйти - 5""");
+            command = scanner.nextInt();
+            switch (command) {
+                case 1 -> usersActions.submitCounterReading(username);
+                case 2 -> usersActions.viewCurrentReadings(username);
+                case 3 -> usersActions.viewReadingHistoryForMonth(username);
+                case 4 -> usersActions.viewReadingHistory(username);
+                case 5 -> exit();
+            }
         }
     }
 
