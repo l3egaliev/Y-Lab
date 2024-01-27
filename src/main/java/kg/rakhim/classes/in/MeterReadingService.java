@@ -11,6 +11,7 @@ public class MeterReadingService {
     private final static Storage storage = new Storage();
     private final static Scanner scanner = new Scanner(System.in);
     private final static RegisterService registerService = new RegisterService(storage);
+    private final static UsersActions usersActions = new UsersActions(scanner, storage);
     private static boolean loop = true;
 
 
@@ -24,18 +25,33 @@ public class MeterReadingService {
                 if (res.equals("")) {
                     loop = false;
                     break;
-                }
+                }else commandList(res);
             } else if (button == 2) {
                 String res = login();
                 if (res.equals("")) {
                     loop = false;
                     break;
-                }
+                }else commandList(res);
             }
         }
     }
 
-
+    static void commandList(String username) {
+        int command;
+        System.out.println("--------------\n");
+        System.out.println("""
+                Список команд:\s
+                - Подать показание - 1
+                - Просмотр актуального показания - 2
+                - Просмотр поданных показаний за конкретный месяц - 3
+                - Просмотр всю историю поданных показаний - 4
+                - Выйти - 5""");
+        command = scanner.nextInt();
+        switch (command) {
+            case 1 -> usersActions.submitCounterReading(username);
+            case 5 -> exit();
+        }
+    }
 
 
     static String registration() {
@@ -79,4 +95,16 @@ public class MeterReadingService {
         return res;
     }
 
+    public static void exit() {
+        System.out.println("""
+                Вы вышли из системы.
+                 ~ Войти в другой аккаунт - 1
+                 ~ Отключить систему - любая другая кнопка.""");
+        String c = scanner.next();
+        if (c.equals("1")) {
+            start();
+        } else {
+            loop = false;
+        }
+    }
 }
