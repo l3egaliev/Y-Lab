@@ -49,6 +49,9 @@ public class MeterReadingService {
         command = scanner.nextInt();
         switch (command) {
             case 1 -> usersActions.submitCounterReading(username);
+            case 2 -> usersActions.viewCurrentReadings(username);
+            case 3 -> usersActions.viewReadingHistoryForMonth(username);
+            case 4 -> usersActions.viewReadingHistory(username);
             case 5 -> exit();
         }
     }
