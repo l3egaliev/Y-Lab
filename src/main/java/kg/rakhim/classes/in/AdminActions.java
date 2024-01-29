@@ -99,6 +99,11 @@ public class AdminActions {
         commandList(currentUser);
     }
 
+    /**
+     * Добавление нового тип счетчика
+     *
+     * @param username    имя пользователя, чьи показания нужно просмотреть
+     */
     public void setNewType(String username){
         if (username.equals("admin")){
             System.out.println("Название нового типа счетчика: ");
@@ -114,5 +119,20 @@ public class AdminActions {
 
         System.out.println("Не удалось добавить новый тип");
         commandList(username);
+    }
+
+    /**
+     * Выводит на экран историю аудитов конкретного пользователя.
+     */
+    public void viewAudit(String adminName) {
+        System.out.println("Имя пользователя: ");
+        String username = scanner.next();
+        System.out.println("Аудиты пользователя "+username+":");
+        for (Audit a : storage.getAudits()){
+            if (a.getUsername().equals(username)){
+                System.out.println(a);
+            }
+        }
+        commandList(adminName);
     }
 }

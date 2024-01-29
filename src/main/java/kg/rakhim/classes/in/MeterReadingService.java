@@ -16,10 +16,12 @@
 package kg.rakhim.classes.in;
 
 import kg.rakhim.classes.database.Storage;
+import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 /**
@@ -75,7 +77,8 @@ public class MeterReadingService {
                     - Просмотр поданных показаний всех пользователей за конкретный месяц - 2
                     - Просмотр всю историю поданных показаний конкретного пользователя - 3
                     - Добавить новый тип показаний - 4
-                    - Выйти - 5""");
+                    - Просмотр аудита пользователя - 5
+                    - Выйти - 6""");
             command = scanner.nextInt();
             switch (command) {
                 case 1 -> adminActions.viewActualReadingsOfUsers(username);
@@ -90,7 +93,8 @@ public class MeterReadingService {
                     adminActions.viewReadingsHistoryOfUser(searchUser, username);
                 }
                 case 4 ->  adminActions.setNewType(username);
-                case 5 -> exit();
+                case 5 -> adminActions.viewAudit(username);
+                case 6 -> exit(username);
             }
         } else {
             System.out.println("--------------\n");
@@ -107,7 +111,7 @@ public class MeterReadingService {
                 case 2 -> usersActions.viewCurrentReadings(username);
                 case 3 -> usersActions.viewReadingHistoryForMonth(username);
                 case 4 -> usersActions.viewReadingHistory(username);
-                case 5 -> exit();
+                case 5 -> exit(username);
             }
         }
     }
@@ -165,13 +169,14 @@ public class MeterReadingService {
     /**
      * Выход из системы.
      */
-    public static void exit() {
+    public static void exit(String username) {
         System.out.println("""
                 Вы вышли из системы.
                  ~ Войти в другой аккаунт - 1
                  ~ Отключить систему - любая другая кнопка.""");
         String c = scanner.next();
         if (c.equals("1")) {
+            storage.getAudits().add(new Audit(username, "Выход", LocalDateTime.now()));
             start();
         } else {
             loop = false;

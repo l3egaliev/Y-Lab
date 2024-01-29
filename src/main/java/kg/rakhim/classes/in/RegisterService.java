@@ -70,6 +70,7 @@ public class RegisterService {
         for (User u : storage.getUsers()) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                 res = true;
+                storage.getAudits().add(new Audit(username,"Вход", LocalDateTime.now()));
                 break;
             }
         }
