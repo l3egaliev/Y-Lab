@@ -16,8 +16,7 @@
 package kg.rakhim.classes.in;
 
 import kg.rakhim.classes.database.Storage;
-import kg.rakhim.classes.models.Audit;
-import kg.rakhim.classes.models.MeterReading;
+import kg.rakhim.classes.models.*;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -105,20 +104,21 @@ public class AdminActions {
      * @param username    имя пользователя, чьи показания нужно просмотреть
      */
     public void setNewType(String username){
-        if (username.equals("admin")){
+        User admin = storage.getUser(username);
+        if (admin.getRole().equals(UserRole.ADMIN)){
             System.out.println("Название нового типа счетчика: ");
             String newType = scanner.next();
-            String firstLetter = String.valueOf(newType.charAt(0));
-            if (!(firstLetter.equalsIgnoreCase("г") || firstLetter.equalsIgnoreCase("о")
-                    || firstLetter.equalsIgnoreCase("х"))){
-                storage.getMeterReadings().add(new MeterReading(newType));
-                System.out.println("Новый тип показания успешно добавлен");
-                commandList(username);
+            for (MeterType m : storage.getMeterTypes()) {
+                if (!(m.getType().equals(newType))){
+                    System.out.println("Новый тип показания успешно добавлен");
+                    storage.getMeterTypes().add(new MeterType(newType));
+                }else {
+                    System.out.println("Такой тип уже существует");
+                }
+                break;
             }
+            commandList(username);
         }
-
-        System.out.println("Не удалось добавить новый тип");
-        commandList(username);
     }
 
     /**

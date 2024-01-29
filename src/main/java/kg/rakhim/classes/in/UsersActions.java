@@ -20,6 +20,7 @@ package kg.rakhim.classes.in;
 import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
+import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;
 
 import java.time.LocalDate;
@@ -87,10 +88,10 @@ public class UsersActions {
         Map<String, String> letterAndType = new HashMap<>();
         System.out.print("\t- Тип показания (");
         // Вывод доступных типов показаний и соответствующих первых букв
-        for (MeterReading m : storage.getMeterReadings()) {
-            String firstLetter = String.valueOf(m.getMeterType().charAt(0));
-            System.out.print("" + m.getMeterType() + " - " + firstLetter + " | ");
-            letterAndType.put(firstLetter, m.getMeterType());
+        for (MeterType m : storage.getMeterTypes()) {
+            String firstLetter = String.valueOf(m.getType().charAt(0));
+            System.out.print("" + m.getType() + " - " + firstLetter + " | ");
+            letterAndType.put(firstLetter, m.getType());
         }
 
         System.out.println(")");
@@ -102,7 +103,7 @@ public class UsersActions {
         for (String key : letterAndType.keySet()) {
             if (key.equals(type)) {
                 String selectedType = letterAndType.get(key);
-                meterReading.setMeterType(selectedType);
+                meterReading.setMeterType(new MeterType(selectedType));
             }else if(!letterAndType.containsKey(type)){
                 System.out.println("Неправильное значение");
                 submitCounterReading(username);

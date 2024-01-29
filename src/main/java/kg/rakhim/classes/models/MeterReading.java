@@ -27,19 +27,9 @@ import java.time.LocalDate;
 public class MeterReading {
     private User user;
     private int value;
-    private String meterType;
+    private MeterType meterType;
     private LocalDate date;
 
-    /**
-     * Конструктор - используется в объекте Storage для создания три default типа счетчиков
-     * другие переменные заполняем для того чтобы не было ошибки NullPointerException.
-     */
-    public MeterReading(String t){
-        this.meterType = t;
-        this.user = new User("default");
-        this.date = LocalDate.now();
-        this.value = 0;
-    }
 
     public MeterReading(){}
 
