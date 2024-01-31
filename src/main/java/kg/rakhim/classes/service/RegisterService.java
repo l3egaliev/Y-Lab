@@ -14,7 +14,7 @@
  * @see Audit
  * @see User
  */
-package kg.rakhim.classes.in;
+package kg.rakhim.classes.service;
 
 import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.Audit;

@@ -13,15 +13,16 @@
  * @see Storage
  * @see MeterReading
  */
-package kg.rakhim.classes.in;
+package kg.rakhim.classes.service;
 
 import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.*;
+import kg.rakhim.classes.out.ConsoleOut;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
-import static kg.rakhim.classes.in.MeterReadingService.commandList;
+import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
 /**
  * Класс {@code AdminActions} предоставляет методы для административных действий, связанных с показаниями счетчиков.
@@ -47,12 +48,12 @@ public class AdminActions {
      * @param username имя текущего администратора
      */
     public void viewActualReadingsOfUsers(String username) {
-        System.out.println("Актуальные показания всех пользователей: ");
+        ConsoleOut.printLine("Актуальные показания всех пользователей: ");
         for (MeterReading m : storage.getMeterReadings()){
             // не показываем показания user'а созданного системой
             if(!m.getUser().getUsername().equals("default")) {
                 if (m.getDate().getMonthValue() == LocalDateTime.now().getMonthValue()) {
-                    System.out.println("\t- " + m);
+                    ConsoleOut.printLine("\t- " + m);
                 }
             }
         }
@@ -67,12 +68,12 @@ public class AdminActions {
      * @param username имя текущего администратора
      */
     public void viewReadingsHistoryForMonth(int month, String username) {
-        System.out.println("Все показания пользователей за "+month+" - месяц");
+        ConsoleOut.printLine("Все показания пользователей за "+month+" - месяц");
         for(MeterReading meterReading : storage.getMeterReadings()){
             // не показываем показания user'а созданного системой
             if (!meterReading.getUser().getUsername().equals("default")) {
                 if (meterReading.getDate().getMonthValue() == month) {
-                    System.out.println("\t- " + meterReading);
+                    ConsoleOut.printLine("\t- " + meterReading);
                 }
             }
         }
@@ -88,10 +89,10 @@ public class AdminActions {
      * @param currentUser имя текущего администратора
      */
     public void viewReadingsHistoryOfUser(String username, String currentUser){
-        System.out.println("Все показания пользователя "+username);
+        ConsoleOut.printLine("Все показания пользователя "+username);
         for (MeterReading m : storage.getMeterReadings()){
             if (m.getUser().getUsername().equals(username))
-                System.out.println("\t~ "+m);
+                ConsoleOut.printLine("\t~ "+m);
         }
         storage.getAudits().add(new Audit(username, "Просмотр истории всех показаний конкретного пользователя",
                 LocalDateTime.now()));
@@ -106,14 +107,14 @@ public class AdminActions {
     public void setNewType(String username){
         User admin = storage.getUser(username);
         if (admin.getRole().equals(UserRole.ADMIN)){
-            System.out.println("Название нового типа счетчика: ");
+            ConsoleOut.printLine("Название нового типа счетчика: ");
             String newType = scanner.next();
             for (MeterType m : storage.getMeterTypes()) {
                 if (!(m.getType().equals(newType))){
-                    System.out.println("Новый тип показания успешно добавлен");
+                    ConsoleOut.printLine("Новый тип показания успешно добавлен");
                     storage.getMeterTypes().add(new MeterType(newType));
                 }else {
-                    System.out.println("Такой тип уже существует");
+                    ConsoleOut.printLine("Такой тип уже существует");
                 }
                 break;
             }
@@ -125,12 +126,12 @@ public class AdminActions {
      * Выводит на экран историю аудитов конкретного пользователя.
      */
     public void viewAudit(String adminName) {
-        System.out.println("Имя пользователя: ");
+        ConsoleOut.printLine("Имя пользователя: ");
         String username = scanner.next();
-        System.out.println("Аудиты пользователя "+username+":");
+        ConsoleOut.printLine("Аудиты пользователя "+username+":");
         for (Audit a : storage.getAudits()){
             if (a.getUsername().equals(username)){
-                System.out.println(a);
+                ConsoleOut.printLine(a);
             }
         }
         commandList(adminName);

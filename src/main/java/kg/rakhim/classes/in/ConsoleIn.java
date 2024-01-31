@@ -17,9 +17,12 @@ package kg.rakhim.classes.in;
 
 import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.Audit;
-import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
+import kg.rakhim.classes.out.ConsoleOut;
+import kg.rakhim.classes.service.AdminActions;
+import kg.rakhim.classes.service.RegisterService;
+import kg.rakhim.classes.service.UsersActions;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -28,7 +31,7 @@ import java.util.Scanner;
  * Класс {@code MeterReadingService} предоставляет сервис для управления регистрацией пользователей,
  * входом в систему и выполнением команд пользователей и администраторов в отношении показаний счетчиков.
  */
-public class MeterReadingService {
+public class ConsoleIn {
     private final static Storage storage = new Storage();
     private final static Scanner scanner = new Scanner(System.in);
     private final static RegisterService registerService = new RegisterService(storage);
@@ -41,8 +44,8 @@ public class MeterReadingService {
      */
     public static void start() {
         while (loop) {
-            System.out.println("Регистрация - 1");
-            System.out.println("Войти - 2");
+            ConsoleOut.printLine("Регистрация - 1");
+            ConsoleOut.printLine("Войти - 2");
             int button = scanner.nextInt();
             if (button == 1) {
                 String res = registration();
@@ -65,30 +68,30 @@ public class MeterReadingService {
      *
      * @param username имя пользователя или администратора
      */
-    static void commandList(String username) {
+    public static void commandList(String username) {
         int command;
         UserRole role = storage.getUser(username).getRole();
         // У админа другие возможности, поэтому список команд отличается
         if (role.equals(UserRole.ADMIN)) {
-            System.out.println("--------------\n");
-            System.out.println("""
-                    Список команд:\s
-                    - Просмотр актуальных показаний пользователей - 1
-                    - Просмотр поданных показаний всех пользователей за конкретный месяц - 2
-                    - Просмотр всю историю поданных показаний конкретного пользователя - 3
-                    - Добавить новый тип показаний - 4
-                    - Просмотр аудита пользователя - 5
-                    - Выйти - 6""");
+            ConsoleOut.printLine("--------------\n"+
+                            """
+                            Список команд:\s
+                            - Просмотр актуальных показаний пользователей - 1
+                            - Просмотр поданных показаний всех пользователей за конкретный месяц - 2
+                            - Просмотр всю историю поданных показаний конкретного пользователя - 3
+                            - Добавить новый тип показаний - 4
+                            - Просмотр аудита пользователя - 5
+                            - Выйти - 6""");
             command = scanner.nextInt();
             switch (command) {
                 case 1 -> adminActions.viewActualReadingsOfUsers(username);
                 case 2 -> {
-                    System.out.println("Выберите месяц: ");
+                    ConsoleOut.printLine("Выберите месяц: ");
                     int m = scanner.nextInt();
                     adminActions.viewReadingsHistoryForMonth(m, username);
                 }
                 case 3 -> {
-                    System.out.println("Имя пользователя: ");
+                    ConsoleOut.printLine("Имя пользователя: ");
                     String searchUser = scanner.next();
                     adminActions.viewReadingsHistoryOfUser(searchUser, username);
                 }
@@ -97,14 +100,14 @@ public class MeterReadingService {
                 case 6 -> exit(username);
             }
         } else {
-            System.out.println("--------------\n");
-            System.out.println("""
-                    Список команд:\s
-                    - Подать показание - 1
-                    - Просмотр актуального показания - 2
-                    - Просмотр поданных показаний за конкретный месяц - 3
-                    - Просмотр всю историю поданных показаний - 4
-                    - Выйти - 5""");
+            ConsoleOut.printLine("--------------\n"+
+                        """
+                        Список команд:\s
+                        - Подать показание - 1
+                        - Просмотр актуального показания - 2
+                        - Просмотр поданных показаний за конкретный месяц - 3
+                        - Просмотр всю историю поданных показаний - 4
+                        - Выйти - 5""");
             command = scanner.nextInt();
             switch (command) {
                 case 1 -> usersActions.submitCounterReading(username);
@@ -123,21 +126,21 @@ public class MeterReadingService {
      */
     static String registration() {
         String res = "";
-        System.out.println("Ваше имя: ");
+        ConsoleOut.printLine("Ваше имя: ");
         String username = scanner.next();
-        System.out.println("Пароль: ");
+        ConsoleOut.printLine("Пароль: ");
         String pass = scanner.next();
         if (username.isEmpty() || pass.isEmpty()) {
-            System.out.println("Вы ввели не корректные данные");
+            ConsoleOut.printLine("Вы ввели не корректные данные");
         }
         UserRole role = UserRole.USER;
         User user = new User(username, pass, role);
         boolean reg = registerService.registerUser(user);
         if (!reg)
-            System.out.println("Произошла ошибка");
+            ConsoleOut.printLine("Произошла ошибка");
         else {
             res = username;
-            System.out.println("Вы успешно зарегистрировались");
+            ConsoleOut.printLine("Вы успешно зарегистрировались");
         }
         return res;
     }
@@ -149,19 +152,19 @@ public class MeterReadingService {
      */
     static String login() {
         String res = "";
-        System.out.println("Введите имя: ");
+        ConsoleOut.printLine("Введите имя: ");
         String username = scanner.next();
-        System.out.println("Пароль: ");
+        ConsoleOut.printLine("Пароль: ");
         String pass = scanner.next();
         if (username.isEmpty() || pass.isEmpty()) {
-            System.out.println("Вы ввели не корректные данные");
+            ConsoleOut.printLine("Вы ввели не корректные данные");
         }
         boolean log = registerService.loginUser(username, pass);
         if (!log)
-            System.out.println("Произошла ошибка");
+            ConsoleOut.printLine("Произошла ошибка");
         else {
             res = username;
-            System.out.println("Вы вошли в систему");
+            ConsoleOut.printLine("Вы вошли в систему");
         }
         return res;
     }
@@ -170,7 +173,7 @@ public class MeterReadingService {
      * Выход из системы.
      */
     public static void exit(String username) {
-        System.out.println("""
+        ConsoleOut.printLine("""
                 Вы вышли из системы.
                  ~ Войти в другой аккаунт - 1
                  ~ Отключить систему - любая другая кнопка.""");

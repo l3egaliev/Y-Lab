@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kg.rakhim.classes</groupId>
-    <artifactId>hm1</artifactId>
+    <artifactId>hm2</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -36,5 +36,20 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.25.1</version>
+        </dependency>
+
     </dependencies>
 </project>

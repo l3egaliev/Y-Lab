@@ -3,6 +3,7 @@ package kg.rakhim.classes.in;
 import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
+import kg.rakhim.classes.service.RegisterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
