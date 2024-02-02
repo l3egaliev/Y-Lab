@@ -15,14 +15,19 @@
  * @see User
  * @see MeterReadingService
  */
-package kg.rakhim.classes.service;
+package kg.rakhim.classes.service.actions;
 
+import kg.rakhim.classes.database.MeterTypesStorage;
 import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.out.ConsoleOut;
+import kg.rakhim.classes.service.AuditService;
+import kg.rakhim.classes.service.MeterReadingService;
+import kg.rakhim.classes.service.MeterTypesService;
+import kg.rakhim.classes.service.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +41,10 @@ import static kg.rakhim.classes.in.ConsoleIn.commandList;
 public class UsersActions {
     private final Storage storage;
     private final Scanner scanner;
+    private final UserService userService;
+    private final AuditService auditService;
+    private final MeterReadingService mService;
+    private final MeterTypesService typesService;
 
     /**
      * Конструирует экземпляр {@code UsersActions} с указанным сканером и хранилищем.
@@ -46,6 +55,10 @@ public class UsersActions {
     public UsersActions(Scanner scanner, Storage storage) {
         this.scanner = scanner;
         this.storage = storage;
+        this.userService = new UserService(storage.getUserStorage());
+        this.auditService = new AuditService(storage.getAuditStorage());
+        this.mService = new MeterReadingService(storage.getMeterReadingStorage());
+        this.typesService = new MeterTypesService(storage.getMeterTypesStorage());
     }
 
     /**
@@ -55,7 +68,7 @@ public class UsersActions {
      */
     public void submitCounterReading(String username) {
         MeterReading meterReading = new MeterReading();
-        meterReading.setUser(storage.getUser(username));
+        meterReading.setUser(userService.findByUsername(username).get());
         ConsoleOut.printLine("Для подачи показаний вводите следующие данные: ");
         scanTypeOfMeterReading(meterReading, username);
         ConsoleOut.printLine("\t- Значение (формат: 4 цифр, пример - 1000)");
@@ -64,7 +77,7 @@ public class UsersActions {
         meterReading.setDate(LocalDate.from(LocalDateTime.now()));
 
         // Проверить не отправлял ли пользователь в этом месяце показаний
-        for (MeterReading m : storage.getMeterReadings()) {
+        for (MeterReading m : mService.findAll()) {
             if (m.getUser().getUsername().equals(username) &&
                     m.getDate().getMonthValue() == LocalDateTime.now().getMonthValue()
                     && m.getMeterType().equals(meterReading.getMeterType())) {
@@ -72,8 +85,8 @@ public class UsersActions {
                 commandList(username);
             }
         }
-        storage.getMeterReadings().add(meterReading);
-        storage.getAudits().add(new Audit(username, "Подача показания: " + meterReading, LocalDateTime.now()));
+        mService.save(meterReading);
+        auditService.save(new Audit(username, "Подача показания: " + meterReading, LocalDateTime.now()));
         ConsoleOut.printLine("Показание успешно отправлено");
 
         commandList(username);
@@ -89,7 +102,7 @@ public class UsersActions {
         Map<String, String> letterAndType = new HashMap<>();
         ConsoleOut.print("\t- Тип показания (");
         // Вывод доступных типов показаний и соответствующих первых букв
-        for (MeterType m : storage.getMeterTypes()) {
+        for (MeterType m : typesService.findAll()) {
             String firstLetter = String.valueOf(m.getType().charAt(0));
             ConsoleOut.print("" + m.getType() + " - " + firstLetter + " | ");
             letterAndType.put(firstLetter, m.getType());
@@ -120,13 +133,13 @@ public class UsersActions {
      */
     public void viewCurrentReadings(String username) {
         ConsoleOut.printLine("\nВаши актуальные показания: ");
-        for (MeterReading m : storage.getMeterReadings()) {
+        for (MeterReading m : mService.findAll()) {
             if (m.getUser().getUsername().equals(username) &&
                     m.getDate().getMonthValue() == LocalDateTime.now().getMonthValue()) {
                 ConsoleOut.printLine("\t- " + m);
             }
         }
-        storage.getAudits().add(new Audit(username, "Просмотр актуальных показаний", LocalDateTime.now()));
+        auditService.save(new Audit(username, "Просмотр актуальных показаний", LocalDateTime.now()));
         commandList(username);
     }
 
@@ -139,14 +152,14 @@ public class UsersActions {
         ConsoleOut.printLine("За какой месяц хотите посмотреть? (формат: 1-12)");
         int month = scanner.nextInt();
         ConsoleOut.printLine("Ваши показания за " + month + " - месяц:");
-        for (MeterReading m : storage.getMeterReadings()) {
-            if (storage.getUser(username).equals(m.getUser())) {
+        for (MeterReading m : mService.findAll()) {
+            if (userService.findByUsername(username).get().equals(m.getUser())) {
                 if (m.getDate().getMonthValue() == month) {
                     ConsoleOut.printLine(" - " + m);
                 }
             }
         }
-        storage.getAudits().add(new Audit(username, "Просмотр истории за конкретный месяц", LocalDateTime.now()));
+        auditService.save(new Audit(username, "Просмотр истории за конкретный месяц", LocalDateTime.now()));
         commandList(username);
     }
 
@@ -156,14 +169,14 @@ public class UsersActions {
      * @param username имя пользователя, просматривающего историю
      */
     public void viewReadingHistory(String username) {
-        User user = storage.getUser(username);
-        ConsoleOut.printLine("Все показания пользователя " + user + ":");
-        for (MeterReading m : storage.getMeterReadings()) {
+        User user = userService.findByUsername(username).get();
+        ConsoleOut.printLine("История показаний:");
+        for (MeterReading m : mService.findAll()) {
             if (m.getUser().equals(user)) {
                 ConsoleOut.printLine("\n \t - " + m);
             }
         }
-        storage.getAudits().add(new Audit(username, "Просмотр истории всех показаний", LocalDateTime.now()));
+        auditService.save(new Audit(username, "Просмотр истории всех показаний", LocalDateTime.now()));
         commandList(username);
     }
 }

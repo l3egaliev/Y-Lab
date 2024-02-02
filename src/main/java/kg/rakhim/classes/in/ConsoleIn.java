@@ -20,9 +20,9 @@ import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 import kg.rakhim.classes.out.ConsoleOut;
-import kg.rakhim.classes.service.AdminActions;
-import kg.rakhim.classes.service.RegisterService;
-import kg.rakhim.classes.service.UsersActions;
+import kg.rakhim.classes.service.*;
+import kg.rakhim.classes.service.actions.AdminActions;
+import kg.rakhim.classes.service.actions.UsersActions;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -34,9 +34,11 @@ import java.util.Scanner;
 public class ConsoleIn {
     private final static Storage storage = new Storage();
     private final static Scanner scanner = new Scanner(System.in);
-    private final static RegisterService registerService = new RegisterService(storage);
     private final static UsersActions usersActions = new UsersActions(scanner, storage);
     private final static AdminActions adminActions = new AdminActions(storage, scanner);
+    private final static UserService userService = new UserService(storage.getUserStorage());
+    private final static AuditService auditService = new AuditService(storage.getAuditStorage());
+    private final static RegisterService registerService = new RegisterService(userService, auditService);
     private static boolean loop = true;
 
     /**
@@ -46,22 +48,37 @@ public class ConsoleIn {
         while (loop) {
             ConsoleOut.printLine("Регистрация - 1");
             ConsoleOut.printLine("Войти - 2");
-            int button = scanner.nextInt();
-            if (button == 1) {
-                String res = registration();
-                if (res.equals("")) {
-                    loop = false;
-                    break;
-                } else commandList(res);
-            } else if (button == 2) {
-                String res = login();
-                if (res.equals("")) {
-                    loop = false;
-                    break;
-                } else commandList(res);
+            String button = scanner.next();
+            switch (button) {
+                case "1" -> handleRegistration();
+                case "2" -> handleLogin();
+                default -> {
+                    ConsoleOut.printLine("Неправильная команда");
+                    // Вместо рекурсивного вызова start(), просто продолжим итерацию цикла
+                }
             }
         }
     }
+
+
+    private static void handleRegistration() {
+        String res = registration();
+        if (res.isEmpty()) {
+            loop = false;
+        } else {
+            commandList(res);
+        }
+    }
+
+    private static void handleLogin() {
+        String res = login();
+        if (res.isEmpty()) {
+            loop = false;
+        } else {
+            commandList(res);
+        }
+    }
+
 
     /**
      * Основной список команд для пользователя или администратора.
@@ -69,10 +86,8 @@ public class ConsoleIn {
      * @param username имя пользователя или администратора
      */
     public static void commandList(String username) {
-        int command;
-        UserRole role = storage.getUser(username).getRole();
-        // У админа другие возможности, поэтому список команд отличается
-        if (role.equals(UserRole.ADMIN)) {
+        String command;
+        if (userService.isAdmin(username)) {
             ConsoleOut.printLine("--------------\n"+
                             """
                             Список команд:\s
@@ -82,22 +97,26 @@ public class ConsoleIn {
                             - Добавить новый тип показаний - 4
                             - Просмотр аудита пользователя - 5
                             - Выйти - 6""");
-            command = scanner.nextInt();
+            command = scanner.next();
             switch (command) {
-                case 1 -> adminActions.viewActualReadingsOfUsers(username);
-                case 2 -> {
+                case "1" -> adminActions.viewActualReadingsOfUsers(username);
+                case "2" -> {
                     ConsoleOut.printLine("Выберите месяц: ");
                     int m = scanner.nextInt();
                     adminActions.viewReadingsHistoryForMonth(m, username);
                 }
-                case 3 -> {
+                case "3" -> {
                     ConsoleOut.printLine("Имя пользователя: ");
                     String searchUser = scanner.next();
                     adminActions.viewReadingsHistoryOfUser(searchUser, username);
                 }
-                case 4 ->  adminActions.setNewType(username);
-                case 5 -> adminActions.viewAudit(username);
-                case 6 -> exit(username);
+                case "4" ->  adminActions.setNewType(username);
+                case "5" -> adminActions.viewAudit(username);
+                case "6"-> exit(username);
+                default -> {
+                    ConsoleOut.printLine("Неправильно выбранная команда");
+                    commandList(username);
+                }
             }
         } else {
             ConsoleOut.printLine("--------------\n"+
@@ -108,13 +127,17 @@ public class ConsoleIn {
                         - Просмотр поданных показаний за конкретный месяц - 3
                         - Просмотр всю историю поданных показаний - 4
                         - Выйти - 5""");
-            command = scanner.nextInt();
+            command = scanner.next();
             switch (command) {
-                case 1 -> usersActions.submitCounterReading(username);
-                case 2 -> usersActions.viewCurrentReadings(username);
-                case 3 -> usersActions.viewReadingHistoryForMonth(username);
-                case 4 -> usersActions.viewReadingHistory(username);
-                case 5 -> exit(username);
+                case "1" -> usersActions.submitCounterReading(username);
+                case "2" -> usersActions.viewCurrentReadings(username);
+                case "3" -> usersActions.viewReadingHistoryForMonth(username);
+                case "4" -> usersActions.viewReadingHistory(username);
+                case "5" -> exit(username);
+                default -> {
+                    ConsoleOut.printLine("Неправильно выбранная команда");
+                    commandList(username);
+                }
             }
         }
     }
@@ -130,14 +153,20 @@ public class ConsoleIn {
         String username = scanner.next();
         ConsoleOut.printLine("Пароль: ");
         String pass = scanner.next();
-        if (username.isEmpty() || pass.isEmpty()) {
+        if (username.length()<3 || pass.length()<5) {
             ConsoleOut.printLine("Вы ввели не корректные данные");
+            ConsoleOut.printLine("Username - должно быть не меньше 3 символов");
+            ConsoleOut.printLine("Password - должно быть не меньше 5 символов\n");
+            start();
         }
         UserRole role = UserRole.USER;
         User user = new User(username, pass, role);
-        boolean reg = registerService.registerUser(user);
-        if (!reg)
-            ConsoleOut.printLine("Произошла ошибка");
+        int reg = registerService.registerUser(user);
+        if (reg == 0){
+            ConsoleOut.printLine("Такой пользователь уже существует");
+            start();
+            return res;
+        }
         else {
             res = username;
             ConsoleOut.printLine("Вы успешно зарегистрировались");
@@ -160,8 +189,10 @@ public class ConsoleIn {
             ConsoleOut.printLine("Вы ввели не корректные данные");
         }
         boolean log = registerService.loginUser(username, pass);
-        if (!log)
-            ConsoleOut.printLine("Произошла ошибка");
+        if (!log) {
+            ConsoleOut.printLine("Что пошло не так попробуйте снова\n");
+            start();
+        }
         else {
             res = username;
             ConsoleOut.printLine("Вы вошли в систему");
@@ -178,11 +209,11 @@ public class ConsoleIn {
                  ~ Войти в другой аккаунт - 1
                  ~ Отключить систему - любая другая кнопка.""");
         String c = scanner.next();
-        if (c.equals("1")) {
-            storage.getAudits().add(new Audit(username, "Выход", LocalDateTime.now()));
-            start();
+        if (!c.equals("1")) {
+            System.exit(0);
         } else {
-            loop = false;
+            auditService.save(new Audit(username, "Выход", LocalDateTime.now()));
         }
+        start();
     }
 }

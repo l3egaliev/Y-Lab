@@ -16,7 +16,6 @@
  */
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
 
@@ -26,15 +25,18 @@ import java.time.LocalDateTime;
  * Класс {@code RegisterService} предоставляет сервис для регистрации и авторизации пользователей.
  */
 public class RegisterService {
-    private final Storage storage;
+    private final UserService userService;
+    private final AuditService auditService;
 
     /**
      * Конструктор для создания экземпляра класса {@code RegisterService}.
      *
-     * @param storage объект Storage для доступа и манипуляции данными о пользователях и аудитах
+     * @param userService  TODO
+     * @param auditService TODO
      */
-    public RegisterService(Storage storage) {
-        this.storage = storage;
+    public RegisterService(UserService userService, AuditService auditService) {
+        this.userService = userService;
+        this.auditService = auditService;
     }
 
     /**
@@ -43,19 +45,20 @@ public class RegisterService {
      * @param user объект User для регистрации
      * @return true, если регистрация успешна; false, если пользователь уже существует
      */
-    public boolean registerUser(User user) {
-        boolean res = true;
+    public int registerUser(User user) {
         // Проверка - не существует ли такого пользователя
-        if (storage.getUsers().contains(user))
-            res = false;
+        for (User u : userService.findAll()){
+            if (u.getUsername().equals(user.getUsername()))
+                return 0;
+        }
 
         // Добавление аудита
         Audit audit = new Audit(user.getUsername(), "Регистрация", LocalDateTime.now());
-        storage.getAudits().add(audit);
+        auditService.save(audit);
 
         // Сохранение пользователя
-        storage.getUsers().add(user);
-        return res;
+        userService.save(user);
+        return 1;
     }
 
     /**
@@ -67,10 +70,10 @@ public class RegisterService {
      */
     public boolean loginUser(String username, String password) {
         boolean res = false;
-        for (User u : storage.getUsers()) {
+        for (User u : userService.findAll()) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                 res = true;
-                storage.getAudits().add(new Audit(username,"Вход", LocalDateTime.now()));
+                auditService.save(new Audit(username,"Вход", LocalDateTime.now()));
                 break;
             }
         }

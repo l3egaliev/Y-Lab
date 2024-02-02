@@ -23,7 +23,8 @@
 
 1. Клонируйте репозиторий на свой компьютер.
 2. Откройте командную строку в корневой директории проекта.
-3. Выполните команду: `java -jar MeterReadingSystem.jar`
+3. Чтобы собрать jar файл выполните: jar -cf <MeterReadingSystem.jar> *.class
+4. Выполните команду: `java -jar MeterReadingSystem.jar`
 
 ## Важно!
 

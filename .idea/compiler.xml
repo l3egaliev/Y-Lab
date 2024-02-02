@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="hm2" />
         <module name="hm1" />
+        <module name="hm2_final" />
       </profile>
     </annotationProcessing>
   </component>

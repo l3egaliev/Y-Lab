@@ -1,38 +1,38 @@
-package kg.rakhim.classes.in;
+package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
+import kg.rakhim.classes.service.AuditService;
 import kg.rakhim.classes.service.RegisterService;
+import kg.rakhim.classes.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class RegisterServiceTest {
-    private Storage storageMock;
+    private UserService userService;
+    private AuditService auditService;
     private RegisterService registerService;
 
     @BeforeEach
     void setUp() {
-        storageMock = mock(Storage.class);
-        registerService = new RegisterService(storageMock);
+        userService = mock(UserService.class);
+        auditService = mock(AuditService.class);
+        registerService = new RegisterService(userService, auditService);
     }
 
     @Test
     void testRegisterUser() {
         User newUser = new User("testUser", "testPassword", UserRole.USER);
-
         // Устанавливаем поведение мока
-        when(storageMock.getUsers()).thenReturn(new ArrayList<>());
-
+        when(userService.findAll()).thenReturn(new ArrayList<>());
         // Вызываем метод тестируемого объекта
-        assertTrue(registerService.registerUser(newUser), "Регистрация пользователя должна вернуть true");
+        assertEquals(1, registerService.registerUser(newUser));
     }
 
     @Test
@@ -40,11 +40,11 @@ class RegisterServiceTest {
 
         User existingUser = new User("existingUser", "existingPassword", UserRole.USER);
 
-        when(storageMock.getUsers()).thenReturn(Collections.singletonList(existingUser));
+        when(userService.findAll()).thenReturn(Collections.singletonList(existingUser));
 
         assertTrue(registerService.loginUser("existingUser", "existingPassword"));
         assertFalse(registerService.loginUser("nonexistentUser", "password"));
 
-        verify(storageMock, times(2)).getUsers();
+        verify(userService, times(2)).findAll();
     }
 }
