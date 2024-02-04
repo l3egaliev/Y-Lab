@@ -1,0 +1,135 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/changelog-master.yml
+  - changeSet:
+      id: create-user-role
+      author: Rakhim
+      changes:
+        - createTable:
+            schemaName: entities
+            tableName: users_role
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: role
+                  type: varchar
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-users-table
+      author: Rakhim
+      changes:
+        - createTable:
+            schemaName: entities
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: username
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: int
+                  constraints:
+                    referencedTableSchemaName: entities
+                    foreignKeyName: id
+                    referencedTableName: users_role
+                    referencedColumnNames: id
+                    nullable: false
+  - changeSet:
+      id: create-audit
+      author: Rakhim
+      changes:
+        - createTable:
+            schemaName: entities
+            tableName: audits
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-meter-type
+      author: Rakhim
+      changes:
+        - createTable:
+            schemaName: entities
+            tableName: meter_types
+            columns:
+              - column:
+                  name: type_id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: type
+                  type: varchar
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-meterReadings
+      author: Rakhim
+      changes:
+        - createTable:
+            schemaName: entities
+            tableName: meter_readings
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    referencedTableSchemaName: entities
+                    foreignKeyName: id
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: meter_type
+                  type: int
+                  constraints:
+                    nullable: false
+                    referencedTableSchemaName: entities
+                    foreignKeyName: type_id
+                    referencedTableName: meter_types
+                    referencedColumnNames: type_id
+              - column:
+                  name: time
+                  type: TIMESTAMP

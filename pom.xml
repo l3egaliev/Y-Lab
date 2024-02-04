@@ -15,6 +15,8 @@
         <junit.version>5.10.1</junit.version>
         <mockito.version>5.9.0</mockito.version>
         <assertJ.version>3.25.2</assertJ.version>
+        <pSql.version>42.7.1</pSql.version>
+        <liquibase.version>4.25.1</liquibase.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,5 +47,16 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${pSql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
     </dependencies>
 </project>

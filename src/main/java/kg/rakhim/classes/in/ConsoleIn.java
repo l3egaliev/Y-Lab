@@ -155,8 +155,8 @@ public class ConsoleIn {
         String pass = scanner.next();
         if (username.length()<3 || pass.length()<5) {
             ConsoleOut.printLine("Вы ввели не корректные данные");
-            ConsoleOut.printLine("Username - должно быть не меньше 3 символов");
-            ConsoleOut.printLine("Password - должно быть не меньше 5 символов\n");
+            ConsoleOut.printLine("Username - должно быть не менее 3 символов");
+            ConsoleOut.printLine("Password - должно быть не менее 5 символов\n");
             start();
         }
         UserRole role = UserRole.USER;
