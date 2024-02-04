@@ -10,18 +10,14 @@ import java.util.Optional;
 public class AuditService implements AuditRepository {
     private final AuditDAO auditDAO;
 
-    public AuditService(AuditDAO auditStorage) {
-        this.auditDAO = auditStorage;
+    public AuditService() {
+        this.auditDAO = new AuditDAO();
     }
 
     // TODO
     @Override
     public Optional<Audit> findById(int id) {
-        if(auditDAO.get(id) == null){
-            return Optional.empty();
-        }else {
             return Optional.of(auditDAO.get(id));
-        }
     }
 
     @Override

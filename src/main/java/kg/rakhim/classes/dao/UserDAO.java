@@ -12,16 +12,7 @@ import java.util.Set;
 
 @Data
 public class UserDAO implements BaseDAO<User, Integer>{
-    private static final LoadProperties properties = new LoadProperties();
-    private static Connection connection;
-    static {
-        try {
-            connection = DriverManager.getConnection(properties.getUrl(), properties.getUsername(), properties.getPassword());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    private static Connection connection = ConnectionLoader.getConnection();
     @Override
     public User get(int id) {
         String sql = "select * from entities.users where id=?";

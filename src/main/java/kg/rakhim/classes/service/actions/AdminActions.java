@@ -15,7 +15,8 @@
  */
 package kg.rakhim.classes.service.actions;
 
-import kg.rakhim.classes.dao.Storage;
+import kg.rakhim.classes.context.ApplicationContext;
+import kg.rakhim.classes.dao.*;
 import kg.rakhim.classes.models.*;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.AuditService;
@@ -32,8 +33,7 @@ import static kg.rakhim.classes.in.ConsoleIn.commandList;
  * Класс {@code AdminActions} предоставляет методы для административных действий, связанных с показаниями счетчиков.
  */
 public class AdminActions {
-    private final Storage storage;
-    private final Scanner scanner;
+    private static final Scanner scanner = new Scanner(System.in);
     private final UserService userService;
     private final AuditService auditService;
     private final MeterReadingService mService;
@@ -42,16 +42,12 @@ public class AdminActions {
     /**
      * Конструирует экземпляр {@code AdminActions} с указанным хранилищем.
      *
-     * @param storage  объект Storage для доступа и манипуляции данными о показаниях счетчиков
-     * @param scanner  объект Scanner для ввода пользователя
      */
-    public AdminActions(Storage storage, Scanner scanner){
-        this.storage = storage;
-        this.scanner = scanner;
-        this.userService = new UserService(storage.getUserDAO());
-        this.auditService = new AuditService(storage.getAuditStorage());
-        this.mService = new MeterReadingService(storage.getMeterReadingStorage());
-        this.typesService = new MeterTypesService(storage.getMeterTypesStorage());
+    public AdminActions(){
+        this.userService = (UserService) ApplicationContext.getContext("userService");
+        this.auditService = (AuditService) ApplicationContext.getContext("auditService");
+        this.mService = (MeterReadingService) ApplicationContext.getContext("meterReadingService");
+        this.typesService = (MeterTypesService) ApplicationContext.getContext("meterTypeService");
     }
 
     /**

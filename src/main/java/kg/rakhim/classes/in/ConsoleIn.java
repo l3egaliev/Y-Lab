@@ -15,10 +15,8 @@
  */
 package kg.rakhim.classes.in;
 
-import kg.rakhim.classes.dao.Storage;
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.Audit;
-import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.*;
 import kg.rakhim.classes.service.actions.AdminActions;
@@ -32,13 +30,12 @@ import java.util.Scanner;
  * входом в систему и выполнением команд пользователей и администраторов в отношении показаний счетчиков.
  */
 public class ConsoleIn {
-    private final static Storage storage = new Storage();
     private final static Scanner scanner = new Scanner(System.in);
-    private final static UsersActions usersActions = new UsersActions(scanner, storage);
-    private final static AdminActions adminActions = new AdminActions(storage, scanner);
-    private final static UserService userService = new UserService(storage.getUserDAO());
-    private final static AuditService auditService = new AuditService(storage.getAuditStorage());
-    private final static RegisterService registerService = new RegisterService(userService, auditService);
+    private final static UsersActions usersActions = new UsersActions();
+    private final static AdminActions adminActions = new AdminActions();
+    private final static UserService userService = (UserService) ApplicationContext.getContext("userService");
+    private final static AuditService auditService = (AuditService) ApplicationContext.getContext("auditService");
+    private final static RegisterService registerService = (RegisterService) ApplicationContext.getContext("registerService");
     private static boolean loop = true;
 
     /**
@@ -61,7 +58,7 @@ public class ConsoleIn {
 
 
     private static void handleRegistration() {
-        String res = registration();
+        String res = registerService.registration();
         if (res.isEmpty()) {
             loop = false;
         } else {
@@ -70,7 +67,7 @@ public class ConsoleIn {
     }
 
     private static void handleLogin() {
-        String res = login();
+        String res = registerService.authorization();
         if (res.isEmpty()) {
             loop = false;
         } else {
@@ -140,64 +137,6 @@ public class ConsoleIn {
             }
         }
     }
-
-    /**
-     * Регистрация нового пользователя.
-     *
-     * @return имя зарегистрированного пользователя
-     */
-    static String registration() {
-        String res = "";
-        ConsoleOut.printLine("Ваше имя: ");
-        String username = scanner.next();
-        ConsoleOut.printLine("Пароль: ");
-        String pass = scanner.next();
-        if (username.length()<3 || pass.length()<5) {
-            ConsoleOut.printLine("Вы ввели не корректные данные");
-            ConsoleOut.printLine("Username - должно быть не менее 3 символов");
-            ConsoleOut.printLine("Password - должно быть не менее 5 символов\n");
-            start();
-        }
-        User user = new User(username, pass, "USER");
-        int reg = registerService.registerUser(user);
-        if (reg == 0){
-            ConsoleOut.printLine("Такой пользователь уже существует");
-            start();
-            return res;
-        }
-        else {
-            res = username;
-            ConsoleOut.printLine("Вы успешно зарегистрировались");
-        }
-        return res;
-    }
-
-    /**
-     * Вход в систему существующего пользователя.
-     *
-     * @return имя вошедшего в систему пользователя
-     */
-    static String login() {
-        String res = "";
-        ConsoleOut.printLine("Введите имя: ");
-        String username = scanner.next();
-        ConsoleOut.printLine("Пароль: ");
-        String pass = scanner.next();
-        if (username.isEmpty() || pass.isEmpty()) {
-            ConsoleOut.printLine("Вы ввели не корректные данные");
-        }
-        boolean log = registerService.loginUser(username, pass);
-        if (!log) {
-            ConsoleOut.printLine("Что пошло не так попробуйте снова\n");
-            start();
-        }
-        else {
-            res = username;
-            ConsoleOut.printLine("Вы вошли в систему");
-        }
-        return res;
-    }
-
     /**
      * Выход из системы.
      */

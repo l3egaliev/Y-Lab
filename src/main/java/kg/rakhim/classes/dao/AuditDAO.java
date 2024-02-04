@@ -11,15 +11,7 @@ import java.util.List;
 
 @Data
 public class AuditDAO implements BaseDAO<Audit, Integer>{
-    private static final LoadProperties properties = new LoadProperties();
-    private static Connection connection;
-    static {
-        try {
-            connection = DriverManager.getConnection(properties.getUrl(), properties.getUsername(), properties.getPassword());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    private Connection connection = ConnectionLoader.getConnection();
 
     @Override
     public Audit get(int id) {

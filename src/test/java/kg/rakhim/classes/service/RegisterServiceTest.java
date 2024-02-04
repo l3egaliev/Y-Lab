@@ -19,7 +19,7 @@ class RegisterServiceTest {
     void setUp() {
         userService = mock(UserService.class);
         auditService = mock(AuditService.class);
-        registerService = new RegisterService(userService, auditService);
+        registerService = new RegisterService();
     }
 
     @Test

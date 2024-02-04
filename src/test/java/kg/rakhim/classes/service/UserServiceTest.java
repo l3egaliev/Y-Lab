@@ -25,7 +25,7 @@ public class UserServiceTest {
         User existingUser = new User("existingUser", "existingPassword", "USER");
         userService.save(existingUser);
 
-        User resultUser = userService.findByUsername("existingUser").get();
+        User resultUser = userService.findByUsername("existingUser");
         assertSame(existingUser, resultUser);
     }
 

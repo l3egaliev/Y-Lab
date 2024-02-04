@@ -11,8 +11,8 @@ import java.util.Optional;
 public class UserService implements UserRepository {
     private final UserDAO userDAO;
 
-    public UserService(UserDAO storage) {
-        this.userDAO = storage;
+    public UserService() {
+        this.userDAO = new UserDAO();
     }
 
     // TODO
@@ -22,8 +22,8 @@ public class UserService implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return Optional.of(userDAO.getUser(username));
+    public User findByUsername(String username) {
+        return userDAO.getUser(username);
     }
 
     @Override

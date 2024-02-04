@@ -16,10 +16,15 @@
  */
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
+import kg.rakhim.classes.out.ConsoleOut;
 
 import java.time.LocalDateTime;
+import java.util.Scanner;
+
+import static kg.rakhim.classes.in.ConsoleIn.start;
 
 /**
  * Класс {@code RegisterService} предоставляет сервис для регистрации и авторизации пользователей.
@@ -30,13 +35,35 @@ public class RegisterService {
 
     /**
      * Конструктор для создания экземпляра класса {@code RegisterService}.
-     *
-     * @param userService  TODO
-     * @param auditService TODO
      */
-    public RegisterService(UserService userService, AuditService auditService) {
-        this.userService = userService;
-        this.auditService = auditService;
+    public RegisterService() {
+        this.userService = (UserService) ApplicationContext.getContext("userService");
+        this.auditService = (AuditService) ApplicationContext.getContext("auditService");
+    }
+
+    /**
+     * Регистрация нового пользователя.
+     *
+     * @return имя зарегистрированного пользователя
+     */
+    public String registration() {
+        Scanner scanner = new Scanner(System.in);
+        String res = "";
+        ConsoleOut.printLine("Ваше имя: ");
+        String username = scanner.next();
+        ConsoleOut.printLine("Пароль: ");
+        String pass = scanner.next();
+        User user = new User(username, pass, "USER");
+        int reg = registerUser(user);
+        if (reg == 0){
+            start();
+            return res;
+        }
+        else {
+            res = username;
+            ConsoleOut.printLine("Вы успешно зарегистрировались");
+        }
+        return res;
     }
 
     /**
@@ -48,17 +75,47 @@ public class RegisterService {
     public int registerUser(User user) {
         // Проверка - не существует ли такого пользователя
         for (User u : userService.findAll()){
-            if (u.getUsername().equals(user.getUsername()))
+            if (u.getUsername().equals(user.getUsername())) {
+                ConsoleOut.printLine("Такой пользователь уже существует");
                 return 0;
+            }if (user.getUsername().length()<3 || user.getPassword().length()<5) {
+                ConsoleOut.printLine("Вы ввели не корректные данные");
+                ConsoleOut.printLine("Username - должно быть не менее 3 символов");
+                ConsoleOut.printLine("Password - должно быть не менее 5 символов\n");
+                return 0;
+            }
         }
-
-        // Добавление аудита
         Audit audit = new Audit(user.getUsername(), "Регистрация", LocalDateTime.now());
         auditService.save(audit);
-
-        // Сохранение пользователя
         userService.save(user);
         return 1;
+    }
+
+    /**
+     * Вход в систему существующего пользователя.
+     *
+     * @return имя вошедшего в систему пользователя
+     */
+    public String authorization() {
+        Scanner scanner = new Scanner(System.in);
+        String res = "";
+        ConsoleOut.printLine("Введите имя: ");
+        String username = scanner.next();
+        ConsoleOut.printLine("Пароль: ");
+        String pass = scanner.next();
+        if (username.isEmpty() || pass.isEmpty()) {
+            ConsoleOut.printLine("Вы ввели не корректные данные");
+        }
+        boolean log = loginUser(username, pass);
+        if (!log) {
+            ConsoleOut.printLine("Что пошло не так попробуйте снова\n");
+            start();
+        }
+        else {
+            res = username;
+            ConsoleOut.printLine("Вы вошли в систему");
+        }
+        return res;
     }
 
     /**
