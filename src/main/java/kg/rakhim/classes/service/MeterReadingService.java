@@ -1,6 +1,6 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.database.MeterReadingStorage;
+import kg.rakhim.classes.dao.MeterReadingStorage;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.repository.MeterReadingRepository;
 

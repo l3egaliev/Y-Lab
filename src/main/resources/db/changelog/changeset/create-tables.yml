@@ -1,7 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/changelog-master.yml
   - changeSet:
-      id: create-user-role
+      id: create-users-roles
       author: Rakhim
       changes:
         - createTable:
@@ -9,7 +9,7 @@ databaseChangeLog:
             tableName: users_role
             columns:
               - column:
-                  name: id
+                  name: role_id
                   type: serial
                   constraints:
                     primaryKey: true
@@ -19,7 +19,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: create-users-table
+      id: creating-users-table
       author: Rakhim
       changes:
         - createTable:
@@ -47,9 +47,9 @@ databaseChangeLog:
                   type: int
                   constraints:
                     referencedTableSchemaName: entities
-                    foreignKeyName: id
+                    foreignKeyName: role_id
                     referencedTableName: users_role
-                    referencedColumnNames: id
+                    referencedColumnNames: role_id
                     nullable: false
   - changeSet:
       id: create-audit

@@ -1,22 +1,24 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/changelog-master.yml
   - changeSet:
-      id: insert-user-role
+      id: insert-users-roles
       author: Rakhim
       changes:
         - sql:
-            sql: "INSERT INTO entities.users_role(role) VALUES('ADMIN')"
+            sql: "INSERT INTO entities.users_role(role) VALUES('ADMIN');"
+        - sql:
+            sql: "INSERT INTO entities.users_role(role) VALUES('USER');"
   - changeSet:
-      id: insert-admin-user
+      id: insert-admin
       author: Rakhim
       changes:
         - sql:
-            sql: "INSERT INTO entities.users(username, password, role) VALUES('admin', 'adminpass', 1)"
-  - changeSet:
-      id: insert-meter-type
-      author: Rakhim
-      changes:
-        - sql:
-            sql: "INSERT INTO entities.meter_types(type) VALUES('горячая вода');
-            INSERT INTO entities.meter_types(type) VALUES('холодная вода');
-            INSERT INTO entities.meter_types(type) VALUES('отопление');"
+            sql: "INSERT INTO entities.users(username, password, role) VALUES('admin', 'adminpass', 2)"
+        - changeSet:
+            id: insert-meter-type
+            author: Rakhim
+            changes:
+              - sql:
+                  sql: "INSERT INTO entities.meter_types(type) VALUES('горячая вода');
+              INSERT INTO entities.meter_types(type) VALUES('холодная вода');
+              INSERT INTO entities.meter_types(type) VALUES('отопление');"

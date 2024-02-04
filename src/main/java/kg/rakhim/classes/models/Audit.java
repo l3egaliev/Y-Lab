@@ -15,8 +15,10 @@ package kg.rakhim.classes.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -25,10 +27,18 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Audit {
+    private int id;
     private String username;
     private String action;
-    private LocalDateTime time;
+    private Timestamp time;
+
+    public Audit(String username, String action, LocalDateTime now) {
+        this.username = username;
+        this.action = action;
+        this.time = Timestamp.valueOf(now);
+    }
 
     /**
      * Переопределение метода {@code toString()} для удобного представления информации об аудитовой записи.

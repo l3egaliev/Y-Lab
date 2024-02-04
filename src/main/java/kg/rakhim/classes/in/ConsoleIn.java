@@ -15,7 +15,7 @@
  */
 package kg.rakhim.classes.in;
 
-import kg.rakhim.classes.database.Storage;
+import kg.rakhim.classes.dao.Storage;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
@@ -36,7 +36,7 @@ public class ConsoleIn {
     private final static Scanner scanner = new Scanner(System.in);
     private final static UsersActions usersActions = new UsersActions(scanner, storage);
     private final static AdminActions adminActions = new AdminActions(storage, scanner);
-    private final static UserService userService = new UserService(storage.getUserStorage());
+    private final static UserService userService = new UserService(storage.getUserDAO());
     private final static AuditService auditService = new AuditService(storage.getAuditStorage());
     private final static RegisterService registerService = new RegisterService(userService, auditService);
     private static boolean loop = true;
@@ -54,7 +54,6 @@ public class ConsoleIn {
                 case "2" -> handleLogin();
                 default -> {
                     ConsoleOut.printLine("Неправильная команда");
-                    // Вместо рекурсивного вызова start(), просто продолжим итерацию цикла
                 }
             }
         }
@@ -159,8 +158,7 @@ public class ConsoleIn {
             ConsoleOut.printLine("Password - должно быть не менее 5 символов\n");
             start();
         }
-        UserRole role = UserRole.USER;
-        User user = new User(username, pass, role);
+        User user = new User(username, pass, "USER");
         int reg = registerService.registerUser(user);
         if (reg == 0){
             ConsoleOut.printLine("Такой пользователь уже существует");

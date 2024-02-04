@@ -1,6 +1,6 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.database.MeterTypesStorage;
+import kg.rakhim.classes.dao.MeterTypesStorage;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.repository.MeterTypesRepository;
 

@@ -1,9 +1,8 @@
-package kg.rakhim.classes.database.migration;
+package kg.rakhim.classes.dao.migration;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;

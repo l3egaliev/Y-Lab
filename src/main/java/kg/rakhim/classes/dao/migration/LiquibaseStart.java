@@ -1,4 +1,4 @@
-package kg.rakhim.classes.database.migration;
+package kg.rakhim.classes.dao.migration;
 
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -7,7 +7,6 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

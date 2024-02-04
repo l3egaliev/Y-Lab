@@ -17,8 +17,7 @@
  */
 package kg.rakhim.classes.service.actions;
 
-import kg.rakhim.classes.database.MeterTypesStorage;
-import kg.rakhim.classes.database.Storage;
+import kg.rakhim.classes.dao.Storage;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
@@ -55,7 +54,7 @@ public class UsersActions {
     public UsersActions(Scanner scanner, Storage storage) {
         this.scanner = scanner;
         this.storage = storage;
-        this.userService = new UserService(storage.getUserStorage());
+        this.userService = new UserService(storage.getUserDAO());
         this.auditService = new AuditService(storage.getAuditStorage());
         this.mService = new MeterReadingService(storage.getMeterReadingStorage());
         this.typesService = new MeterTypesService(storage.getMeterTypesStorage());

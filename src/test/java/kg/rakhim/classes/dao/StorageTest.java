@@ -1,10 +1,4 @@
-package kg.rakhim.classes.database;
-
-import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+package kg.rakhim.classes.dao;
 
 //class StorageTest {
 //

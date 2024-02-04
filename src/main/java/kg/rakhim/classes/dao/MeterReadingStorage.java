@@ -1,4 +1,4 @@
-package kg.rakhim.classes.database;
+package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.models.MeterReading;
 import lombok.Data;

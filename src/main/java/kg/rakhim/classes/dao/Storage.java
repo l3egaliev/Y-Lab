@@ -16,25 +16,17 @@
  * @see Audit
  * @see MeterType
  */
-package kg.rakhim.classes.database;
+package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.models.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Класс {@code Storage} предоставляет хранилище для данных о пользователях, показаниях счетчиков и аудитах.
  */
 @Data
 public class Storage {
-    private UserStorage userStorage = new UserStorage();
-    private AuditStorage auditStorage = new AuditStorage();
+    private UserDAO userDAO = new UserDAO();
+    private AuditDAO auditStorage = new AuditDAO();
     private MeterReadingStorage meterReadingStorage = new MeterReadingStorage();
     private MeterTypesStorage meterTypesStorage = new MeterTypesStorage();
 }

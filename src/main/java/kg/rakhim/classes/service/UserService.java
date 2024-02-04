@@ -1,6 +1,6 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.database.UserStorage;
+import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 import kg.rakhim.classes.repository.UserRepository;
@@ -9,41 +9,40 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserService implements UserRepository {
-    private final UserStorage userStorage;
+    private final UserDAO userDAO;
 
-    public UserService(UserStorage storage) {
-        this.userStorage = storage;
+    public UserService(UserDAO storage) {
+        this.userDAO = storage;
     }
 
     // TODO
     @Override
     public Optional<User> findById(int id) {
-        return Optional.empty();
+        return Optional.of(userDAO.get(id));
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        for (User u : userStorage.getUsers()){
-            if (u.getUsername().equals(username)){
-                return Optional.of(u);
-            }
-        }
-        return Optional.empty();
+        return Optional.of(userDAO.getUser(username));
     }
 
     @Override
     public List<User> findAll() {
-        return userStorage.getUsers();
+        return userDAO.getAll();
     }
 
 
     @Override
     public boolean isAdmin(String username) {
-        return findByUsername(username).get().getRole().equals(UserRole.ADMIN);
+        User user = userDAO.getUser(username);
+        if (user.getRole().equals("ADMIN")){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void save(Object user) {
-        userStorage.getUsers().add((User) user);
+        userDAO.save((User) user);
     }
 }

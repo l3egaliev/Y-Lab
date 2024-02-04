@@ -1,10 +1,6 @@
 package kg.rakhim.classes.service;
 
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
-import kg.rakhim.classes.service.AuditService;
-import kg.rakhim.classes.service.RegisterService;
-import kg.rakhim.classes.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +24,7 @@ class RegisterServiceTest {
 
     @Test
     void testRegisterUser() {
-        User newUser = new User("testUser", "testPassword", UserRole.USER);
+        User newUser = new User("testUser", "testPassword", "USER");
         // Устанавливаем поведение мока
         when(userService.findAll()).thenReturn(new ArrayList<>());
         // Вызываем метод тестируемого объекта
@@ -38,7 +34,7 @@ class RegisterServiceTest {
     @Test
     void testLoginUser() {
 
-        User existingUser = new User("existingUser", "existingPassword", UserRole.USER);
+        User existingUser = new User("existingUser", "existingPassword", "USER");
 
         when(userService.findAll()).thenReturn(Collections.singletonList(existingUser));
 
