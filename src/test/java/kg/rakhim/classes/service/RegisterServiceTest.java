@@ -1,6 +1,5 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,18 +17,15 @@ class RegisterServiceTest {
 
     @BeforeEach
     void setUp() {
-        ApplicationContext.loadContext();
         userService = mock(UserService.class);
         auditService = mock(AuditService.class);
-        registerService = (RegisterService) ApplicationContext.getContext("registerService");
+        registerService = new RegisterService(userService, auditService);
     }
 
     @Test
     void testRegisterUser() {
         User newUser = new User("testUser", "testPassword", "USER");
-        // Устанавливаем поведение мока
         when(userService.findAll()).thenReturn(new ArrayList<>());
-        // Вызываем метод тестируемого объекта
         assertEquals(1, registerService.registerUser(newUser));
     }
 

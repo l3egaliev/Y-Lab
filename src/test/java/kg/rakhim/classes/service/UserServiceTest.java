@@ -6,43 +6,56 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
-    private UserService userService;
-    private UserDAO userDAO;
+    private UserService service;
+    private UserDAO mockUserDAO;
 
     @BeforeEach
     void setUp(){
-        userDAO = new UserDAO();
-        userService = new UserService(userDAO);
+        mockUserDAO = mock(UserDAO.class);
+        service = new UserService(mockUserDAO);
     }
 
     @DisplayName("Testing method findByUsername()")
     @Test
     void testFindByUsername() {
         User existingUser = new User("existingUser", "existingPassword", "USER");
-        userService.save(existingUser);
-        User resultUser = userService.findByUsername("existingUser");
-        assertEquals(existingUser.getUsername(), resultUser.getUsername());
+
+        when(mockUserDAO.getUser("existingUser")).thenReturn(existingUser);
+        User resultUser = service.findByUsername("existingUser");
+
+        assertSame(existingUser, resultUser);
+
+        verify(mockUserDAO, times(1)).getUser("existingUser");
     }
 
     @DisplayName("Testing method findAll()")
     @Test
     void testFindAll(){
-        User user1 = new User("user1", "user1pass", "USER");
-        User user2 = new User("user2", "user2pass", "ADMIN");
-        userService.save(user1);
-        userService.save(user2);
-        assertThat(userService.findAll()).hasSize(3); // 3 потому что при запуске программы создается user админ.
+        List<User> expectedUsers = new ArrayList<>();
+        expectedUsers.add(new User("user1", "user1pass", "USER"));
+        expectedUsers.add(new User("user2", "user2pass", "USER"));
+
+        when(mockUserDAO.getAll()).thenReturn(expectedUsers);
+
+        UserService userService = new UserService(mockUserDAO);
+        List<User> result = userService.findAll();
+        assertThat(result).containsExactlyElementsOf(expectedUsers);
+        verify(mockUserDAO, times(1)).getAll();
     }
 
-    @DisplayName("Testing method isAdmin()")
+    @DisplayName("Testing method save()")
     @Test
-    void testIsAdmin(){
+    void testSave(){
         User userAdmin = new User("user", "password", "ADMIN");
-        userService.save(userAdmin);
-        assertTrue(userService.isAdmin(userAdmin.getUsername()));
+        service.save(userAdmin);
+        verify(mockUserDAO, times(1)).save(userAdmin);
     }
 }

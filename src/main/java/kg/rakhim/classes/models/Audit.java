@@ -40,6 +40,11 @@ public class Audit {
         this.time = Timestamp.valueOf(now);
     }
 
+    public Audit(int auditId, String testAction) {
+        this.id = auditId;
+        this.action = testAction;
+    }
+
     /**
      * Переопределение метода {@code toString()} для удобного представления информации об аудитовой записи.
      *

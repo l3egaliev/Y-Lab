@@ -1,8 +1,14 @@
 version: 'v2.23.3-desktop.2'
+
 services:
   postgres:
     image: postgres:latest
+    container_name: y_lab
     environment:
-      POSTGRES_DB: jdbc:postgresql://localhost:5432/ylab
+      POSTGRES_DB: ylab
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
