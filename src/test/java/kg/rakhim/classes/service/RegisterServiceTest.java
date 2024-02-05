@@ -1,5 +1,6 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +18,10 @@ class RegisterServiceTest {
 
     @BeforeEach
     void setUp() {
+        ApplicationContext.loadContext();
         userService = mock(UserService.class);
         auditService = mock(AuditService.class);
-        registerService = new RegisterService();
+        registerService = (RegisterService) ApplicationContext.getContext("registerService");
     }
 
     @Test

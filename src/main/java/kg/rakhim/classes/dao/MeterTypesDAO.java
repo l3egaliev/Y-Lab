@@ -76,4 +76,20 @@ public class MeterTypesDAO implements BaseDAO<MeterType, Integer>{
             s.printStackTrace();
         }
     }
+
+    public boolean isExists(String type){
+        try{
+            PreparedStatement p = connection.prepareStatement("select * from entities.meter_types where type=?");
+            p.setString(1,type);
+            ResultSet resultSet = p.executeQuery();
+            while(resultSet.next()){
+                if (resultSet.getString("type") != null){
+                    return true;
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

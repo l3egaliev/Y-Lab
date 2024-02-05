@@ -1,7 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/changelog-master.yml
   - changeSet:
-      id: create-users-roles
+      id: creating-users-roles
       author: Rakhim
       changes:
         - createTable:
@@ -19,7 +19,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: creating-users-table
+      id: creating-users_table
       author: Rakhim
       changes:
         - createTable:
@@ -51,8 +51,9 @@ databaseChangeLog:
                     referencedTableName: users_role
                     referencedColumnNames: role_id
                     nullable: false
+                    deleteCascade: true
   - changeSet:
-      id: create-audit
+      id: creating-audit
       author: Rakhim
       changes:
         - createTable:
@@ -69,7 +70,12 @@ databaseChangeLog:
                   name: username
                   type: varchar
                   constraints:
+                    referencedTableSchemaName: entities
+                    referencedTableName: users
+                    referencedColumnNames: username
+                    foreignKeyName: id
                     nullable: false
+                    deleteCascade: true
               - column:
                   name: action
                   type: varchar
@@ -81,7 +87,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: create-meter-type
+      id: create-meter_type
       author: Rakhim
       changes:
         - createTable:
@@ -99,7 +105,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: create-meterReadings
+      id: creating-meterReadings
       author: Rakhim
       changes:
         - createTable:
@@ -121,6 +127,7 @@ databaseChangeLog:
                     foreignKeyName: id
                     referencedTableName: users
                     referencedColumnNames: id
+                    deleteCascade: true
               - column:
                   name: meter_type
                   type: int
@@ -130,9 +137,10 @@ databaseChangeLog:
                     foreignKeyName: type_id
                     referencedTableName: meter_types
                     referencedColumnNames: type_id
+                    deleteCascade: true
               - column:
                   name: date
-                  type: DATE
+                  type: TIMESTAMP
               - column:
                   name: value
                   type: int

@@ -131,7 +131,7 @@ public class UsersActions {
                 ConsoleOut.printLine("\t- " + m);
             }
         }
-        auditService.save(new Audit(username, "Просмотр актуальных показаний", LocalDateTime.now()));
+        auditService.save(new Audit(username,"Просмотр актуальных показаний", LocalDateTime.now()));
         commandList(username);
     }
 
@@ -167,7 +167,7 @@ public class UsersActions {
                 ConsoleOut.printLine("\t - " + m);
             }
         }
-        auditService.save(new Audit(username, "Просмотр истории всех показаний", LocalDateTime.now()));
+        auditService.save(new Audit(username,"Просмотр истории всех показаний", LocalDateTime.now()));
         commandList(username);
     }
 }

@@ -1,7 +1,10 @@
 package kg.rakhim.classes.dao;
 
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.Audit;
+import kg.rakhim.classes.models.User;
+import kg.rakhim.classes.service.UserService;
 import lombok.Data;
 
 import java.sql.*;
@@ -12,6 +15,7 @@ import java.util.List;
 @Data
 public class AuditDAO implements BaseDAO<Audit, Integer>{
     private Connection connection = ConnectionLoader.getConnection();
+    private UserDAO userDAO = (UserDAO) ApplicationContext.getContext("userDAO");
 
     @Override
     public Audit get(int id) {
@@ -25,7 +29,7 @@ public class AuditDAO implements BaseDAO<Audit, Integer>{
             while (resultSet.next()){
                 audit.setId(resultSet.getInt("id"));
                 audit.setAction(resultSet.getString("action"));
-                audit.setUsername(resultSet.getString("username"));
+                audit.setUsername(username(resultSet.getInt("user_id")));
                 audit.setTime(resultSet.getTimestamp("time"));
             }
         } catch (SQLException e) {
@@ -45,7 +49,7 @@ public class AuditDAO implements BaseDAO<Audit, Integer>{
                 Audit audit = new Audit();
                 audit.setId(resultSet.getInt("id"));
                 audit.setAction(resultSet.getString("action"));
-                audit.setUsername(resultSet.getString("username"));
+                audit.setUsername(username(resultSet.getInt("user_id")));
                 audit.setTime(resultSet.getTimestamp("time"));
                 res.add(audit);
             }
@@ -59,13 +63,17 @@ public class AuditDAO implements BaseDAO<Audit, Integer>{
     public void save(Audit audit){
         PreparedStatement p = null;
         try{
-            p = connection.prepareStatement("INSERT INTO entities.audits(username, action, time) VALUES (?,?,?)");
-            p.setString(1,audit.getUsername());
+            p = connection.prepareStatement("INSERT INTO entities.audits(user_id, action, time) VALUES (?,?,?)");
+            p.setInt(1,userDAO.getUser(audit.getUsername()).getId());
             p.setString(2, audit.getAction());
             p.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             p.executeUpdate();
         }catch (SQLException e){
             e.printStackTrace();
         }
+    }
+
+    private String username(int id){
+        return userDAO.get(id).getUsername();
     }
 }

@@ -16,7 +16,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp(){
         userDAO = new UserDAO();
-        userService = new UserService(userDAO);
+        userService = new UserService();
     }
 
     @DisplayName("Testing method findByUsername()")
@@ -24,9 +24,8 @@ public class UserServiceTest {
     void testFindByUsername() {
         User existingUser = new User("existingUser", "existingPassword", "USER");
         userService.save(existingUser);
-
         User resultUser = userService.findByUsername("existingUser");
-        assertSame(existingUser, resultUser);
+        assertEquals(existingUser.getUsername(), resultUser.getUsername());
     }
 
     @DisplayName("Testing method findAll()")

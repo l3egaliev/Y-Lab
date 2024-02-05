@@ -1,7 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/changelog-master.yml
   - changeSet:
-      id: insert-users-roles
+      id: insert-to-users-role
       author: Rakhim
       changes:
         - sql:
@@ -9,16 +9,16 @@ databaseChangeLog:
         - sql:
             sql: "INSERT INTO entities.users_role(role) VALUES('USER');"
   - changeSet:
-      id: insert-admin
+      id: insert-to-admin
       author: Rakhim
       changes:
         - sql:
-            sql: "INSERT INTO entities.users(username, password, role) VALUES('admin', 'adminpass', 2)"
-        - changeSet:
-            id: insert-meter-type
-            author: Rakhim
-            changes:
-              - sql:
-                  sql: "INSERT INTO entities.meter_types(type) VALUES('горячая вода');
-              INSERT INTO entities.meter_types(type) VALUES('холодная вода');
-              INSERT INTO entities.meter_types(type) VALUES('отопление');"
+            sql: "INSERT INTO entities.users(username, password, role) VALUES('admin', 'adminpass', 1)"
+  - changeSet:
+      id: insert-to-meter-type
+      author: Rakhim
+      changes:
+        - sql:
+            sql: "INSERT INTO entities.meter_types(type) VALUES('горячая вода');
+        INSERT INTO entities.meter_types(type) VALUES('холодная вода');
+        INSERT INTO entities.meter_types(type) VALUES('отопление');"

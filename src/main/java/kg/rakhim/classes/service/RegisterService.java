@@ -85,9 +85,9 @@ public class RegisterService {
                 return 0;
             }
         }
+        userService.save(user);
         Audit audit = new Audit(user.getUsername(), "Регистрация", LocalDateTime.now());
         auditService.save(audit);
-        userService.save(user);
         return 1;
     }
 

@@ -62,7 +62,11 @@ public class UserDAO implements BaseDAO<User, Integer>{
             p = connection.prepareStatement("INSERT INTO entities.users(username, password, role) VALUES (?,?,?)");
             p.setString(1,user.getUsername());
             p.setString(2, user.getPassword());
-            p.setInt(3, 1);
+            if (user.getRole().equals("ADMIN")){
+                p.setInt(3, 1);
+            }else{
+                p.setInt(3, 2);
+            }
             p.executeUpdate();
         }catch (SQLException e){
             e.printStackTrace();

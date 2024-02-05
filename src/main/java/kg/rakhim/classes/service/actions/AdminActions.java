@@ -114,17 +114,13 @@ public class AdminActions {
         if (userService.isAdmin(username)){
             ConsoleOut.printLine("Название нового типа счетчика: ");
             String newType = scanner.next();
-            for (MeterType m : typesService.findAll()) {
-                if (!(m.getType().equals(newType))){
-                    ConsoleOut.printLine("Новый тип показания успешно добавлен");
-                    typesService.save(new MeterType(newType));
-                }else {
-                    ConsoleOut.printLine("Такой тип уже существует");
-                }
-                break;
+            if(typesService.saveType(newType) == 1){
+                auditService.save(new Audit(username, "Добавление счетчика", LocalDateTime.now()));
+            }else{
+                ConsoleOut.printLine("Попробуйте еще раз");
+                setNewType(username);
             }
             commandList(username);
-            auditService.save(new Audit(username, "Добавление счетчика", LocalDateTime.now()));
         }
     }
 

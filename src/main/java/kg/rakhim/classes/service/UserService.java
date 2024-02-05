@@ -45,4 +45,8 @@ public class UserService implements UserRepository {
     public void save(Object user) {
         userDAO.save((User) user);
     }
+
+    public int getUserId(User user){
+        return userDAO.getUser(user.getUsername()).getId();
+    }
 }
