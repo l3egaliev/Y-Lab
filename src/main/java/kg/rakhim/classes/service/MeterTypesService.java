@@ -3,6 +3,7 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.MeterTypesDAO;
 import kg.rakhim.classes.models.Audit;
+import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.repository.MeterTypesRepository;
@@ -12,10 +13,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static kg.rakhim.classes.in.ConsoleIn.commandList;
+
 public class MeterTypesService implements MeterTypesRepository {
     private final MeterTypesDAO meterTypesDAO;
-    public MeterTypesService() {
-        this.meterTypesDAO = (MeterTypesDAO) ApplicationContext.getContext("meterTypeDAO");
+    public MeterTypesService(MeterTypesDAO meterTypesDAO) {
+        this.meterTypesDAO = meterTypesDAO;
     }
 
     // TODO

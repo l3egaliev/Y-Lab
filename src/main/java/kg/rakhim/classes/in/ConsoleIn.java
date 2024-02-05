@@ -32,11 +32,18 @@ import java.util.Scanner;
  */
 public class ConsoleIn {
     private final static Scanner scanner = new Scanner(System.in);
-    private final static UsersActions usersActions = new UsersActions();
-    private final static AdminActions adminActions = new AdminActions();
     private final static UserService userService = (UserService) ApplicationContext.getContext("userService");
     private final static AuditService auditService = (AuditService) ApplicationContext.getContext("auditService");
     private final static RegisterService registerService = (RegisterService) ApplicationContext.getContext("registerService");
+    private final static UsersActions usersActions = new UsersActions(
+            userService, auditService,
+            (MeterReadingService) ApplicationContext.getContext("meterReadingService"),
+            (MeterTypesService) ApplicationContext.getContext("meterTypeService")
+    );
+    private final static AdminActions adminActions = new AdminActions(
+            userService, auditService,
+            (MeterReadingService) ApplicationContext.getContext("meterReadingService"),
+            (MeterTypesService) ApplicationContext.getContext("meterTypeService"));
     private static boolean loop = true;
 
     /**
@@ -126,7 +133,7 @@ public class ConsoleIn {
                         - Выйти - 5""");
             command = scanner.next();
             switch (command) {
-                case "1" -> usersActions.submitCounterReading(username);
+                case "1" -> usersActions.submitNewReading(username);
                 case "2" -> usersActions.viewCurrentReadings(username);
                 case "3" -> usersActions.viewReadingHistoryForMonth(username);
                 case "4" -> usersActions.viewReadingHistory(username);

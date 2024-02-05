@@ -16,7 +16,6 @@
 package kg.rakhim.classes.service.actions;
 
 import kg.rakhim.classes.context.ApplicationContext;
-import kg.rakhim.classes.dao.*;
 import kg.rakhim.classes.models.*;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.AuditService;
@@ -43,11 +42,12 @@ public class AdminActions {
      * Конструирует экземпляр {@code AdminActions} с указанным хранилищем.
      *
      */
-    public AdminActions(){
-        this.userService = (UserService) ApplicationContext.getContext("userService");
-        this.auditService = (AuditService) ApplicationContext.getContext("auditService");
-        this.mService = (MeterReadingService) ApplicationContext.getContext("meterReadingService");
-        this.typesService = (MeterTypesService) ApplicationContext.getContext("meterTypeService");
+    public AdminActions(UserService userService, AuditService auditService,
+                        MeterReadingService mService, MeterTypesService typesService){
+        this.userService = userService;
+        this.auditService = auditService;
+        this.mService = mService;
+        this.typesService = typesService;
     }
 
     /**

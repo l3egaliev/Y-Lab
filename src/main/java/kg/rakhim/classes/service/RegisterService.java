@@ -17,6 +17,7 @@
 package kg.rakhim.classes.service;
 
 import kg.rakhim.classes.context.ApplicationContext;
+import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.out.ConsoleOut;
@@ -36,9 +37,9 @@ public class RegisterService {
     /**
      * Конструктор для создания экземпляра класса {@code RegisterService}.
      */
-    public RegisterService() {
-        this.userService = (UserService) ApplicationContext.getContext("userService");
-        this.auditService = (AuditService) ApplicationContext.getContext("auditService");
+    public RegisterService(UserService userService, AuditService auditService) {
+        this.userService = userService;
+        this.auditService = auditService;
     }
 
     /**

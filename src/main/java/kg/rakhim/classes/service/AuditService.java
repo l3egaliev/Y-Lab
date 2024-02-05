@@ -7,11 +7,12 @@ import kg.rakhim.classes.repository.AuditRepository;
 import java.util.List;
 import java.util.Optional;
 
+
 public class AuditService implements AuditRepository {
     private final AuditDAO auditDAO;
 
-    public AuditService() {
-        this.auditDAO = new AuditDAO();
+    public AuditService(AuditDAO auditDAO) {
+        this.auditDAO = auditDAO;
     }
 
     // TODO

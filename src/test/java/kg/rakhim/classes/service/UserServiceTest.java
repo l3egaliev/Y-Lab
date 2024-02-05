@@ -16,7 +16,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp(){
         userDAO = new UserDAO();
-        userService = new UserService();
+        userService = new UserService(userDAO);
     }
 
     @DisplayName("Testing method findByUsername()")

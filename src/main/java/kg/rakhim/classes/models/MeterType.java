@@ -23,6 +23,10 @@ public class MeterType {
     private String type;
     private Integer id;
 
+    public MeterType(String type){
+        this.type = type;
+    }
+
     /**
      * Переопределенный метод toString(), возвращающий строковое представление
      * объекта MeterType. В данном случае, возвращается строка, представляющая
@@ -30,9 +34,6 @@ public class MeterType {
      *
      * @return строковое представление типа счетчика
      */
-    public MeterType(String type){
-        this.type = type;
-    }
     @Override
     public String toString() {
         return type;

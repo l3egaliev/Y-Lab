@@ -46,77 +46,20 @@ public class UsersActions {
      * Конструирует экземпляр {@code UsersActions} с указанным сканером и хранилищем.
      *
      */
-    public UsersActions() {
-        this.userService = (UserService) ApplicationContext.getContext("userService");
-        this.auditService = (AuditService) ApplicationContext.getContext("auditService");
-        this.mService = (MeterReadingService) ApplicationContext.getContext("meterReadingService");
-        this.typesService = (MeterTypesService) ApplicationContext.getContext("meterTypeService");
+    public UsersActions(
+            UserService userService,
+            AuditService auditService,
+            MeterReadingService mService,
+            MeterTypesService typesService) {
+        this.userService = userService;
+        this.auditService = auditService;
+        this.mService = mService;
+        this.typesService = typesService;
     }
 
-    /**
-     * Реализация подачи показаний.
-     *
-     * @param username имя пользователя, подающего показания
-     */
-    public void submitCounterReading(String username) {
-        MeterReading meterReading = new MeterReading();
-        meterReading.setUser(userService.findByUsername(username));
-        ConsoleOut.printLine("Для подачи показаний вводите следующие данные: ");
-        scanTypeOfMeterReading(meterReading, username);
-        ConsoleOut.printLine("\t- Значение (формат: 4 цифр, пример - 1000)");
-        int value = Integer.parseInt(scanner.next());
-        meterReading.setValue(value);
-        meterReading.setDate(LocalDateTime.now());
-
-        // Проверить не отправлял ли пользователь в этом месяце показаний
-        for (MeterReading m : mService.findAll()) {
-            if (m.getUser().getUsername().equals(username) &&
-                    m.getDate().getMonthValue() == LocalDateTime.now().getMonthValue()
-                    && m.getMeterType().equals(meterReading.getMeterType())) {
-                ConsoleOut.printLine("Вы в этом месяце уже отправляли показание: " + meterReading.getMeterType() + "\n---\n" + m);
-                commandList(username);
-            }
-        }
-        mService.save(meterReading);
-        auditService.save(new Audit(username, "Подача показания: " + meterReading, LocalDateTime.now()));
-        ConsoleOut.printLine("Показание успешно отправлено");
-
-        commandList(username);
+    public void submitNewReading(String username){
+        mService.sendCounterReading(username, userService, auditService);
     }
-
-    /**
-     * Метод для сканирования и выбора типа показания счетчика.
-     *
-     * @param meterReading Объект MeterReading, для которого необходимо выбрать тип показания.
-     */
-    public void scanTypeOfMeterReading(MeterReading meterReading, String username) {
-        // Создание карты для хранения соответствия первой буквы и типа показания
-        Map<String, String> letterAndType = new HashMap<>();
-        ConsoleOut.print("\t- Тип показания (");
-        // Вывод доступных типов показаний и соответствующих первых букв
-        for (MeterType m : typesService.findAll()) {
-            String firstLetter = String.valueOf(m.getType().charAt(0));
-            ConsoleOut.print("" + m.getType() + " - " + firstLetter + " | ");
-            letterAndType.put(firstLetter, m.getType());
-        }
-
-        ConsoleOut.printLine(")");
-
-        // Получение выбора от пользователя
-        String type = scanner.next().toLowerCase();
-
-        // Установка выбранного типа показания в объекте MeterReading
-        for (String key : letterAndType.keySet()) {
-            if (key.equals(type)) {
-                String selectedType = letterAndType.get(key);
-                meterReading.setMeterType(new MeterType(selectedType));
-            }else if(!letterAndType.containsKey(type)){
-                ConsoleOut.printLine("Неправильное значение");
-                submitCounterReading(username);
-            }
-        }
-    }
-
 
     /**
      * Реализация просмотра актуальных показаний.

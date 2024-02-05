@@ -11,8 +11,8 @@ import java.util.Optional;
 public class UserService implements UserRepository {
     private final UserDAO userDAO;
 
-    public UserService() {
-        this.userDAO = new UserDAO();
+    public UserService(UserDAO dao) {
+        this.userDAO = dao;
     }
 
     // TODO

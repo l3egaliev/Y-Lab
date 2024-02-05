@@ -1,13 +1,10 @@
 package kg.rakhim.classes.context;
 
 import kg.rakhim.classes.dao.*;
-import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.repository.BaseRepository;
 import kg.rakhim.classes.service.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class ApplicationContext {
     private static final Map<String, Object> CONTEXT = new HashMap<>();
@@ -25,11 +22,13 @@ public class ApplicationContext {
     }
 
     private static void loadService(){
-        CONTEXT.put("meterReadingService", new MeterReadingService());
-        CONTEXT.put("meterTypeService", new MeterTypesService());
-        CONTEXT.put("userService", new UserService());
-        CONTEXT.put("auditService", new AuditService());
-        CONTEXT.put("registerService", new RegisterService());
+        CONTEXT.put("meterReadingService", new MeterReadingService((MeterReadingDAO) getContext("meterReadingDAO"),
+                new MeterTypesService((MeterTypesDAO) getContext("meterTypeDAO"))));
+        CONTEXT.put("meterTypeService", new MeterTypesService((MeterTypesDAO) getContext("meterTypeDAO")));
+        CONTEXT.put("userService", new UserService((UserDAO) getContext("userDAO")));
+        CONTEXT.put("auditService", new AuditService((AuditDAO) getContext("auditDAO")));
+        CONTEXT.put("registerService", new RegisterService((UserService) getContext("userService"),
+                (AuditService) getContext("auditService")));
     }
 
     public static Object getContext(String o){
