@@ -1,26 +1,7 @@
-/**
- * Класс {@code UsersActions} представляет собой действия, которые пользователи могут выполнять
- * в отношении показаний счетчиков. Включает методы для подачи показаний, просмотра актуальных показаний,
- * просмотра истории показаний за конкретный месяц и просмотра полной истории подачи показаний.
- * <p>
- * Этот класс зависит от класса {@link Storage} для доступа и манипулирования данными о пользователях и показаниях счетчиков.
- * </p>
- *
- * @author Рахим Нуралиев
- * @version 1.0
- * @since 2024-01-26
- * @see Storage
- * @see Audit
- * @see MeterReading
- * @see User
- * @see MeterReadingService
- */
 package kg.rakhim.classes.service.actions;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
-import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.AuditService;
 import kg.rakhim.classes.service.MeterReadingService;
@@ -45,6 +26,10 @@ public class UsersActions {
     /**
      * Конструирует экземпляр {@code UsersActions} с указанным сканером и хранилищем.
      *
+     * @param userService    сервис пользователей
+     * @param auditService   сервис аудита
+     * @param mService       сервис показаний счетчиков
+     * @param typesService   сервис типов счетчиков
      */
     public UsersActions(
             UserService userService,
