@@ -1,44 +1,59 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.dao.AuditDAO;
+import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.ArrayList;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RegisterServiceTest {
-    private UserService userService;
-    private AuditService auditService;
     private RegisterService registerService;
+    private UserDAO userDAO;
+
+    @Container
+    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("ylab")
+            .withUsername("postgres")
+            .withPassword("postgres");
 
     @BeforeEach
     void setUp() {
-        userService = mock(UserService.class);
-        auditService = mock(AuditService.class);
-        registerService = new RegisterService(userService, auditService);
+        String jdbcUrl = postgresContainer.getJdbcUrl();
+        String username = postgresContainer.getUsername();
+        String password = postgresContainer.getPassword();
+
+        userDAO = new UserDAO();
+        userDAO.setJdbcUrl(jdbcUrl);
+        userDAO.setUsername(username);
+        userDAO.setPassword(password);
+        UserService userService = new UserService(userDAO);
+        AuditDAO mockAuditDAO = mock(AuditDAO.class);
+        registerService = new RegisterService(userService, new AuditService(mockAuditDAO));
     }
 
     @Test
+    @DisplayName("Testing method registerUser()")
     void testRegisterUser() {
-        User newUser = new User("testUser", "testPassword", "USER");
-        when(userService.findAll()).thenReturn(new ArrayList<>());
+        User newUser = new User("test", "testPassword", "USER");
         assertEquals(1, registerService.registerUser(newUser));
     }
 
     @Test
+    @DisplayName("Testing method loginUser()")
     void testLoginUser() {
-
         User existingUser = new User("existingUser", "existingPassword", "USER");
-
-        when(userService.findAll()).thenReturn(Collections.singletonList(existingUser));
+        userDAO.save(existingUser);
 
         assertTrue(registerService.loginUser("existingUser", "existingPassword"));
         assertFalse(registerService.loginUser("nonexistentUser", "password"));
-
-        verify(userService, times(2)).findAll();
     }
 }

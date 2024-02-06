@@ -4,6 +4,8 @@ import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +16,15 @@ import java.util.Set;
 public class UserDAO implements BaseDAO<User, Integer>{
     private static Connection connection = ConnectionLoader.getConnection();
     private static LoadProperties properties = new LoadProperties();
+    @Getter
+    @Setter
+    private String jdbcUrl;
+    @Getter
+    @Setter
+    private String username;
+    @Getter
+    @Setter
+    private String password;
     @Override
     public User get(int id) {
         String sql = "select * from entities.users where id=?";
@@ -104,17 +115,5 @@ public class UserDAO implements BaseDAO<User, Integer>{
            userRole.setId(resultSet.getInt("role_id"));
         }
         return userRole;
-    }
-
-    public String getJdbcUrl() {
-        return properties.getUrl();
-    }
-
-    public String getUsername() {
-        return properties.getUsername();
-    }
-
-    public String getPassword() {
-        return properties.getPassword();
     }
 }
