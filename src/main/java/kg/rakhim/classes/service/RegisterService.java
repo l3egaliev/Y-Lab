@@ -8,16 +8,12 @@
  * </p>
  *
  * @author Рахим Нуралиев
- * @version 1.0
- * @since 2024-01-26
  * @see Storage
  * @see Audit
  * @see User
  */
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.context.ApplicationContext;
-import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.out.ConsoleOut;
