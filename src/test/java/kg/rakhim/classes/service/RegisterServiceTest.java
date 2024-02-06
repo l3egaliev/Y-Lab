@@ -50,10 +50,10 @@ class RegisterServiceTest {
     @Test
     @DisplayName("Testing method loginUser()")
     void testLoginUser() {
-        User existingUser = new User("existingUser", "existingPassword", "USER");
+        User existingUser = new User("existing_user", "existingPassword", "USER");
         userDAO.save(existingUser);
 
-        assertTrue(registerService.loginUser("existingUser", "existingPassword"));
+        assertTrue(registerService.loginUser("existing_user", "existingPassword"));
         assertFalse(registerService.loginUser("nonexistentUser", "password"));
     }
 }
