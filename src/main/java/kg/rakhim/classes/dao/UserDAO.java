@@ -13,6 +13,7 @@ import java.util.Set;
 @Data
 public class UserDAO implements BaseDAO<User, Integer>{
     private static Connection connection = ConnectionLoader.getConnection();
+    private static LoadProperties properties = new LoadProperties();
     @Override
     public User get(int id) {
         String sql = "select * from entities.users where id=?";
@@ -103,5 +104,17 @@ public class UserDAO implements BaseDAO<User, Integer>{
            userRole.setId(resultSet.getInt("role_id"));
         }
         return userRole;
+    }
+
+    public String getJdbcUrl() {
+        return properties.getUrl();
+    }
+
+    public String getUsername() {
+        return properties.getUsername();
+    }
+
+    public String getPassword() {
+        return properties.getPassword();
     }
 }

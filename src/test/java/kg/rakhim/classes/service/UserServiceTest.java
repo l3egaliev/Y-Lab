@@ -1,25 +1,46 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.UserDAO;
-import kg.rakhim.classes.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import kg.rakhim.classes.dao.UserDAO;
+import kg.rakhim.classes.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
-
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceTest {
     private UserService service;
     private UserDAO mockUserDAO;
 
+    @Container
+    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("ylab")
+            .withUsername("postgres")
+            .withPassword("postgres");
+
     @BeforeEach
     void setUp(){
+        String jdbcUrl = postgresContainer.getJdbcUrl();
+        String username = postgresContainer.getUsername();
+        String password = postgresContainer.getPassword();
+
+        // Создаем mockUserDAO и передаем подключение к контейнеру PostgreSQL
         mockUserDAO = mock(UserDAO.class);
+        when(mockUserDAO.getJdbcUrl()).thenReturn(jdbcUrl);
+        when(mockUserDAO.getUsername()).thenReturn(username);
+        when(mockUserDAO.getPassword()).thenReturn(password);
+
         service = new UserService(mockUserDAO);
     }
 
