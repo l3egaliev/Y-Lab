@@ -1,21 +1,5 @@
-/**
- * Класс {@code AdminActions} представляет собой административные действия, которые администратор может выполнять
- * относительно показаний счетчиков. Он включает в себя методы для просмотра актуальных показаний всех пользователей,
- * просмотра истории показаний за определенный месяц, просмотра истории показаний конкретного пользователя
- * и добавления нового тип счетчика.
- * <p>
- * Этот класс зависит от класса {@link Storage} для доступа и манипулирования данными о показаниях счетчиков.
- * </p>
- *
- * @author Рахим Нуралиев
- * @version 1.0
- * @since 2024-01-26
- * @see Storage
- * @see MeterReading
- */
 package kg.rakhim.classes.service.actions;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.*;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.AuditService;
@@ -41,6 +25,10 @@ public class AdminActions {
     /**
      * Конструирует экземпляр {@code AdminActions} с указанным хранилищем.
      *
+     * @param userService    сервис пользователей
+     * @param auditService   сервис аудита
+     * @param mService       сервис показаний счетчиков
+     * @param typesService   сервис типов счетчиков
      */
     public AdminActions(UserService userService, AuditService auditService,
                         MeterReadingService mService, MeterTypesService typesService){
@@ -78,11 +66,11 @@ public class AdminActions {
     public void viewReadingsHistoryForMonth(int month, String username) {
         ConsoleOut.printLine("Все показания пользователей за "+month+" - месяц");
         for(MeterReading meterReading : mService.findAll()){
-                if (meterReading.getDate().getMonthValue() == month) {
-                    ConsoleOut.printLine("\t- " + meterReading);
-                }
+            if (meterReading.getDate().getMonthValue() == month) {
+                ConsoleOut.printLine("\t- " + meterReading);
+            }
         }
-        auditService.save(new Audit(username, "Просмотр историю показаний пользователя за конкретный месяц", LocalDateTime.now()));
+        auditService.save(new Audit(username, "Просмотр истории показаний пользователя за конкретный месяц", LocalDateTime.now()));
         commandList(username);
     }
 
@@ -113,7 +101,7 @@ public class AdminActions {
     public void setNewType(String username){
         if (userService.isAdmin(username)){
             ConsoleOut.printLine("Название нового типа счетчика: ");
-            String newType = scanner.next();
+            String newType = scanner.nextLine();
             if(typesService.saveType(newType) == 1){
                 auditService.save(new Audit(username, "Добавление счетчика", LocalDateTime.now()));
             }else{
@@ -126,6 +114,8 @@ public class AdminActions {
 
     /**
      * Выводит на экран историю аудитов конкретного пользователя.
+     *
+     * @param adminName имя администратора
      */
     public void viewAudit(String adminName) {
         ConsoleOut.printLine("Имя пользователя: ");
