@@ -1,11 +1,9 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.MeterReadingDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
-import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.repository.MeterReadingRepository;
 
@@ -14,10 +12,19 @@ import java.util.*;
 
 import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
+/**
+ * Сервис для работы с показаниями счетчиков.
+ */
 public class MeterReadingService implements MeterReadingRepository {
     private final MeterReadingDAO dao;
     private final MeterTypesService typesService;
 
+    /**
+     * Создает экземпляр класса MeterReadingService с указанным DAO и сервисом типов счетчиков.
+     *
+     * @param dao           DAO для работы с данными о показаниях счетчиков
+     * @param typesService  сервис для работы с типами счетчиков
+     */
     public MeterReadingService(MeterReadingDAO dao, MeterTypesService typesService) {
         this.dao = dao;
         this.typesService = typesService;
@@ -41,9 +48,12 @@ public class MeterReadingService implements MeterReadingRepository {
 
 
     /**
-     * Реализация подачи показаний.
+     * Отправляет показания счетчика от указанного пользователя.
      *
-     * @param username имя пользователя, подающего показания
+     * @param username      имя пользователя, подающего показания
+     * @param userService   сервис для работы с пользователями
+     * @param auditService  сервис для аудита действий пользователей
+     * @param scanner       сканер для считывания ввода пользователя
      */
     public void sendCounterReading(String username, UserService userService, AuditService auditService, Scanner scanner) {
         MeterReading meterReading = new MeterReading();
@@ -69,9 +79,12 @@ public class MeterReadingService implements MeterReadingRepository {
     }
 
     /**
-     * Метод для сканирования и выбора типа показания счетчика.
+     * Считывает и выбирает тип показания счетчика.
      *
-     * @param meterReading Объект MeterReading, для которого необходимо выбрать тип показания.
+     * @param meterReading  объект MeterReading, для которого необходимо выбрать тип показания
+     * @param userService   сервис для работы с пользователями
+     * @param auditService  сервис для аудита действий пользователей
+     * @param scanner       сканер для считывания ввода пользователя
      */
     public void scanTypeOfMeterReading(MeterReading meterReading, UserService userService,
                                        AuditService auditService, Scanner scanner) {
@@ -92,6 +105,11 @@ public class MeterReadingService implements MeterReadingRepository {
         }
     }
 
+    /**
+     * Отображает доступные типы показаний.
+     *
+     * @param letterAndType  карта соответствия первой буквы и типа показания
+     */
     private void displayTypes(Map<String, String> letterAndType){
         // Создание карты для хранения соответствия первой буквы и типа показания
         ConsoleOut.print("\t- Тип показания (");
@@ -104,6 +122,12 @@ public class MeterReadingService implements MeterReadingRepository {
         ConsoleOut.printLine(")");
     }
 
+    /**
+     * Проверяет, существуют ли уже показания счетчика для данного пользователя в текущем месяце и типом счетчика.
+     *
+     * @param meterReading  объект MeterReading, для которого необходимо проверить существование показаний
+     * @return              1, если показания уже существуют, иначе 0
+     */
     public int isExistsReading(MeterReading meterReading){
         int res = 0;
         // Проверить не отправлял ли пользователь в этом месяце показаний
