@@ -45,17 +45,16 @@ public class MeterReadingService implements MeterReadingRepository {
      *
      * @param username имя пользователя, подающего показания
      */
-    public void sendCounterReading(String username, UserService userService, AuditService auditService) {
-        Scanner scanner = new Scanner(System.in);
+    public void sendCounterReading(String username, UserService userService, AuditService auditService, Scanner scanner) {
         MeterReading meterReading = new MeterReading();
         meterReading.setUser(userService.findByUsername(username));
         ConsoleOut.printLine("Для подачи показаний вводите следующие данные: ");
-        scanTypeOfMeterReading(meterReading, userService, auditService);
+        scanTypeOfMeterReading(meterReading, userService, auditService, scanner);
         ConsoleOut.printLine("\t- Значение (формат: 4 цифр, пример - 1000)");
         int value = Integer.parseInt(scanner.next());
         if(Integer.toString(value).length()<4){
             ConsoleOut.printLine("Неправильно! Не меньше 4 цифр");
-            sendCounterReading(username, userService, auditService);
+            sendCounterReading(username, userService, auditService, scanner);
         }
         meterReading.setValue(value);
         meterReading.setDate(LocalDateTime.now());
@@ -74,8 +73,8 @@ public class MeterReadingService implements MeterReadingRepository {
      *
      * @param meterReading Объект MeterReading, для которого необходимо выбрать тип показания.
      */
-    public void scanTypeOfMeterReading(MeterReading meterReading, UserService userService, AuditService auditService) {
-        Scanner scanner = new Scanner(System.in);
+    public void scanTypeOfMeterReading(MeterReading meterReading, UserService userService,
+                                       AuditService auditService, Scanner scanner) {
         Map<String, String> letterAndType = new HashMap<>();
         displayTypes(letterAndType);
         // Получение выбора от пользователя
@@ -88,7 +87,7 @@ public class MeterReadingService implements MeterReadingRepository {
                 meterReading.setMeterType(new MeterType(selectedType));
             }else if(!letterAndType.containsKey(type)){
                 ConsoleOut.printLine("Неправильное значение");
-                sendCounterReading(meterReading.getUser().getUsername(), userService, auditService);
+                sendCounterReading(meterReading.getUser().getUsername(), userService, auditService, scanner);
             }
         }
     }

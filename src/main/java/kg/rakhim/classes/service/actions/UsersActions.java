@@ -58,7 +58,7 @@ public class UsersActions {
     }
 
     public void submitNewReading(String username){
-        mService.sendCounterReading(username, userService, auditService);
+        mService.sendCounterReading(username, userService, auditService, scanner);
     }
 
     /**

@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
  * Класс {@code MeterReading} представляет объект, содержащий информацию о показаниях счетчика.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MeterReading {
     private Integer id;
     private User user;

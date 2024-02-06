@@ -40,6 +40,10 @@ public class User {
         this.role  = role;
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
     /**
      * Переопределение метода {@code toString()} для удобного представления информации о пользователе.
      *
