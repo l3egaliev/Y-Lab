@@ -11,9 +11,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс для работы с пользователями в базе данных.
+ */
 @Data
 public class UserDAO implements BaseDAO<User, Integer> {
-    private static Connection connection = ConnectionLoader.getConnection();
+
+    /**
+     * Соединение с базой данных.
+     */
+    private static final Connection connection = ConnectionLoader.getConnection();
+
     @Getter
     @Setter
     private String jdbcUrl;
@@ -23,9 +31,16 @@ public class UserDAO implements BaseDAO<User, Integer> {
     @Getter
     @Setter
     private String password;
+
+    /**
+     * Получение пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя
+     * @return объект User
+     */
     @Override
     public User get(int id) {
-        String sql = "select * from entities.users where id=?";
+        String sql = "SELECT * FROM entities.users WHERE id=?";
         PreparedStatement p = null;
         User user = new User();
         try {
@@ -44,12 +59,17 @@ public class UserDAO implements BaseDAO<User, Integer> {
         return user;
     }
 
+    /**
+     * Получение списка всех пользователей.
+     *
+     * @return список объектов User
+     */
     @Override
     public List<User> getAll() {
         List<User> res = new ArrayList<>();
         PreparedStatement p = null;
         try {
-            p = connection.prepareStatement("select * from entities.users");
+            p = connection.prepareStatement("SELECT * FROM entities.users");
             ResultSet resultSet = p.executeQuery();
             while (resultSet.next()){
                 User user = new User();
@@ -65,6 +85,11 @@ public class UserDAO implements BaseDAO<User, Integer> {
         return res;
     }
 
+    /**
+     * Сохранение пользователя в базе данных.
+     *
+     * @param user объект User для сохранения
+     */
     @Override
     public void save(User user) {
         PreparedStatement p = null;
@@ -83,8 +108,14 @@ public class UserDAO implements BaseDAO<User, Integer> {
         }
     }
 
+    /**
+     * Получение пользователя по его имени.
+     *
+     * @param username имя пользователя
+     * @return объект User
+     */
     public User getUser(String username){
-        String sql = "select * from entities.users where username=?";
+        String sql = "SELECT * FROM entities.users WHERE username=?";
         PreparedStatement p = null;
         User user = new User();
         try {
@@ -103,9 +134,15 @@ public class UserDAO implements BaseDAO<User, Integer> {
         return user;
     }
 
+    /**
+     * Получение идентификатора пользователя по его имени.
+     *
+     * @param username имя пользователя
+     * @return идентификатор пользователя
+     */
     public Integer userId(String username){
         try{
-            PreparedStatement p = connection.prepareStatement("select id from entities.users where username = ?");
+            PreparedStatement p = connection.prepareStatement("SELECT id FROM entities.users WHERE username = ?");
             p.setString(1, username);
             ResultSet resultSet = p.executeQuery();
             while(resultSet.next()){
@@ -117,14 +154,21 @@ public class UserDAO implements BaseDAO<User, Integer> {
         return null;
     }
 
+    /**
+     * Получение роли пользователя по её идентификатору.
+     *
+     * @param role_id идентификатор роли
+     * @return объект UserRole
+     * @throws SQLException если возникает ошибка при выполнении SQL-запроса
+     */
     private UserRole getRole(int role_id) throws SQLException {
         UserRole userRole = new UserRole();
-        PreparedStatement p = connection.prepareStatement("select * from entities.users_role where role_id = ?");
+        PreparedStatement p = connection.prepareStatement("SELECT * FROM entities.users_role WHERE role_id = ?");
         p.setInt(1,role_id);
         ResultSet resultSet = p.executeQuery();
         while (resultSet.next()){
-           userRole.setRole(resultSet.getString("role"));
-           userRole.setId(resultSet.getInt("role_id"));
+            userRole.setRole(resultSet.getString("role"));
+            userRole.setId(resultSet.getInt("role_id"));
         }
         return userRole;
     }

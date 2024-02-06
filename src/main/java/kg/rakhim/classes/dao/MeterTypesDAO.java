@@ -13,7 +13,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс для работы с типами счетчиков в базе данных.
+ */
 public class MeterTypesDAO implements MeterTypesDAOIn {
+
+    /**
+     * Соединение с базой данных.
+     */
+    private static final Connection connection = ConnectionLoader.getConnection();
+
     @Getter
     @Setter
     private String jdbcUrl;
@@ -23,12 +32,17 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
     @Getter
     @Setter
     private String password;
-    private static Connection connection = ConnectionLoader.getConnection();
 
+    /**
+     * Получение идентификатора типа счетчика.
+     *
+     * @param type объект MeterType
+     * @return идентификатор типа счетчика
+     */
     public int typeId(MeterType type){
         Integer id = null;
         try{
-            PreparedStatement p = connection.prepareStatement("SELECT type_id from entities.meter_types where type = ?");
+            PreparedStatement p = connection.prepareStatement("SELECT type_id FROM entities.meter_types WHERE type = ?");
             p.setString(1, type.getType());
             ResultSet resultSet = p.executeQuery();
             while (resultSet.next()){
@@ -40,12 +54,17 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
         return id;
     }
 
+    /**
+     * Получение типа счетчика по его идентификатору.
+     *
+     * @param id идентификатор типа счетчика
+     * @return объект MeterType
+     */
     @Override
     public MeterType get(int id){
-        PreparedStatement p = null;
         MeterType meterType = new MeterType();
         try{
-            p = connection.prepareStatement("select * from entities.meter_types where type_id = ?");
+            PreparedStatement p = connection.prepareStatement("SELECT * FROM entities.meter_types WHERE type_id = ?");
             p.setInt(1, id);
             ResultSet resultSet = p.executeQuery();
             while (resultSet.next()){
@@ -58,12 +77,16 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
         return meterType;
     }
 
+    /**
+     * Получение списка всех типов счетчиков.
+     *
+     * @return список объектов MeterType
+     */
     @Override
     public List<MeterType> getAll() {
-        PreparedStatement p = null;
         List<MeterType> types = new ArrayList<>();
         try{
-            p = connection.prepareStatement("select * from entities.meter_types;");
+            PreparedStatement p = connection.prepareStatement("SELECT * FROM entities.meter_types");
             ResultSet resultSet = p.executeQuery();
             while(resultSet.next()){
                 MeterType type = new MeterType();
@@ -77,6 +100,11 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
         return types;
     }
 
+    /**
+     * Сохранение типа счетчика в базе данных.
+     *
+     * @param type объект MeterType для сохранения
+     */
     @Override
     public void save(MeterType type) {
         try{
@@ -88,10 +116,16 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
         }
     }
 
+    /**
+     * Проверка существования типа счетчика в базе данных.
+     *
+     * @param type тип счетчика
+     * @return true, если тип счетчика существует; в противном случае - false
+     */
     @Override
     public boolean isExists(String type){
         try{
-            PreparedStatement p = connection.prepareStatement("select * from entities.meter_types where type=?");
+            PreparedStatement p = connection.prepareStatement("SELECT * FROM entities.meter_types WHERE type=?");
             p.setString(1,type);
             ResultSet resultSet = p.executeQuery();
             while(resultSet.next()){
