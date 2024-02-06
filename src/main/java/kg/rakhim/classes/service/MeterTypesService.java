@@ -2,6 +2,7 @@ package kg.rakhim.classes.service;
 
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.MeterTypesDAO;
+import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
@@ -16,8 +17,8 @@ import java.util.Optional;
 import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
 public class MeterTypesService implements MeterTypesRepository {
-    private final MeterTypesDAO meterTypesDAO;
-    public MeterTypesService(MeterTypesDAO meterTypesDAO) {
+    private final MeterTypesDAOIn meterTypesDAO;
+    public MeterTypesService(MeterTypesDAOIn meterTypesDAO) {
         this.meterTypesDAO = meterTypesDAO;
     }
 

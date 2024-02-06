@@ -1,7 +1,7 @@
 package kg.rakhim.classes.dao;
 
+import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.MeterReading;
-import kg.rakhim.classes.models.MeterType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeterReadingDAO implements BaseDAO<MeterReading, Integer>{
+public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     private static Connection connection = ConnectionLoader.getConnection();
     @Getter
     @Setter

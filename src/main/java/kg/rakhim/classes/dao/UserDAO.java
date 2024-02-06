@@ -1,6 +1,6 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.migration.LoadProperties;
+import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 import lombok.Data;
@@ -10,10 +10,9 @@ import lombok.Setter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Data
-public class UserDAO implements BaseDAO<User, Integer>{
+public class UserDAO implements BaseDAO<User, Integer> {
     private static Connection connection = ConnectionLoader.getConnection();
     @Getter
     @Setter

@@ -1,10 +1,8 @@
 package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.context.ApplicationContext;
-import kg.rakhim.classes.dao.migration.LoadProperties;
+import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.Audit;
-import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.service.UserService;
 import lombok.Data;
 
 import java.sql.*;
@@ -13,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class AuditDAO implements BaseDAO<Audit, Integer>{
+public class AuditDAO implements BaseDAO<Audit, Integer> {
     private Connection connection = ConnectionLoader.getConnection();
     private UserDAO userDAO = (UserDAO) ApplicationContext.getContext("userDAO");
 

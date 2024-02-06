@@ -1,7 +1,7 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.ConnectionLoader;
-import kg.rakhim.classes.models.MeterReading;
+import kg.rakhim.classes.dao.interfaces.BaseDAO;
+import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.models.MeterType;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeterTypesDAO implements BaseDAO<MeterType, Integer>{
+public class MeterTypesDAO implements MeterTypesDAOIn {
     @Getter
     @Setter
     private String jdbcUrl;
@@ -88,6 +88,7 @@ public class MeterTypesDAO implements BaseDAO<MeterType, Integer>{
         }
     }
 
+    @Override
     public boolean isExists(String type){
         try{
             PreparedStatement p = connection.prepareStatement("select * from entities.meter_types where type=?");

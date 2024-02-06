@@ -1,4 +1,4 @@
-package kg.rakhim.classes.dao;
+package kg.rakhim.classes.dao.interfaces;
 
 import java.util.List;
 
