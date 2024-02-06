@@ -15,7 +15,6 @@ import java.util.Set;
 @Data
 public class UserDAO implements BaseDAO<User, Integer>{
     private static Connection connection = ConnectionLoader.getConnection();
-    private static LoadProperties properties = new LoadProperties();
     @Getter
     @Setter
     private String jdbcUrl;
@@ -103,6 +102,20 @@ public class UserDAO implements BaseDAO<User, Integer>{
             throw new RuntimeException(e);
         }
         return user;
+    }
+
+    public Integer userId(String username){
+        try{
+            PreparedStatement p = connection.prepareStatement("select id from entities.users where username = ?");
+            p.setString(1, username);
+            ResultSet resultSet = p.executeQuery();
+            while(resultSet.next()){
+                return resultSet.getInt("id");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private UserRole getRole(int role_id) throws SQLException {

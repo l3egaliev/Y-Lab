@@ -14,6 +14,7 @@
  */
 package kg.rakhim.classes.models;
 
+import kg.rakhim.classes.dao.MeterTypesDAO;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -25,7 +26,6 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class MeterReading {
     private Integer id;
     private User user;
@@ -33,6 +33,11 @@ public class MeterReading {
     private MeterType meterType;
     private LocalDateTime date;
 
+    public MeterReading(User user, int value, MeterType meterType){
+        this.user = user;
+        this.value = value;
+        this.meterType = meterType;
+    }
     /**
      * Переопределение метода {@code toString()} для удобного представления информации о показаниях счетчика.
      *

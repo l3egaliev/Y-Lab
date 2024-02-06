@@ -3,6 +3,8 @@ package kg.rakhim.classes.dao;
 import kg.rakhim.classes.dao.ConnectionLoader;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MeterTypesDAO implements BaseDAO<MeterType, Integer>{
+    @Getter
+    @Setter
+    private String jdbcUrl;
+    @Getter
+    @Setter
+    private String username;
+    @Getter
+    @Setter
+    private String password;
     private static Connection connection = ConnectionLoader.getConnection();
 
     public int typeId(MeterType type){

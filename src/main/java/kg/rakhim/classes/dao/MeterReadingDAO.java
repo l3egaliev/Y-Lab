@@ -2,6 +2,8 @@ package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.*;
 import java.time.*;
@@ -10,6 +12,15 @@ import java.util.List;
 
 public class MeterReadingDAO implements BaseDAO<MeterReading, Integer>{
     private static Connection connection = ConnectionLoader.getConnection();
+    @Getter
+    @Setter
+    private String jdbcUrl;
+    @Getter
+    @Setter
+    private String username;
+    @Getter
+    @Setter
+    private String password;
     private UserDAO userDAO = new UserDAO();
     private MeterTypesDAO meterTypesDAO = new MeterTypesDAO();
 
@@ -64,7 +75,7 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer>{
         try {
             p = connection.prepareStatement(sql);
             p.setInt(1, meterTypesDAO.typeId(meterReading.getMeterType()));
-            p.setInt(2, meterReading.getUser().getId());
+            p.setInt(2, userDAO.userId(meterReading.getUser().getUsername()));
             p.setInt(3, meterReading.getValue());
             p.setDate(4, new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()));
             p.executeUpdate();
@@ -72,6 +83,4 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer>{
             e.printStackTrace();
         }
     }
-    
-
 }

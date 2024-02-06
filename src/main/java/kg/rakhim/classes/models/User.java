@@ -43,7 +43,6 @@ public class User {
     public User(String username) {
         this.username = username;
     }
-
     /**
      * Переопределение метода {@code toString()} для удобного представления информации о пользователе.
      *
