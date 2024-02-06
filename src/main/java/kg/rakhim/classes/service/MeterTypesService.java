@@ -16,8 +16,17 @@ import java.util.Optional;
 
 import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
+/**
+ * Сервис для работы с типами счетчиков.
+ */
 public class MeterTypesService implements MeterTypesRepository {
     private final MeterTypesDAOIn meterTypesDAO;
+
+    /**
+     * Создает экземпляр класса MeterTypesService с указанным DAO для типов счетчиков.
+     *
+     * @param meterTypesDAO DAO для работы с данными о типах счетчиков
+     */
     public MeterTypesService(MeterTypesDAOIn meterTypesDAO) {
         this.meterTypesDAO = meterTypesDAO;
     }
@@ -38,6 +47,12 @@ public class MeterTypesService implements MeterTypesRepository {
         meterTypesDAO.save(type);
     }
 
+    /**
+     * Сохраняет новый тип счетчика.
+     *
+     * @param newType новый тип счетчика
+     * @return 1, если тип успешно сохранен; 0, если тип уже существует
+     */
     public int saveType(String newType){
         if (meterTypesDAO.isExists(newType)){
             ConsoleOut.printLine("Такой тип уже существует");
