@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Класс для загрузки настроек из файла application.properties.
+ */
 @Getter
 @Setter
 public class LoadProperties {
@@ -15,10 +18,13 @@ public class LoadProperties {
     private String password;
     private String liquibasePath;
 
-    public LoadProperties(){
+    /**
+     * Конструктор класса, загружает настройки из файла application.properties.
+     */
+    public LoadProperties() {
         Properties properties = new Properties();
         InputStream input;
-        try{
+        try {
             ClassLoader classLoader = getClass().getClassLoader();
             input = classLoader.getResourceAsStream("application.properties");
             if (input == null) {
@@ -30,8 +36,8 @@ public class LoadProperties {
             username = properties.getProperty("db.username");
             password = properties.getProperty("db.password");
             liquibasePath = properties.getProperty("liquibase.changelog");
-        }catch (IOException e){
-            System.out.println("Exception "+e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Exception " + e.getMessage());
         }
     }
 }
