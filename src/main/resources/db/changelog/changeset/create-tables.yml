@@ -5,11 +5,13 @@ databaseChangeLog:
       author: Rakhim
       changes:
         - createSequence:
+            remarks: Sequence for the users_role(role_id)
             sequenceName: role_id_seq
             startValue: 1
             incrementBy: 1
             minValue: 1
         - createTable:
+            remarks: Table roles for the users
             schemaName: entities
             tableName: users_role
             columns:
@@ -17,6 +19,7 @@ databaseChangeLog:
                   name: role_id
                   type: int
                   defaultValueComputed: nextval('role_id_seq')
+                  remarks: Primary key of the users_role table
                   constraints:
                     primaryKey: true
               - column:
@@ -29,11 +32,13 @@ databaseChangeLog:
       author: Rakhim
       changes:
         - createSequence:
+            remarks: Sequence for the users(id)
             sequenceName: user_id_seq
             startValue: 1
             incrementBy: 1
             minValue: 1
         - createTable:
+            remarks: Table users
             schemaName: entities
             tableName: users
             columns:
@@ -41,6 +46,7 @@ databaseChangeLog:
                   name: id
                   type: int
                   defaultValueComputed: nextval('user_id_seq')
+                  remarks: Primary key of the users table
                   constraints:
                     primaryKey: true
               - column:
@@ -69,6 +75,7 @@ databaseChangeLog:
       author: Rakhim
       changes:
         - createSequence:
+            remarks: Sequence for the audits(id)
             sequenceName: audit_id_seq
             startValue: 1
             incrementBy: 1
@@ -81,6 +88,7 @@ databaseChangeLog:
                   name: id
                   type: int
                   defaultValueComputed: nextval('audit_id_seq')
+                  remarks: Primary key of the audits table
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -109,6 +117,7 @@ databaseChangeLog:
       author: Rakhim
       changes:
         - createSequence:
+            remarks: Sequence for the meter_types(type_id)
             sequenceName: type_id_seq
             startValue: 1
             incrementBy: 1
@@ -121,6 +130,7 @@ databaseChangeLog:
                   name: type_id
                   type: int
                   defaultValueComputed: nextval('type_id_seq')
+                  remarks: Primary key of the meter_types table
                   constraints:
                     primaryKey: true
               - column:
@@ -133,6 +143,7 @@ databaseChangeLog:
       author: Rakhim
       changes:
         - createSequence:
+            remarks: Sequence for the meter_readings(id)
             sequenceName: reading_id_seq
             startValue: 1
             incrementBy: 1
@@ -145,6 +156,7 @@ databaseChangeLog:
                   name: id
                   type: int
                   defaultValueComputed: nextval('reading_id_seq')
+                  remarks: Primary key of the meter_readings table
                   constraints:
                     primaryKey: true
                     nullable: false
