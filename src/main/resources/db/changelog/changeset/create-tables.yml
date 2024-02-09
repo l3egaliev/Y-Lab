@@ -1,16 +1,22 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/changelog-master.yml
   - changeSet:
-      id: creating-users-roles
+      id: roles_table
       author: Rakhim
       changes:
+        - createSequence:
+            sequenceName: role_id_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
         - createTable:
             schemaName: entities
             tableName: users_role
             columns:
               - column:
                   name: role_id
-                  type: serial
+                  type: int
+                  defaultValueComputed: nextval('role_id_seq')
                   constraints:
                     primaryKey: true
               - column:
@@ -19,16 +25,22 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: creating-users_table
+      id: users_table
       author: Rakhim
       changes:
+        - createSequence:
+            sequenceName: user_id_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
         - createTable:
             schemaName: entities
             tableName: users
             columns:
               - column:
                   name: id
-                  type: serial
+                  type: int
+                  defaultValueComputed: nextval('user_id_seq')
                   constraints:
                     primaryKey: true
               - column:
@@ -53,16 +65,22 @@ databaseChangeLog:
                     nullable: false
                     deleteCascade: true
   - changeSet:
-      id: creating-audit
+      id: audits_table
       author: Rakhim
       changes:
+        - createSequence:
+            sequenceName: audit_id_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
         - createTable:
             schemaName: entities
             tableName: audits
             columns:
               - column:
                   name: id
-                  type: serial
+                  type: int
+                  defaultValueComputed: nextval('audit_id_seq')
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -87,16 +105,22 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: create-meter_type
+      id: meter_types_table
       author: Rakhim
       changes:
+        - createSequence:
+            sequenceName: type_id_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
         - createTable:
             schemaName: entities
             tableName: meter_types
             columns:
               - column:
                   name: type_id
-                  type: serial
+                  type: int
+                  defaultValueComputed: nextval('type_id_seq')
                   constraints:
                     primaryKey: true
               - column:
@@ -105,16 +129,22 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: creating-meterReadings
+      id: meterReadings_table
       author: Rakhim
       changes:
+        - createSequence:
+            sequenceName: reading_id_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
         - createTable:
             schemaName: entities
             tableName: meter_readings
             columns:
               - column:
                   name: id
-                  type: serial
+                  type: int
+                  defaultValueComputed: nextval('reading_id_seq')
                   constraints:
                     primaryKey: true
                     nullable: false

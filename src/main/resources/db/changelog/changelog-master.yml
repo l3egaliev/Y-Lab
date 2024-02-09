@@ -1,5 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changeset/create-tables.yml
- - include:
-     file: db/changelog/changeset/insert-tables.yml
+  - include:
+      file: db/changelog/changeset/insert-tables.yml
