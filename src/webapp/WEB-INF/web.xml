@@ -3,13 +3,7 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-<!--    <display-name>Web app</display-name>-->
-<!--    <servlet>-->
-<!--        <servlet-name>authorizationServlet</servlet-name>-->
-<!--        <servlet-class>kg.rakhim.classes.servlet.AuthorizationServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>authorizationServlet</servlet-name>-->
-<!--        <url-pattern>/authorize</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <listener>
+        <listener-class>kg.rakhim.classes.servlet.ApplicationContextListener</listener-class>
+    </listener>
 </web-app>

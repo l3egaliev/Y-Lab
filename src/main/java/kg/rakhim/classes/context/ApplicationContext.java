@@ -45,11 +45,9 @@ public class ApplicationContext {
         CONTEXT.put("meterTypeRepository", new MeterTypeRepositoryImpl((MeterTypesDAO) getContext("meterTypeDAO")));
         CONTEXT.put("userRepository", new UserRepositoryImpl((UserDAO) getContext("userDAO")));
     }
-
     private static void loadMapper(){
         CONTEXT.put("modelMapper", new ModelMapper());
     }
-
     public static Object getContext(String o){
         return CONTEXT.get(o);
     }

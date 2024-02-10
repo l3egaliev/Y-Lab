@@ -20,6 +20,7 @@ import kg.rakhim.classes.out.ConsoleOut;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -95,15 +96,16 @@ public class RegisterService {
      * @param password пароль пользователя
      * @return true, если пользователь аутентифицирован; false, если не найден или пароль неверен
      */
-    public boolean loginUser(String username, String password) {
-        boolean res = false;
+    public Map<Boolean, JSONObject> loginUser(String username, String password) {
+        JSONObject message = new JSONObject();
         for (User u : userService.findAll()) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
-                res = true;
                 auditService.save(new Audit(username,"Вход", LocalDateTime.now()));
-                break;
+                message.put("message:", "Вы успешно вошли в систему");
+                return Map.of(true, message);
             }
         }
-        return res;
+        message.put("message:", "Некорректные данные");
+        return Map.of(false, message);
     }
 }

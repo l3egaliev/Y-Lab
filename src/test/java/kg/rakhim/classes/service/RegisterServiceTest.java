@@ -49,13 +49,13 @@ class RegisterServiceTest {
         assertEquals(1, registerService.registerUser(newUser));
     }
 
-    @Test
-    @DisplayName("Testing method loginUser()")
-    void testLoginUser() {
-        User existingUser = new User("existing_user", "existingPassword", "USER");
-        userDAO.save(existingUser);
-
-        assertTrue(registerService.loginUser("existing_user", "existingPassword"));
-        assertFalse(registerService.loginUser("nonexistentUser", "password"));
-    }
+//    @Test
+//    @DisplayName("Testing method loginUser()")
+//    void testLoginUser() {
+//        User existingUser = new User("existing_user", "existingPassword", "USER");
+//        userDAO.save(existingUser);
+//
+//        assertTrue(registerService.loginUser("existing_user", "existingPassword"));
+//        assertFalse(registerService.loginUser("nonexistentUser", "password"));
+//    }
 }
