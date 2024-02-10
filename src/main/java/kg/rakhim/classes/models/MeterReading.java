@@ -14,25 +14,30 @@
  */
 package kg.rakhim.classes.models;
 
-import lombok.Getter;
-import lombok.Setter;
+import kg.rakhim.classes.dao.MeterTypesDAO;
+import lombok.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Класс {@code MeterReading} представляет объект, содержащий информацию о показаниях счетчика.
  */
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class MeterReading {
+    private Integer id;
     private User user;
     private int value;
     private MeterType meterType;
-    private LocalDate date;
+    private LocalDateTime date;
 
-
-    public MeterReading(){}
-
+    public MeterReading(User user, int value, MeterType meterType){
+        this.user = user;
+        this.value = value;
+        this.meterType = meterType;
+    }
     /**
      * Переопределение метода {@code toString()} для удобного представления информации о показаниях счетчика.
      *

@@ -26,17 +26,23 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+    private Integer id;
     private String username;
     private String password;
-    private UserRole role;
+    private String role;
 
     /**
      * Конструктор, который используется в объекте MeterReading
      */
-    public User(String username){
+    public User(String username, String password, String role){
         this.username = username;
+        this.password = password;
+        this.role  = role;
     }
 
+    public User(String username) {
+        this.username = username;
+    }
     /**
      * Переопределение метода {@code toString()} для удобного представления информации о пользователе.
      *

@@ -1,51 +1,82 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.database.UserStorage;
-import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import kg.rakhim.classes.dao.UserDAO;
+import kg.rakhim.classes.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceTest {
-    private UserService userService;
-    private UserStorage userStorage;
+    private UserService service;
+    private UserDAO mockUserDAO;
+
+    @Container
+    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("ylab")
+            .withUsername("postgres")
+            .withPassword("postgres");
 
     @BeforeEach
     void setUp(){
-        userStorage = new UserStorage();
-        userService = new UserService(userStorage);
+        String jdbcUrl = postgresContainer.getJdbcUrl();
+        String username = postgresContainer.getUsername();
+        String password = postgresContainer.getPassword();
+
+        // Создаем mockUserDAO и передаем подключение к контейнеру PostgreSQL
+        mockUserDAO = mock(UserDAO.class);
+        when(mockUserDAO.getJdbcUrl()).thenReturn(jdbcUrl);
+        when(mockUserDAO.getUsername()).thenReturn(username);
+        when(mockUserDAO.getPassword()).thenReturn(password);
+
+        service = new UserService(mockUserDAO);
     }
 
     @DisplayName("Testing method findByUsername()")
     @Test
     void testFindByUsername() {
-        User existingUser = new User("existingUser", "existingPassword", UserRole.USER);
-        userService.save(existingUser);
+        User existingUser = new User("existingUser", "existingPassword", "USER");
 
-        User resultUser = userService.findByUsername("existingUser").get();
+        when(mockUserDAO.getUser("existingUser")).thenReturn(existingUser);
+        User resultUser = service.findByUsername("existingUser");
+
         assertSame(existingUser, resultUser);
+
+        verify(mockUserDAO, times(1)).getUser("existingUser");
     }
 
     @DisplayName("Testing method findAll()")
     @Test
     void testFindAll(){
-        User user1 = new User("user1", "user1pass", UserRole.USER);
-        User user2 = new User("user2", "user2pass", UserRole.ADMIN);
-        userService.save(user1);
-        userService.save(user2);
-        assertThat(userService.findAll()).hasSize(3); // 3 потому что при запуске программы создается user админ.
+        List<User> expectedUsers = new ArrayList<>();
+        expectedUsers.add(new User("user1", "user1pass", "USER"));
+        expectedUsers.add(new User("user2", "user2pass", "USER"));
+
+        when(mockUserDAO.getAll()).thenReturn(expectedUsers);
+
+        UserService userService = new UserService(mockUserDAO);
+        List<User> result = userService.findAll();
+        assertThat(result).containsExactlyElementsOf(expectedUsers);
+        verify(mockUserDAO, times(1)).getAll();
     }
 
-    @DisplayName("Testing method isAdmin()")
+    @DisplayName("Testing method save()")
     @Test
-    void testIsAdmin(){
-        User userAdmin = new User("user", "password", UserRole.ADMIN);
-        userService.save(userAdmin);
-        assertTrue(userService.isAdmin(userAdmin.getUsername()));
+    void testSave(){
+        User userAdmin = new User("user", "password", "ADMIN");
+        service.save(userAdmin);
+        verify(mockUserDAO, times(1)).save(userAdmin);
     }
 }

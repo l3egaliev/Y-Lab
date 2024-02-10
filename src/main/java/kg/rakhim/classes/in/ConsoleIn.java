@@ -15,10 +15,9 @@
  */
 package kg.rakhim.classes.in;
 
-import kg.rakhim.classes.database.Storage;
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.*;
 import kg.rakhim.classes.service.actions.AdminActions;
@@ -32,13 +31,19 @@ import java.util.Scanner;
  * входом в систему и выполнением команд пользователей и администраторов в отношении показаний счетчиков.
  */
 public class ConsoleIn {
-    private final static Storage storage = new Storage();
     private final static Scanner scanner = new Scanner(System.in);
-    private final static UsersActions usersActions = new UsersActions(scanner, storage);
-    private final static AdminActions adminActions = new AdminActions(storage, scanner);
-    private final static UserService userService = new UserService(storage.getUserStorage());
-    private final static AuditService auditService = new AuditService(storage.getAuditStorage());
-    private final static RegisterService registerService = new RegisterService(userService, auditService);
+    private final static UserService userService = (UserService) ApplicationContext.getContext("userService");
+    private final static AuditService auditService = (AuditService) ApplicationContext.getContext("auditService");
+    private final static RegisterService registerService = (RegisterService) ApplicationContext.getContext("registerService");
+    private final static UsersActions usersActions = new UsersActions(
+            userService, auditService,
+            (MeterReadingService) ApplicationContext.getContext("meterReadingService"),
+            (MeterTypesService) ApplicationContext.getContext("meterTypeService")
+    );
+    private final static AdminActions adminActions = new AdminActions(
+            userService, auditService,
+            (MeterReadingService) ApplicationContext.getContext("meterReadingService"),
+            (MeterTypesService) ApplicationContext.getContext("meterTypeService"));
     private static boolean loop = true;
 
     /**
@@ -54,7 +59,6 @@ public class ConsoleIn {
                 case "2" -> handleLogin();
                 default -> {
                     ConsoleOut.printLine("Неправильная команда");
-                    // Вместо рекурсивного вызова start(), просто продолжим итерацию цикла
                 }
             }
         }
@@ -62,7 +66,7 @@ public class ConsoleIn {
 
 
     private static void handleRegistration() {
-        String res = registration();
+        String res = registerService.registration();
         if (res.isEmpty()) {
             loop = false;
         } else {
@@ -71,7 +75,7 @@ public class ConsoleIn {
     }
 
     private static void handleLogin() {
-        String res = login();
+        String res = registerService.authorization();
         if (res.isEmpty()) {
             loop = false;
         } else {
@@ -129,7 +133,7 @@ public class ConsoleIn {
                         - Выйти - 5""");
             command = scanner.next();
             switch (command) {
-                case "1" -> usersActions.submitCounterReading(username);
+                case "1" -> usersActions.submitNewReading(username);
                 case "2" -> usersActions.viewCurrentReadings(username);
                 case "3" -> usersActions.viewReadingHistoryForMonth(username);
                 case "4" -> usersActions.viewReadingHistory(username);
@@ -141,65 +145,6 @@ public class ConsoleIn {
             }
         }
     }
-
-    /**
-     * Регистрация нового пользователя.
-     *
-     * @return имя зарегистрированного пользователя
-     */
-    static String registration() {
-        String res = "";
-        ConsoleOut.printLine("Ваше имя: ");
-        String username = scanner.next();
-        ConsoleOut.printLine("Пароль: ");
-        String pass = scanner.next();
-        if (username.length()<3 || pass.length()<5) {
-            ConsoleOut.printLine("Вы ввели не корректные данные");
-            ConsoleOut.printLine("Username - должно быть не меньше 3 символов");
-            ConsoleOut.printLine("Password - должно быть не меньше 5 символов\n");
-            start();
-        }
-        UserRole role = UserRole.USER;
-        User user = new User(username, pass, role);
-        int reg = registerService.registerUser(user);
-        if (reg == 0){
-            ConsoleOut.printLine("Такой пользователь уже существует");
-            start();
-            return res;
-        }
-        else {
-            res = username;
-            ConsoleOut.printLine("Вы успешно зарегистрировались");
-        }
-        return res;
-    }
-
-    /**
-     * Вход в систему существующего пользователя.
-     *
-     * @return имя вошедшего в систему пользователя
-     */
-    static String login() {
-        String res = "";
-        ConsoleOut.printLine("Введите имя: ");
-        String username = scanner.next();
-        ConsoleOut.printLine("Пароль: ");
-        String pass = scanner.next();
-        if (username.isEmpty() || pass.isEmpty()) {
-            ConsoleOut.printLine("Вы ввели не корректные данные");
-        }
-        boolean log = registerService.loginUser(username, pass);
-        if (!log) {
-            ConsoleOut.printLine("Что пошло не так попробуйте снова\n");
-            start();
-        }
-        else {
-            res = username;
-            ConsoleOut.printLine("Вы вошли в систему");
-        }
-        return res;
-    }
-
     /**
      * Выход из системы.
      */

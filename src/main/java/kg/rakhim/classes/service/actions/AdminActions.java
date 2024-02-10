@@ -1,21 +1,5 @@
-/**
- * Класс {@code AdminActions} представляет собой административные действия, которые администратор может выполнять
- * относительно показаний счетчиков. Он включает в себя методы для просмотра актуальных показаний всех пользователей,
- * просмотра истории показаний за определенный месяц, просмотра истории показаний конкретного пользователя
- * и добавления нового тип счетчика.
- * <p>
- * Этот класс зависит от класса {@link Storage} для доступа и манипулирования данными о показаниях счетчиков.
- * </p>
- *
- * @author Рахим Нуралиев
- * @version 1.0
- * @since 2024-01-26
- * @see Storage
- * @see MeterReading
- */
 package kg.rakhim.classes.service.actions;
 
-import kg.rakhim.classes.database.Storage;
 import kg.rakhim.classes.models.*;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.AuditService;
@@ -32,8 +16,7 @@ import static kg.rakhim.classes.in.ConsoleIn.commandList;
  * Класс {@code AdminActions} предоставляет методы для административных действий, связанных с показаниями счетчиков.
  */
 public class AdminActions {
-    private final Storage storage;
-    private final Scanner scanner;
+    private static final Scanner scanner = new Scanner(System.in);
     private final UserService userService;
     private final AuditService auditService;
     private final MeterReadingService mService;
@@ -42,16 +25,17 @@ public class AdminActions {
     /**
      * Конструирует экземпляр {@code AdminActions} с указанным хранилищем.
      *
-     * @param storage  объект Storage для доступа и манипуляции данными о показаниях счетчиков
-     * @param scanner  объект Scanner для ввода пользователя
+     * @param userService    сервис пользователей
+     * @param auditService   сервис аудита
+     * @param mService       сервис показаний счетчиков
+     * @param typesService   сервис типов счетчиков
      */
-    public AdminActions(Storage storage, Scanner scanner){
-        this.storage = storage;
-        this.scanner = scanner;
-        this.userService = new UserService(storage.getUserStorage());
-        this.auditService = new AuditService(storage.getAuditStorage());
-        this.mService = new MeterReadingService(storage.getMeterReadingStorage());
-        this.typesService = new MeterTypesService(storage.getMeterTypesStorage());
+    public AdminActions(UserService userService, AuditService auditService,
+                        MeterReadingService mService, MeterTypesService typesService){
+        this.userService = userService;
+        this.auditService = auditService;
+        this.mService = mService;
+        this.typesService = typesService;
     }
 
     /**
@@ -82,11 +66,11 @@ public class AdminActions {
     public void viewReadingsHistoryForMonth(int month, String username) {
         ConsoleOut.printLine("Все показания пользователей за "+month+" - месяц");
         for(MeterReading meterReading : mService.findAll()){
-                if (meterReading.getDate().getMonthValue() == month) {
-                    ConsoleOut.printLine("\t- " + meterReading);
-                }
+            if (meterReading.getDate().getMonthValue() == month) {
+                ConsoleOut.printLine("\t- " + meterReading);
+            }
         }
-        auditService.save(new Audit(username, "Просмотр историю показаний пользователя за конкретный месяц", LocalDateTime.now()));
+        auditService.save(new Audit(username, "Просмотр истории показаний пользователя за конкретный месяц", LocalDateTime.now()));
         commandList(username);
     }
 
@@ -117,23 +101,21 @@ public class AdminActions {
     public void setNewType(String username){
         if (userService.isAdmin(username)){
             ConsoleOut.printLine("Название нового типа счетчика: ");
-            String newType = scanner.next();
-            for (MeterType m : typesService.findAll()) {
-                if (!(m.getType().equals(newType))){
-                    ConsoleOut.printLine("Новый тип показания успешно добавлен");
-                    typesService.save(new MeterType(newType));
-                }else {
-                    ConsoleOut.printLine("Такой тип уже существует");
-                }
-                break;
+            String newType = scanner.nextLine();
+            if(typesService.saveType(newType) == 1){
+                auditService.save(new Audit(username, "Добавление счетчика", LocalDateTime.now()));
+            }else{
+                ConsoleOut.printLine("Попробуйте еще раз");
+                setNewType(username);
             }
             commandList(username);
-            auditService.save(new Audit(username, "Добавление счетчика", LocalDateTime.now()));
         }
     }
 
     /**
      * Выводит на экран историю аудитов конкретного пользователя.
+     *
+     * @param adminName имя администратора
      */
     public void viewAudit(String adminName) {
         ConsoleOut.printLine("Имя пользователя: ");

@@ -12,18 +12,20 @@
  */
 package kg.rakhim.classes.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
+@NoArgsConstructor
 public class MeterType {
     /**
      * Строковое представление типа счетчика.
      */
-    String type;
+    private String type;
+    private Integer id;
+
+    public MeterType(String type){
+        this.type = type;
+    }
 
     /**
      * Переопределенный метод toString(), возвращающий строковое представление
