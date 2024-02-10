@@ -1,5 +1,6 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +14,11 @@ import kg.rakhim.classes.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.mockito.Mockito.*;
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -41,7 +44,7 @@ public class UserServiceTest {
         when(mockUserDAO.getUsername()).thenReturn(username);
         when(mockUserDAO.getPassword()).thenReturn(password);
 
-        service = new UserService(mockUserDAO);
+        service = new UserService(new UserRepositoryImpl(mockUserDAO));
     }
 
     @DisplayName("Testing method findByUsername()")
@@ -49,8 +52,8 @@ public class UserServiceTest {
     void testFindByUsername() {
         User existingUser = new User("existingUser", "existingPassword", "USER");
 
-        when(mockUserDAO.getUser("existingUser")).thenReturn(existingUser);
-        User resultUser = service.findByUsername("existingUser");
+        when(mockUserDAO.getUser("existingUser")).thenReturn(Optional.of(existingUser));
+        User resultUser = service.findByUsername("existingUser").get();
 
         assertSame(existingUser, resultUser);
 
@@ -66,7 +69,7 @@ public class UserServiceTest {
 
         when(mockUserDAO.getAll()).thenReturn(expectedUsers);
 
-        UserService userService = new UserService(mockUserDAO);
+        UserService userService = new UserService(new UserRepositoryImpl(mockUserDAO));
         List<User> result = userService.findAll();
         assertThat(result).containsExactlyElementsOf(expectedUsers);
         verify(mockUserDAO, times(1)).getAll();

@@ -1,8 +1,8 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.repository.AuditRepository;
+import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,16 +10,16 @@ import java.util.Optional;
 /**
  * Сервис для работы с аудитом, реализующий интерфейс {@link AuditRepository}.
  */
-public class AuditService implements AuditRepository {
-    private final AuditDAO auditDAO;
+public class AuditService {
+    private final AuditRepositoryImpl auditRepository;
 
     /**
      * Конструктор, принимающий объект доступа к данным аудита.
      *
-     * @param auditDAO объект доступа к данным аудита
+     * @param auditRepository объект доступа к данным аудита
      */
-    public AuditService(AuditDAO auditDAO) {
-        this.auditDAO = auditDAO;
+    public AuditService(AuditRepositoryImpl auditRepository) {
+        this.auditRepository = auditRepository;
     }
 
     /**
@@ -28,9 +28,8 @@ public class AuditService implements AuditRepository {
      * @param id идентификатор аудита
      * @return объект аудита, обернутый в Optional
      */
-    @Override
     public Optional<Audit> findById(int id) {
-        return Optional.of(auditDAO.get(id));
+        return auditRepository.findById(id);
     }
 
     /**
@@ -38,9 +37,8 @@ public class AuditService implements AuditRepository {
      *
      * @return список объектов аудита
      */
-    @Override
     public List<Audit> findAll() {
-        return auditDAO.getAll();
+        return auditRepository.findAll();
     }
 
     /**
@@ -48,8 +46,7 @@ public class AuditService implements AuditRepository {
      *
      * @param e объект аудита для сохранения
      */
-    @Override
     public void save(Audit e) {
-        auditDAO.save(e);
+        auditRepository.save(e);
     }
 }

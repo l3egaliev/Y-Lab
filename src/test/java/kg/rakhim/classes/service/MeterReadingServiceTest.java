@@ -9,6 +9,8 @@ import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;
+import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
+import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,8 @@ import java.util.*;
 class MeterReadingServiceTest {
     private MeterReadingDAO meterReadingDAO;
     @Mock
+    private MeterReadingRepositoryImpl meterReadingRepository;
+    @Mock
     private MeterTypesService meterTypesService;
     private MeterReadingService meterReadingService;
 
@@ -43,7 +47,7 @@ class MeterReadingServiceTest {
         meterReadingDAO.setPassword(postgresContainer.getPassword());
 
         MockitoAnnotations.openMocks(this);
-        meterReadingService = new MeterReadingService(meterReadingDAO, meterTypesService);
+        meterReadingService = new MeterReadingService(meterReadingRepository, meterTypesService);
     }
 
     @DisplayName("Testing method findById()")

@@ -1,7 +1,7 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
+import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.MeterType;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Класс для работы с типами счетчиков в базе данных.
@@ -61,7 +62,7 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
      * @return объект MeterType
      */
     @Override
-    public MeterType get(int id){
+    public Optional<MeterType> get(int id){
         MeterType meterType = new MeterType();
         try{
             PreparedStatement p = connection.prepareStatement("SELECT * FROM entities.meter_types WHERE type_id = ?");
@@ -74,7 +75,7 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
         }catch(SQLException e){
             e.printStackTrace();
         }
-        return meterType;
+        return Optional.of(meterType);
     }
 
     /**

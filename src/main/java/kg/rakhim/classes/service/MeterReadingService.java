@@ -6,44 +6,42 @@ import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.repository.MeterReadingRepository;
+import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static kg.rakhim.classes.in.ConsoleIn.commandList;
+//import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
 /**
  * Сервис для работы с показаниями счетчиков.
  */
-public class MeterReadingService implements MeterReadingRepository {
-    private final MeterReadingDAO dao;
+public class MeterReadingService {
+    private final MeterReadingRepositoryImpl meterReadingRepository;
     private final MeterTypesService typesService;
 
     /**
      * Создает экземпляр класса MeterReadingService с указанным DAO и сервисом типов счетчиков.
      *
-     * @param dao           DAO для работы с данными о показаниях счетчиков
-     * @param typesService  сервис для работы с типами счетчиков
+     * @param meterReadingRepository     Repository для работы с данными о показаниях счетчиков
+     * @param typesService               сервис для работы с типами счетчиков
      */
-    public MeterReadingService(MeterReadingDAO dao, MeterTypesService typesService) {
-        this.dao = dao;
+    public MeterReadingService(MeterReadingRepositoryImpl meterReadingRepository, MeterTypesService typesService) {
+        this.meterReadingRepository = meterReadingRepository;
         this.typesService = typesService;
     }
 
     // TODO
-    @Override
     public Optional<MeterReading> findById(int id) {
-        return Optional.of(dao.get(id));
+        return meterReadingRepository.findById(id);
     }
 
-    @Override
     public List<MeterReading> findAll() {
-        return dao.getAll();
+        return meterReadingRepository.findAll();
     }
 
-    @Override
     public void save(MeterReading e) {
-        dao.save(e);
+        meterReadingRepository.save(e);
     }
 
 
@@ -57,25 +55,25 @@ public class MeterReadingService implements MeterReadingRepository {
      */
     public void sendCounterReading(String username, UserService userService, AuditService auditService, Scanner scanner) {
         MeterReading meterReading = new MeterReading();
-        meterReading.setUser(userService.findByUsername(username));
+        meterReading.setUser(userService.findByUsername(username).get());
         ConsoleOut.printLine("Для подачи показаний вводите следующие данные: ");
         scanTypeOfMeterReading(meterReading, userService, auditService, scanner);
         ConsoleOut.printLine("\t- Значение (формат: 4 цифр, пример - 1000)");
         int value = Integer.parseInt(scanner.next());
-        if(Integer.toString(value).length()<4){
+        if(Integer.toString(value).length() != 4){
             ConsoleOut.printLine("Неправильно! Не меньше 4 цифр");
             sendCounterReading(username, userService, auditService, scanner);
         }
         meterReading.setValue(value);
         meterReading.setDate(LocalDateTime.now());
         if (isExistsReading(meterReading) == 1){
-            commandList(username);
+//            commandList(username);
         }else{
             save(meterReading);
             auditService.save(new Audit(username, "Подача показания: " + meterReading, LocalDateTime.now()));
             ConsoleOut.printLine("Показание успешно отправлено");
         }
-        commandList(username);
+//        commandList(username);
     }
 
     /**

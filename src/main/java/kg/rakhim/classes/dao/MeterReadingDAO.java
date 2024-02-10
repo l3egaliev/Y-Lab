@@ -1,17 +1,30 @@
 package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
+import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.MeterReading;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Класс для взаимодействия с таблицей показаний счетчиков в базе данных.
  */
 public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
+    @Getter
+    @Setter
+    private String jdbcUrl;
+    @Getter
+    @Setter
+    private String username;
+    @Getter
+    @Setter
+    private String password;
 
     private static final Connection connection = ConnectionLoader.getConnection();
     private final UserDAO userDAO = new UserDAO();
@@ -24,7 +37,7 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
      * @return объект показаний счетчика
      */
     @Override
-    public MeterReading get(int id) {
+    public Optional<MeterReading> get(int id) {
         String sql = "select * from entities.meter_readings where id = ?";
         try (PreparedStatement p = connection.prepareStatement(sql)) {
             p.setInt(1, id);
@@ -33,12 +46,12 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
                 while (r.next()) {
                     readingFromSql(r, meterReading);
                 }
-                return meterReading;
+                return Optional.of(meterReading);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -89,10 +102,10 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
      * @throws SQLException если возникает ошибка при доступе к данным ResultSet
      */
     private void readingFromSql(ResultSet resultSet, MeterReading meterReading) throws SQLException {
-        meterReading.setMeterType(meterTypesDAO.get(resultSet.getInt("meter_type")));
+        meterReading.setMeterType(meterTypesDAO.get(resultSet.getInt("meter_type")).get());
         meterReading.setId(resultSet.getInt("id"));
         meterReading.setDate(resultSet.getTimestamp("date_time").toLocalDateTime());
         meterReading.setValue(resultSet.getInt("value"));
-        meterReading.setUser(userDAO.get(resultSet.getInt("user_id")));
+        meterReading.setUser(userDAO.get(resultSet.getInt("user_id")).get());
     }
 }

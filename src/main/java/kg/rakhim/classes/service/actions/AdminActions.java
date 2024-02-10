@@ -10,7 +10,7 @@ import kg.rakhim.classes.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
-import static kg.rakhim.classes.in.ConsoleIn.commandList;
+//import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
 /**
  * Класс {@code AdminActions} предоставляет методы для административных действий, связанных с показаниями счетчиков.
@@ -54,7 +54,7 @@ public class AdminActions {
             }
         }
         auditService.save(new Audit(username, "Просмотр актуальных показаний всех пользователей", LocalDateTime.now()));
-        commandList(username);
+//        commandList(username);
     }
 
     /**
@@ -71,7 +71,7 @@ public class AdminActions {
             }
         }
         auditService.save(new Audit(username, "Просмотр истории показаний пользователя за конкретный месяц", LocalDateTime.now()));
-        commandList(username);
+//        commandList(username);
     }
 
 
@@ -90,7 +90,7 @@ public class AdminActions {
         }
         auditService.save(new Audit(username, "Просмотр истории всех показаний конкретного пользователя",
                 LocalDateTime.now()));
-        commandList(currentUser);
+//        commandList(currentUser);
     }
 
     /**
@@ -102,13 +102,13 @@ public class AdminActions {
         if (userService.isAdmin(username)){
             ConsoleOut.printLine("Название нового типа счетчика: ");
             String newType = scanner.nextLine();
-            if(typesService.saveType(newType) == 1){
+            if(typesService.saveType(newType)){
                 auditService.save(new Audit(username, "Добавление счетчика", LocalDateTime.now()));
             }else{
                 ConsoleOut.printLine("Попробуйте еще раз");
                 setNewType(username);
             }
-            commandList(username);
+//            commandList(username);
         }
     }
 
@@ -126,6 +126,6 @@ public class AdminActions {
                 ConsoleOut.printLine(a);
             }
         }
-        commandList(adminName);
+//        commandList(adminName);
     }
 }

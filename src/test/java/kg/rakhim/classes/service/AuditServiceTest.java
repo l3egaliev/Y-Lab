@@ -3,7 +3,9 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.repository.AuditRepository;
+import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,9 @@ public class AuditServiceTest {
         Audit expectedAudit = new Audit(auditId, "Test");
 
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
-        when(mockAuditDAO.get(auditId)).thenReturn(expectedAudit);
+        when(mockAuditDAO.get(auditId)).thenReturn(Optional.of(expectedAudit));
 
-        AuditRepository auditService = new AuditService(mockAuditDAO);
+        AuditService auditService = new AuditService(new AuditRepositoryImpl(mockAuditDAO));
 
         Optional<Audit> result = auditService.findById(auditId);
 
@@ -39,7 +41,7 @@ public class AuditServiceTest {
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
         when(mockAuditDAO.getAll()).thenReturn(expectedAudits);
 
-        AuditRepository auditService = new AuditService(mockAuditDAO);
+        AuditService auditService = new AuditService(new AuditRepositoryImpl(mockAuditDAO));
 
         List<Audit> result = auditService.findAll();
 
@@ -51,7 +53,7 @@ public class AuditServiceTest {
     public void testSave() {
         Audit auditToSave = new Audit(1, "Test");
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
-        AuditRepository auditService = new AuditService(mockAuditDAO);
+        AuditService auditService = new AuditService(new AuditRepositoryImpl(mockAuditDAO));
         auditService.save(auditToSave);
         verify(mockAuditDAO, times(1)).save(auditToSave);
     }

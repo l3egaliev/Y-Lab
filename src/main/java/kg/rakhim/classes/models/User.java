@@ -13,17 +13,12 @@
  */
 package kg.rakhim.classes.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 /**
  * Класс {@code User} представляет объект пользователя системы.
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class User {
     private Integer id;
@@ -39,8 +34,7 @@ public class User {
         this.password = password;
         this.role  = role;
     }
-
-    public User(String username) {
+    public User(String username){
         this.username = username;
     }
     /**

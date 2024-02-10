@@ -3,6 +3,8 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
+import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
+import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -35,9 +37,9 @@ class RegisterServiceTest {
         userDAO.setJdbcUrl(jdbcUrl);
         userDAO.setUsername(username);
         userDAO.setPassword(password);
-        UserService userService = new UserService(userDAO);
+        UserService userService = new UserService(new UserRepositoryImpl(userDAO));
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
-        registerService = new RegisterService(userService, new AuditService(mockAuditDAO));
+        registerService = new RegisterService(userService, new AuditService(new AuditRepositoryImpl(mockAuditDAO)));
     }
 
     @Test

@@ -2,6 +2,7 @@ package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
+import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.Audit;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Класс для взаимодействия с таблицей аудита в базе данных.
@@ -26,7 +28,7 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
      * @return объект аудита
      */
     @Override
-    public Audit get(int id) {
+    public Optional<Audit> get(int id) {
         String sql = "select * from entities.audits where id=?";
         try (PreparedStatement p = connection.prepareStatement(sql)) {
             p.setInt(1, id);
@@ -35,15 +37,15 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
                     Audit audit = new Audit();
                     audit.setId(resultSet.getInt("id"));
                     audit.setAction(resultSet.getString("action"));
-                    audit.setUsername(username(resultSet.getInt("user_id")));
+                    audit.setUsername(resultSet.getString("username"));
                     audit.setTime(resultSet.getTimestamp("time"));
-                    return audit;
+                    return Optional.of(audit);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -60,7 +62,7 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
                 Audit audit = new Audit();
                 audit.setId(resultSet.getInt("id"));
                 audit.setAction(resultSet.getString("action"));
-                audit.setUsername(username(resultSet.getInt("user_id")));
+                audit.setUsername(resultSet.getString("username"));
                 audit.setTime(resultSet.getTimestamp("time"));
                 res.add(audit);
             }
@@ -77,23 +79,13 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
      */
     @Override
     public void save(Audit audit) {
-        try (PreparedStatement p = connection.prepareStatement("INSERT INTO entities.audits(user_id, action, time) VALUES (?,?,?)")) {
-            p.setInt(1, userDAO.getUser(audit.getUsername()).getId());
+        try (PreparedStatement p = connection.prepareStatement("INSERT INTO entities.audits(username, action, time) VALUES (?,?,?)")) {
+            p.setString(1, audit.getUsername());
             p.setString(2, audit.getAction());
             p.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             p.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Получает имя пользователя по его идентификатору.
-     *
-     * @param id идентификатор пользователя
-     * @return имя пользователя
-     */
-    private String username(int id) {
-        return userDAO.get(id).getUsername();
     }
 }

@@ -11,7 +11,7 @@ import kg.rakhim.classes.service.UserService;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static kg.rakhim.classes.in.ConsoleIn.commandList;
+//import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
 /**
  * Класс {@code UsersActions} предоставляет методы для действий пользователей в отношении показаний счетчиков.
@@ -60,7 +60,7 @@ public class UsersActions {
             }
         }
         auditService.save(new Audit(username,"Просмотр актуальных показаний", LocalDateTime.now()));
-        commandList(username);
+//        commandList(username);
     }
 
     /**
@@ -80,7 +80,7 @@ public class UsersActions {
             }
         }
         auditService.save(new Audit(username, "Просмотр истории за конкретный месяц", LocalDateTime.now()));
-        commandList(username);
+//        commandList(username);
     }
 
     /**
@@ -96,6 +96,6 @@ public class UsersActions {
             }
         }
         auditService.save(new Audit(username,"Просмотр истории всех показаний", LocalDateTime.now()));
-        commandList(username);
+//        commandList(username);
     }
 }

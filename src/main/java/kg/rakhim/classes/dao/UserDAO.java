@@ -1,6 +1,7 @@
 package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
+import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Класс для работы с пользователями в базе данных.
@@ -39,7 +41,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
      * @return объект User
      */
     @Override
-    public User get(int id) {
+    public Optional<User> get(int id) {
         String sql = "SELECT * FROM entities.users WHERE id=?";
         PreparedStatement p = null;
         User user = new User();
@@ -56,7 +58,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return user;
+        return Optional.of(user);
     }
 
     /**
@@ -114,7 +116,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
      * @param username имя пользователя
      * @return объект User
      */
-    public User getUser(String username){
+    public Optional<User> getUser(String username){
         String sql = "SELECT * FROM entities.users WHERE username=?";
         PreparedStatement p = null;
         User user = new User();
@@ -131,7 +133,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return user;
+        return Optional.of(user);
     }
 
     /**
