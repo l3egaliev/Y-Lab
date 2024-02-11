@@ -1,4 +1,4 @@
-package kg.rakhim.classes.utils;
+package kg.rakhim.classes.servlet.authorization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-public class AuthorizeResponseSender {
+public class ResponseSender {
     public static boolean sendValidationResp(Object obj, HttpServletResponse response, ObjectMapper mapper) throws IOException {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
@@ -33,14 +33,14 @@ public class AuthorizeResponseSender {
         }
     }
 
-    public static void sendAuthorizeResp(Map<Boolean, JSONObject> result, HttpServletResponse resp) throws IOException {
+    public static void sendResponse(Map<Boolean, JSONObject> message, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
-        if (result.containsKey(true)){
+        if (message.containsKey(true)){
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write(result.get(true).toString());
+            resp.getWriter().write(message.get(true).toString());
         }else{
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write(result.get(false).toString());
+            resp.getWriter().write(message.get(false).toString());
         }
     }
 }

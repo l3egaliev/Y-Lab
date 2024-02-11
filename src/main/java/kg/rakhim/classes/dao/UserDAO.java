@@ -1,5 +1,6 @@
 package kg.rakhim.classes.dao;
 
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.User;
@@ -22,7 +23,8 @@ public class UserDAO implements BaseDAO<User, Integer> {
     /**
      * Соединение с базой данных.
      */
-    private static final Connection connection = ConnectionLoader.getConnection();
+    private static ConnectionLoader connectionLoader = (ConnectionLoader) ApplicationContext.getContext("connectionLoader");
+    private static final Connection connection = connectionLoader.getConnection();
 
     @Getter
     @Setter
@@ -132,6 +134,9 @@ public class UserDAO implements BaseDAO<User, Integer> {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+        if (user.getUsername() == null){
+            return Optional.empty();
         }
         return Optional.of(user);
     }

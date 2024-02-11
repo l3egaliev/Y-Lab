@@ -32,4 +32,8 @@ public class MeterTypeRepositoryImpl implements MeterTypesRepository {
     public boolean isExists(String type){
         return meterTypesDAO.isExists(type);
     }
+
+    public Optional<MeterType> findByType(String type) {
+        return meterTypesDAO.findByType(type);
+    }
 }

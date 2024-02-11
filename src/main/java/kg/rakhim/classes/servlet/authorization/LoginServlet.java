@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.service.RegisterService;
-import kg.rakhim.classes.utils.AuthorizeResponseSender;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -26,14 +25,11 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        login(resp, req);
-    }
-    private void login(HttpServletResponse resp, HttpServletRequest req) throws IOException {
         AuthorizeDTO dto = jsonMapper.readValue(req.getInputStream(), AuthorizeDTO.class);
-        boolean status = AuthorizeResponseSender.sendValidationResp(dto, resp, jsonMapper);
+        boolean status = ResponseSender.sendValidationResp(dto, resp, jsonMapper);
         if (status){
             Map<Boolean, JSONObject> result = registerService.loginUser(dto.getUsername(), dto.getPassword());
-            AuthorizeResponseSender.sendAuthorizeResp(result,resp);
+            ResponseSender.sendResponse(result,resp);
         }
     }
 }

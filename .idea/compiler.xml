@@ -8,7 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="hm2_final" />
-        <module name="hm2" />
         <module name="hm1" />
         <module name="hm3" />
       </profile>

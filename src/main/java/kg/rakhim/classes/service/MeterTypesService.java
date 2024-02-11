@@ -23,8 +23,6 @@ public class MeterTypesService {
     public MeterTypesService(MeterTypeRepositoryImpl meterTypesRepository) {
         this.meterTypesRepository = meterTypesRepository;
     }
-
-    // TODO
     public Optional<MeterType> findById(int id) {
         return meterTypesRepository.findById(id);
     }
@@ -56,5 +54,9 @@ public class MeterTypesService {
             }
         }
         return result;
+    }
+
+    public Optional<MeterType> findByType(String type) {
+        return meterTypesRepository.findByType(type);
     }
 }

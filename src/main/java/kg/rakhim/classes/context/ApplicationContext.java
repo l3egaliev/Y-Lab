@@ -1,6 +1,8 @@
 package kg.rakhim.classes.context;
 
 import kg.rakhim.classes.dao.*;
+import kg.rakhim.classes.dao.migration.ConnectionLoader;
+import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
 import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
 import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
@@ -15,38 +17,25 @@ public class ApplicationContext {
     private static final Map<String, Object> CONTEXT = new HashMap<>();
 
     public static void loadContext(){
-        loadDAO();
-        loadRepository();
+        loadConnection();
         loadService();
         loadMapper();
     }
-
-    private static void loadDAO(){
-        CONTEXT.put("meterReadingDAO", new MeterReadingDAO());
-        CONTEXT.put("meterTypeDAO", new MeterTypesDAO());
-        CONTEXT.put("userDAO", new UserDAO());
-        CONTEXT.put("auditDAO", new AuditDAO());
-    }
-
     private static void loadService(){
-        CONTEXT.put("meterTypeService", new MeterTypesService((MeterTypeRepositoryImpl) getContext("meterTypeRepository")));
-        CONTEXT.put("userService", new UserService((UserRepositoryImpl) getContext("userRepository")));
-        CONTEXT.put("auditService", new AuditService((AuditRepositoryImpl) getContext("auditRepository")));
+        CONTEXT.put("meterTypeService", new MeterTypesService(new MeterTypeRepositoryImpl(new MeterTypesDAO())));
+        CONTEXT.put("userService", new UserService(new UserRepositoryImpl(new UserDAO())));
+        CONTEXT.put("auditService", new AuditService(new AuditRepositoryImpl(new AuditDAO())));
         CONTEXT.put("registerService", new RegisterService((UserService) getContext("userService"),
                 (AuditService) getContext("auditService")));
         CONTEXT.put("meterReadingService",
-                new MeterReadingService((MeterReadingRepositoryImpl) getContext("meterReadingRepository"),
-                        (MeterTypesService) getContext("meterTypeService")));
-    }
-
-    private static void loadRepository(){
-        CONTEXT.put("meterReadingRepository", new MeterReadingRepositoryImpl((MeterReadingDAO) getContext("meterReadingDAO")));
-        CONTEXT.put("auditRepository", new AuditRepositoryImpl((AuditDAO) getContext("auditDAO")));
-        CONTEXT.put("meterTypeRepository", new MeterTypeRepositoryImpl((MeterTypesDAO) getContext("meterTypeDAO")));
-        CONTEXT.put("userRepository", new UserRepositoryImpl((UserDAO) getContext("userDAO")));
+                new MeterReadingService(new MeterReadingRepositoryImpl(new MeterReadingDAO())));
     }
     private static void loadMapper(){
         CONTEXT.put("modelMapper", new ModelMapper());
+    }
+    private static void loadConnection(){
+        CONTEXT.put("properties", new LoadProperties());
+        CONTEXT.put("connectionLoader", new ConnectionLoader());
     }
     public static Object getContext(String o){
         return CONTEXT.get(o);

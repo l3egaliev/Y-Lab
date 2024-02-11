@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kg.rakhim.classes</groupId>
-    <artifactId>hm2</artifactId>
+    <artifactId>hm3</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -25,6 +25,7 @@
         <hibernate.validator>8.0.1.Final</hibernate.validator>
         <json.version>20240205</json.version>
         <modalMapper.version>3.2.0</modalMapper.version>
+        <mapStruct.version>1.5.5.FINAL</mapStruct.version>
     </properties>
     <dependencies>
         <dependency>
@@ -121,11 +122,20 @@
             <artifactId>modelmapper</artifactId>
             <version>${modalMapper.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapStruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapStruct.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>hm2</finalName>
+        <finalName>hm3</finalName>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
                 <plugin>
@@ -140,7 +150,6 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
-                <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.0.2</version>
@@ -163,5 +172,15 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

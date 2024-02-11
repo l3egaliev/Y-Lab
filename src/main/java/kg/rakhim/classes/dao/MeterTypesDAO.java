@@ -1,5 +1,6 @@
 package kg.rakhim.classes.dao;
 
+import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.MeterType;
@@ -17,20 +18,19 @@ import java.util.Optional;
 /**
  * Класс для работы с типами счетчиков в базе данных.
  */
+@Getter
 public class MeterTypesDAO implements MeterTypesDAOIn {
 
     /**
      * Соединение с базой данных.
      */
-    private static final Connection connection = ConnectionLoader.getConnection();
+    private final ConnectionLoader connectionLoader = (ConnectionLoader) ApplicationContext.getContext("connectionLoader");
+    private final Connection connection = connectionLoader.getConnection();
 
-    @Getter
     @Setter
     private String jdbcUrl;
-    @Getter
     @Setter
     private String username;
-    @Getter
     @Setter
     private String password;
 
@@ -138,5 +138,25 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Optional<MeterType> findByType(String type) {
+        MeterType meterType = new MeterType();
+        String sql = "select * from entities.meter_types where type=?";
+        try {
+            PreparedStatement p = connection.prepareStatement(sql);
+            p.setString(1,type);
+            ResultSet resultSet = p.executeQuery();
+            while (resultSet.next()){
+                meterType.setId(resultSet.getInt("type_id"));
+                meterType.setType(resultSet.getString("type"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (meterType.getType() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(meterType);
     }
 }

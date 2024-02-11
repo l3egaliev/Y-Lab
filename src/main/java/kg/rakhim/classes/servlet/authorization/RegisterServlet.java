@@ -12,7 +12,6 @@ import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.service.RegisterService;
 import kg.rakhim.classes.utils.MapperObject;
-import kg.rakhim.classes.utils.AuthorizeResponseSender;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -34,15 +33,12 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-        register(resp, req);
-    }
-    private void register(HttpServletResponse resp, HttpServletRequest req) throws IOException {
         AuthorizeDTO dto = jsonMapper.readValue(req.getInputStream(), AuthorizeDTO.class);
-        boolean status = AuthorizeResponseSender.sendValidationResp(dto, resp, jsonMapper);
+        boolean status = ResponseSender.sendValidationResp(dto, resp, jsonMapper);
         if (status){
             User user = (User) MapperObject.map(dto, User.class);
             Map<Boolean, JSONObject> result = registerService.registerUser(user);
-            AuthorizeResponseSender.sendAuthorizeResp(result,resp);
+            ResponseSender.sendResponse(result,resp);
         }
     }
 }
