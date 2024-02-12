@@ -3,8 +3,10 @@ package kg.rakhim.classes.dao;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
+import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.MeterReading;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.*;
@@ -16,6 +18,7 @@ import java.util.Optional;
 /**
  * Класс для взаимодействия с таблицей показаний счетчиков в базе данных.
  */
+@NoArgsConstructor
 public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     @Getter
     @Setter
@@ -27,11 +30,9 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     @Setter
     private String password;
 
-    private final ConnectionLoader connectionLoader = (ConnectionLoader) ApplicationContext.getContext("connectionLoader");
-    private final Connection connection = connectionLoader.getConnection();
+    private final Connection connection = ConnectionLoader.getConnection();
     private final UserDAO userDAO = new UserDAO();
     private final MeterTypesDAO meterTypesDAO = new MeterTypesDAO();
-
     /**
      * Получает показания счетчика по заданному идентификатору.
      *

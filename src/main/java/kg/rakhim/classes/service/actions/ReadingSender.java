@@ -1,6 +1,7 @@
 package kg.rakhim.classes.service.actions;
 
 import kg.rakhim.classes.models.MeterReading;
+import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.service.MeterReadingService;
 import kg.rakhim.classes.service.MeterTypesService;
@@ -32,21 +33,20 @@ public class ReadingSender {
         boolean key;
         boolean userNotPresent = isEmptyUser(meterReading);
            if(userNotPresent) {
-               message.put("message:", "Пользователь с именем " + meterReading.getUser().getUsername() + " не найден");
+               message.put("message", "Пользователь с именем " + meterReading.getUser().getUsername() + " не найден");
                key = false;
            }else {
                boolean isExists = isExistsReading(meterReading);
-               if (!isExists) {
-                   if (!isNotExistsType(meterReading.getMeterType().getType())) {
-                       meterReadingService.save(meterReading);
-                       message.put("message:", "Показание успешно отправлено");
-                       key = true;
-                   }else{
-                       message.put("message:",meterReading.getMeterType().getType()+ "Такой тип показания не принимается");
-                       key = false;
-                   }
-               }else {
-                   message.put("message:", "Вы в этом месяце уже отправляли показание: " + meterReading.getMeterType());
+               MeterType type = meterReading.getMeterType();
+               if(typesService.getTypeId(type) == null){
+                   message.put("message", type.getType()+" - Такой тип показания не существует");
+                   key = false;
+               }else if (!isExists) {
+                   meterReadingService.save(meterReading);
+                   message.put("message", "Показание успешно отправлено");
+                   key = true;
+               } else {
+                   message.put("message", "Вы в этом месяце уже отправляли показание: " + meterReading.getMeterType());
                    key = false;
                }
            }
@@ -101,14 +101,11 @@ public class ReadingSender {
 //        }
 //        ConsoleOut.printLine(")");
 //    }
-    private boolean isNotExistsType(String type){
-        return typesService.findByType(type).isEmpty();
-    }
     /**
      * Проверяет, существуют ли уже показания счетчика для данного пользователя в текущем месяце и типом счетчика.
      *
      * @param meterReading  объект MeterReading, для которого необходимо проверить существование показаний
-     * @return              1, если показания уже существуют, иначе 0
+     * @return              true, если показания уже существуют, иначе false
      */
     private boolean isExistsReading(MeterReading meterReading){
         boolean res = false;

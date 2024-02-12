@@ -17,28 +17,23 @@ public class ApplicationContext {
     private static final Map<String, Object> CONTEXT = new HashMap<>();
 
     public static void loadContext(){
-        loadConnection();
         loadService();
         loadMapper();
-    }
-    private static void loadService(){
-        CONTEXT.put("meterTypeService", new MeterTypesService(new MeterTypeRepositoryImpl(new MeterTypesDAO())));
-        CONTEXT.put("userService", new UserService(new UserRepositoryImpl(new UserDAO())));
-        CONTEXT.put("auditService", new AuditService(new AuditRepositoryImpl(new AuditDAO())));
-        CONTEXT.put("registerService", new RegisterService((UserService) getContext("userService"),
-                (AuditService) getContext("auditService")));
-        CONTEXT.put("meterReadingService",
-                new MeterReadingService(new MeterReadingRepositoryImpl(new MeterReadingDAO())));
     }
     private static void loadMapper(){
         CONTEXT.put("modelMapper", new ModelMapper());
     }
-    private static void loadConnection(){
-        CONTEXT.put("properties", new LoadProperties());
-        CONTEXT.put("connectionLoader", new ConnectionLoader());
+    private static void loadService(){
+        CONTEXT.put("auditService", new AuditService(new AuditRepositoryImpl(new AuditDAO())));
+        CONTEXT.put("auditsService", new AuditService(new AuditRepositoryImpl(new AuditDAO())));
+        CONTEXT.put("userService", new UserService(new UserRepositoryImpl(new UserDAO())));
+        CONTEXT.put("meterTypeService", new MeterTypesService(new MeterTypeRepositoryImpl(new MeterTypesDAO())));
+        CONTEXT.put("registerService", new RegisterService((UserService) getContext("userService"),
+                (AuditService) getContext("auditsService")));
+        CONTEXT.put("meterReadingService",
+                new MeterReadingService(new MeterReadingRepositoryImpl(new MeterReadingDAO())));
     }
     public static Object getContext(String o){
         return CONTEXT.get(o);
     }
-
 }

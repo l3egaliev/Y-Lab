@@ -3,6 +3,7 @@ package kg.rakhim.classes.dao;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
+import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.Audit;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,12 +17,10 @@ import java.util.Optional;
 /**
  * Класс для взаимодействия с таблицей аудита в базе данных.
  */
-@NoArgsConstructor
 public class AuditDAO implements BaseDAO<Audit, Integer> {
-
-    private final ConnectionLoader connectionLoader = (ConnectionLoader) ApplicationContext.getContext("connectionLoader");
-    private final Connection connection = connectionLoader.getConnection();
+    private final Connection connection = ConnectionLoader.getConnection();
     private final UserDAO userDAO = (UserDAO) ApplicationContext.getContext("userDAO");
+
     /**
      * Получает аудит по заданному идентификатору.
      *

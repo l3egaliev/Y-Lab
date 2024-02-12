@@ -11,18 +11,13 @@ import java.sql.*;
  */
 public class ConnectionLoader {
 
-    private final LoadProperties properties;
-
-    public ConnectionLoader() {
-        properties = (LoadProperties) ApplicationContext.getContext("properties");
-    }
-
+    private static final LoadProperties properties = new LoadProperties();
     /**
      * Получает соединение с базой данных.
      *
      * @return соединение с базой данных
      */
-    public Connection getConnection() throws NullPointerException{
+    public static Connection getConnection() throws NullPointerException{
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(properties.getUrl(), properties.getUsername(), properties.getPassword());

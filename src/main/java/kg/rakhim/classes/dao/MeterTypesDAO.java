@@ -3,8 +3,10 @@ package kg.rakhim.classes.dao;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
+import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.MeterType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Connection;
@@ -19,13 +21,13 @@ import java.util.Optional;
  * Класс для работы с типами счетчиков в базе данных.
  */
 @Getter
+@NoArgsConstructor
 public class MeterTypesDAO implements MeterTypesDAOIn {
 
     /**
      * Соединение с базой данных.
      */
-    private final ConnectionLoader connectionLoader = (ConnectionLoader) ApplicationContext.getContext("connectionLoader");
-    private final Connection connection = connectionLoader.getConnection();
+    private final Connection connection = ConnectionLoader.getConnection();
 
     @Setter
     private String jdbcUrl;
@@ -40,7 +42,7 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
      * @param type объект MeterType
      * @return идентификатор типа счетчика
      */
-    public int typeId(MeterType type){
+    public Integer typeId(MeterType type){
         Integer id = null;
         try{
             PreparedStatement p = connection.prepareStatement("SELECT type_id FROM entities.meter_types WHERE type = ?");
@@ -138,25 +140,5 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public Optional<MeterType> findByType(String type) {
-        MeterType meterType = new MeterType();
-        String sql = "select * from entities.meter_types where type=?";
-        try {
-            PreparedStatement p = connection.prepareStatement(sql);
-            p.setString(1,type);
-            ResultSet resultSet = p.executeQuery();
-            while (resultSet.next()){
-                meterType.setId(resultSet.getInt("type_id"));
-                meterType.setType(resultSet.getString("type"));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (meterType.getType() == null) {
-            return Optional.empty();
-        }
-        return Optional.of(meterType);
     }
 }

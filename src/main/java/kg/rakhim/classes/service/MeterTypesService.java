@@ -55,8 +55,7 @@ public class MeterTypesService {
         }
         return result;
     }
-
-    public Optional<MeterType> findByType(String type) {
-        return meterTypesRepository.findByType(type);
+    public Integer getTypeId(MeterType type){
+        return meterTypesRepository.getTypeId(type);
     }
 }
