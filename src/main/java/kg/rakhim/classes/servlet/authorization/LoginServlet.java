@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.service.RegisterService;
+import kg.rakhim.classes.servlet.ResponseSender;
 import org.json.JSONObject;
 
 import java.io.IOException;

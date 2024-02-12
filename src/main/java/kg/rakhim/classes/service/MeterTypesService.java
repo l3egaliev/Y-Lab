@@ -42,18 +42,18 @@ public class MeterTypesService {
      * @return 1, если тип успешно сохранен; 0, если тип уже существует
      */
     public boolean saveType(String newType) {
-        boolean result = false;
         if (!newType.isEmpty()) {
             if (meterTypesRepository.isExists(newType)) {
-                ConsoleOut.printLine("Такой тип уже существует");
-                result = false;
+                return false;
             } else {
                 save(new MeterType(newType));
-                ConsoleOut.printLine("Новый тип успешно добавлен");
-                result = true;
+                return  true;
             }
         }
-        return result;
+        return false;
+    }
+    public boolean isExistsType(String type){
+        return meterTypesRepository.isExists(type);
     }
     public Integer getTypeId(MeterType type){
         return meterTypesRepository.getTypeId(type);

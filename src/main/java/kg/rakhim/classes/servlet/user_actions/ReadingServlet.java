@@ -9,20 +9,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import kg.rakhim.classes.dto.ReadingDTO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.service.actions.UsersActions;
-import kg.rakhim.classes.servlet.authorization.ResponseSender;
+import kg.rakhim.classes.servlet.ResponseSender;
 import kg.rakhim.classes.utils.ReadingMapper;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Optional;
 
 @WebServlet("/reading")
 public class ReadingServlet extends HttpServlet {
     private final ObjectMapper jsonMapper;
     private final UsersActions userActions;
-//    private final ReadingMapper mapper;
 
     public ReadingServlet() {
         this.jsonMapper = new ObjectMapper();
@@ -42,20 +38,11 @@ public class ReadingServlet extends HttpServlet {
         setEncoding(resp, req);
         resp.setContentType("application/json");
         if (req.getParameter("month") == null || req.getParameter("month").isEmpty()){
-            sendMessage(req, resp, userActions.viewReadings(req.getParameter("username")));
+            ResponseSender.sendReadingResponse(resp, userActions.viewActualReadings(req.getParameter("username")));
         }else{
             int month = Integer.parseInt(req.getParameter("month"));
             String username = req.getParameter("username");
-            sendMessage(req, resp, userActions.viewReadingsForMonth(username, month));
-        }
-    }
-    private void sendMessage(HttpServletRequest req, HttpServletResponse resp, List<JSONObject> message) throws IOException {
-        if (message.isEmpty()){
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            jsonMapper.writeValue(resp.getWriter(), "У вас еще нет поданных показаний");
-        }else {
-            resp.setStatus(HttpServletResponse.SC_OK);
-            jsonMapper.writeValue(resp.getWriter(), message.toString());
+            ResponseSender.sendReadingResponse(resp, userActions.viewReadingsForMonth(username, month));
         }
     }
     private void setEncoding(HttpServletResponse resp, HttpServletRequest req) throws UnsupportedEncodingException {

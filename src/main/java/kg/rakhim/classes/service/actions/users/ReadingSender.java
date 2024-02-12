@@ -1,4 +1,4 @@
-package kg.rakhim.classes.service.actions;
+package kg.rakhim.classes.service.actions.users;
 
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;

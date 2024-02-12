@@ -1,16 +1,15 @@
 package kg.rakhim.classes.service.actions;
 
 import kg.rakhim.classes.context.ApplicationContext;
-import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
-import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.AuditService;
 import kg.rakhim.classes.service.MeterReadingService;
 import kg.rakhim.classes.service.MeterTypesService;
 import kg.rakhim.classes.service.UserService;
+import kg.rakhim.classes.service.actions.users.ReadingHistoryViewer;
+import kg.rakhim.classes.service.actions.users.ReadingSender;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 //import static kg.rakhim.classes.in.ConsoleIn.commandList;
@@ -43,10 +42,13 @@ public class UsersActions {
     public Map<Boolean, JSONObject> submitNewReading(MeterReading meterReading){
         return readingSender.sendCounterReading(meterReading);
     }
-    public List<JSONObject> viewReadings(String username){
+    public List<JSONObject> viewActualReadings(String username){
         return viewer.viewCurrentReadings(username);
     }
     public List<JSONObject> viewReadingsForMonth(String username, int monthValue){
         return viewer.viewReadingHistoryForMonth(username, monthValue);
+    }
+    public List<JSONObject> viewAllHistory(String username){
+        return viewer.viewAllReadingHistory(username);
     }
 }
