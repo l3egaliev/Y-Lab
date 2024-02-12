@@ -46,4 +46,7 @@ public class UsersActions {
     public List<JSONObject> viewReadings(String username){
         return viewer.viewCurrentReadings(username);
     }
+    public List<JSONObject> viewReadingsForMonth(String username, int monthValue){
+        return viewer.viewReadingHistoryForMonth(username, monthValue);
+    }
 }

@@ -58,49 +58,6 @@ public class ReadingSender {
         Optional<User> userOptional = userService.findByUsername(username);
         return userOptional.isEmpty();
     }
-//    /**
-//     * Считывает и выбирает тип показания счетчика.
-//     *
-//     * @param meterReading  объект MeterReading, для которого необходимо выбрать тип показания
-//     * @param userService   сервис для работы с пользователями
-//     * @param auditService  сервис для аудита действий пользователей
-//     * @param scanner       сканер для считывания ввода пользователя
-//     */
-//    public void scanTypeOfMeterReading(MeterReading meterReading, UserService userService,
-//                                       AuditService auditService, Scanner scanner) {
-//        Map<String, String> letterAndType = new HashMap<>();
-//        displayTypes(letterAndType);
-//        // Получение выбора от пользователя
-//        String type = scanner.next().toLowerCase();
-//
-//        // Установка выбранного типа показания в объекте MeterReading
-//        for (String key : letterAndType.keySet()) {
-//            if (key.equals(type)) {
-//                String selectedType = letterAndType.get(key);
-//                meterReading.setMeterType(new MeterType(selectedType));
-//            }else if(!letterAndType.containsKey(type)){
-//                ConsoleOut.printLine("Неправильное значение");
-//                sendCounterReading(meterReading.getUser().getUsername(), userService, auditService, scanner);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Отображает доступные типы показаний.
-//     *
-//     * @param letterAndType  карта соответствия первой буквы и типа показания
-//     */
-//    private void displayTypes(Map<String, String> letterAndType){
-//        // Создание карты для хранения соответствия первой буквы и типа показания
-//        ConsoleOut.print("\t- Тип показания (");
-//        // Вывод доступных типов показаний и соответствующих первых букв
-//        for (MeterType m : typesService.findAll()) {
-//            String firstLetter = String.valueOf(m.getType().charAt(0));
-//            ConsoleOut.print("" + m.getType() + " - " + firstLetter + " | ");
-//            letterAndType.put(firstLetter, m.getType());
-//        }
-//        ConsoleOut.printLine(")");
-//    }
     /**
      * Проверяет, существуют ли уже показания счетчика для данного пользователя в текущем месяце и типом счетчика.
      *

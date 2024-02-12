@@ -40,7 +40,16 @@ public class ReadingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(resp, req);
-        List<JSONObject> message = userActions.viewReadings(req.getParameter("username"));
+        resp.setContentType("application/json");
+        if (req.getParameter("month") == null || req.getParameter("month").isEmpty()){
+            sendMessage(req, resp, userActions.viewReadings(req.getParameter("username")));
+        }else{
+            int month = Integer.parseInt(req.getParameter("month"));
+            String username = req.getParameter("username");
+            sendMessage(req, resp, userActions.viewReadingsForMonth(username, month));
+        }
+    }
+    private void sendMessage(HttpServletRequest req, HttpServletResponse resp, List<JSONObject> message) throws IOException {
         if (message.isEmpty()){
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             jsonMapper.writeValue(resp.getWriter(), "У вас еще нет поданных показаний");

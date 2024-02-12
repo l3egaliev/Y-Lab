@@ -46,7 +46,7 @@ public class MeterReading {
      */
     @Override
     public String toString() {
-        return "Показание{" +
+        return "{" +
                 "Пользователь = " + user +
                 ", значение = " + value +
                 ", тип показания = " + meterType +

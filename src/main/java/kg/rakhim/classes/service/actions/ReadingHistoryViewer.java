@@ -26,35 +26,31 @@ public class ReadingHistoryViewer {
         for (MeterReading m : mService.findAll()) {
             if (m.getUser().getUsername().equals(username) &&
                     m.getDate().getMonthValue() == LocalDateTime.now().getMonthValue()) {
-                readings.add(new JSONObject().put("Показание:", m));
+                readings.add(new JSONObject().put("Показание", m));
             }else {
                 return Collections.emptyList();
             }
         }
         return readings;
-//        auditService.save(new Audit(username,"Просмотр актуальных показаний", LocalDateTime.now()));
-//        commandList(username);
     }
 
-//    /**
-//     * Реализация просмотра истории подачи показаний за конкретный месяц.
-//     *
-//     * @param username имя пользователя, просматривающего историю
-//     */
-//    public void viewReadingHistoryForMonth(String username) {
-//        ConsoleOut.printLine("За какой месяц хотите посмотреть? (формат: 1-12)");
-//        int month = scanner.nextInt();
-//        ConsoleOut.printLine("Ваши показания за " + month + " - месяц:");
-//        for (MeterReading m : mService.findAll()) {
-//            if (m.getUser().getUsername().equals(username)) {
-//                if (m.getDate().getMonthValue() == month) {
-//                    ConsoleOut.printLine(" - " + m);
-//                }
-//            }
-//        }
-////        auditService.save(new Audit(username, "Просмотр истории за конкретный месяц", LocalDateTime.now()));
-////        commandList(username);
-//    }
+    /**
+     * Реализация просмотра истории подачи показаний за конкретный месяц.
+     *
+     * @param username имя пользователя, просматривающего историю
+     */
+    public List<JSONObject> viewReadingHistoryForMonth(String username, int month) {
+        List<JSONObject> result = new ArrayList<>();
+        JSONObject message = new JSONObject();
+        for (MeterReading m : mService.findAll()) {
+            if (m.getUser().getUsername().equals(username)
+            && m.getDate().getMonthValue() == month) {
+                message.put("Показание", m);
+                result.add(message);
+            }
+        }
+        return result;
+    }
 //
 //    /**
 //     * Реализация просмотра истории всех поданных показаний.
