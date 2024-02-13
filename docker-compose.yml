@@ -1,8 +1,8 @@
-version: '3.9'
+version: '3.8'
 
 services:
   postgres:
-    image: postgres:15.3
+    image: postgres:latest
     container_name: y-lab
     environment:
       POSTGRES_DB: "ylab"
@@ -11,4 +11,4 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./pg_data:/var/lib/postgresql/data/pg_data
+      - ./pg_data:/var/lib/postgres/data/pg_data

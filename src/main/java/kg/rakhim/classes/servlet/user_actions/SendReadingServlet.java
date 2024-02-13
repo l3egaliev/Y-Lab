@@ -13,41 +13,23 @@ import kg.rakhim.classes.servlet.ResponseSender;
 import kg.rakhim.classes.utils.ReadingMapper;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
-@WebServlet("/reading")
-public class ReadingServlet extends HttpServlet {
+@WebServlet("/reading/add")
+public class SendReadingServlet extends HttpServlet {
     private final ObjectMapper jsonMapper;
     private final UsersActions userActions;
 
-    public ReadingServlet() {
+    public SendReadingServlet() {
         this.jsonMapper = new ObjectMapper();
         this.userActions = new UsersActions();
     }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncoding(resp, req);
+        resp.setCharacterEncoding("UTF-8");
+        req.setCharacterEncoding("UTF-8");
         ReadingDTO dto = jsonMapper.readValue(req.getInputStream(), ReadingDTO.class);
         MeterReading meterReading = ReadingMapper.convertFromDto(dto);
         ResponseSender.sendResponse(userActions.submitNewReading(meterReading), resp);
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncoding(resp, req);
-        resp.setContentType("application/json");
-        if (req.getParameter("month") == null ||
-                req.getParameter("month").isEmpty()){
-            ResponseSender.sendReadingResponse(resp, userActions.viewActualReadings(req.getParameter("username")));
-        }else{
-            int month = Integer.parseInt(req.getParameter("month"));
-            String username = req.getParameter("username");
-            ResponseSender.sendReadingResponse(resp, userActions.viewReadingsForMonth(username, month));
-        }
-    }
-    private void setEncoding(HttpServletResponse resp, HttpServletRequest req) throws UnsupportedEncodingException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-    }
 }
