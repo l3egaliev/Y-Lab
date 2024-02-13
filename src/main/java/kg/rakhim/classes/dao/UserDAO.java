@@ -1,17 +1,15 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
-import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.models.UserRole;
-import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +24,8 @@ public class UserDAO implements BaseDAO<User, Integer> {
      * Соединение с базой данных.
      */
     private final Connection connection = ConnectionLoader.getConnection();
-
-    @Getter
-    @Setter
     private String jdbcUrl;
-    @Getter
-    @Setter
     private String username;
-    @Getter
-    @Setter
     private String password;
     /**
      * Получение пользователя по его идентификатору.
@@ -178,5 +169,29 @@ public class UserDAO implements BaseDAO<User, Integer> {
             userRole.setId(resultSet.getInt("role_id"));
         }
         return userRole;
+    }
+
+    public String getJdbcUrl() {
+        return jdbcUrl;
+    }
+
+    public void setJdbcUrl(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

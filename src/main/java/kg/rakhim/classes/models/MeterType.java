@@ -12,10 +12,6 @@
  */
 package kg.rakhim.classes.models;
 
-import lombok.*;
-
-@Data
-@NoArgsConstructor
 public class MeterType {
     /**
      * Строковое представление типа счетчика.
@@ -25,6 +21,25 @@ public class MeterType {
 
     public MeterType(String type){
         this.type = type;
+    }
+
+    public MeterType() {
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     /**

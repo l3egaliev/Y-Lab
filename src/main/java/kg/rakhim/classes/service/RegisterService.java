@@ -14,21 +14,20 @@
  */
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.models.Audit;
+import kg.rakhim.classes.annotations.Auditable;
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.out.ConsoleOut;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 //import static kg.rakhim.classes.in.ConsoleIn.start;
 
 /**
  * Класс {@code RegisterService} предоставляет сервис для регистрации и авторизации пользователей.
  */
+@Auditable
 public class RegisterService {
     private final UserService userService;
     private final AuditService auditService;
@@ -56,39 +55,11 @@ public class RegisterService {
             }
         }
         userService.save(user);
-        Audit audit = new Audit(user.getUsername(), "Регистрация", LocalDateTime.now());
-        auditService.save(audit);
+        UserDetails userDetails = new UserDetails(user.getUsername(), Map.of("registerUser", "Регистрация"));
+        UserContext.setCurrentUser(userDetails);
         message.put("message: ", "Регистрация успешна");
         return Map.of(true, message);
     }
-
-    /**
-     * Вход в систему существующего пользователя.
-     *
-     * @return имя вошедшего в систему пользователя
-     */
-//    public String authorization() {
-//        Scanner scanner = new Scanner(System.in);
-//        String res = "";
-//        ConsoleOut.printLine("Введите имя: ");
-//        String username = scanner.next();
-//        ConsoleOut.printLine("Пароль: ");
-//        String pass = scanner.next();
-//        if (username.isEmpty() || pass.isEmpty()) {
-//            ConsoleOut.printLine("Вы ввели не корректные данные");
-//        }
-//        boolean log = loginUser(username, pass);
-//        if (!log) {
-//            ConsoleOut.printLine("Что пошло не так попробуйте снова\n");
-//            start();
-//        }
-//        else {
-//            res = username;
-//            ConsoleOut.printLine("Вы вошли в систему");
-//        }
-//        return res;
-//    }
-
     /**
      * Авторизация пользователя.
      *
@@ -100,11 +71,14 @@ public class RegisterService {
         JSONObject message = new JSONObject();
         for (User u : userService.findAll()) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
-                auditService.save(new Audit(username,"Вход", LocalDateTime.now()));
                 message.put("message:", "Вы успешно вошли в систему");
+                UserDetails userDetails = new UserDetails(username, Map.of("loginUser", "Вход в систему"));
+                UserContext.setCurrentUser(userDetails);
                 return Map.of(true, message);
             }
         }
+        UserDetails error = new UserDetails("null", Map.of("loginUser", "Не получилось войти"));
+        UserContext.setCurrentUser(error);
         message.put("message:", "Некорректные данные");
         return Map.of(false, message);
     }
