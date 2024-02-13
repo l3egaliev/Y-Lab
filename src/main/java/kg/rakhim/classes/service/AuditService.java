@@ -1,5 +1,6 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.repository.AuditRepository;
 import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
@@ -10,6 +11,7 @@ import java.util.Optional;
 /**
  * Сервис для работы с аудитом, реализующий интерфейс {@link AuditRepository}.
  */
+@Loggable
 public class AuditService {
     private final AuditRepositoryImpl auditRepository;
 

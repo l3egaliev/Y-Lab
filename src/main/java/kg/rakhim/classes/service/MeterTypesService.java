@@ -1,9 +1,7 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
+import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.MeterType;
-import kg.rakhim.classes.out.ConsoleOut;
-import kg.rakhim.classes.repository.MeterTypesRepository;
 import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
 
 import java.util.List;
@@ -12,6 +10,7 @@ import java.util.Optional;
 /**
  * Сервис для работы с типами счетчиков.
  */
+@Loggable
 public class MeterTypesService {
     private final MeterTypeRepositoryImpl meterTypesRepository;
 

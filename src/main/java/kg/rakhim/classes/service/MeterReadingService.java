@@ -1,5 +1,6 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 /**
  * Сервис для работы с показаниями счетчиков.
  */
+@Loggable
 public class MeterReadingService {
     private final MeterReadingRepositoryImpl meterReadingRepository;
     /**

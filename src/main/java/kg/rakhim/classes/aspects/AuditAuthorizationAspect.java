@@ -5,9 +5,9 @@ import kg.rakhim.classes.context.UserContext;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.service.AuditService;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
-
-import java.util.Arrays;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class AuditAuthorizationAspect {
@@ -32,7 +32,6 @@ public class AuditAuthorizationAspect {
             auditService.save(new Audit(userName, action));
             System.out.println("Аудит успешно сохранен");
         }
-        System.out.println(Arrays.toString(joinPoint.getArgs()));
     }
 
     private String getCurrentUserName() {

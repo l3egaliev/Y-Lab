@@ -1,9 +1,6 @@
 package kg.rakhim.classes.service.actions;
 
 import kg.rakhim.classes.context.ApplicationContext;
-import kg.rakhim.classes.models.*;
-import kg.rakhim.classes.out.ConsoleOut;
-import kg.rakhim.classes.service.AuditService;
 import kg.rakhim.classes.service.MeterReadingService;
 import kg.rakhim.classes.service.MeterTypesService;
 import kg.rakhim.classes.service.UserService;
@@ -11,11 +8,8 @@ import kg.rakhim.classes.service.actions.admins.EditorReadings;
 import kg.rakhim.classes.service.actions.admins.ViewerReadings;
 import org.json.JSONObject;
 
-import javax.swing.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 //import static kg.rakhim.classes.in.ConsoleIn.commandList;
 

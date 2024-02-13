@@ -1,8 +1,7 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.UserDAO;
+import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.repository.UserRepository;
 import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
 
 import java.util.List;
@@ -12,6 +11,7 @@ import java.util.Optional;
  * Сервисный класс для работы с пользователями.
  * Реализует интерфейс UserRepository.
  */
+@Loggable
 public class UserService  {
     private final UserRepositoryImpl userRepository;
 
