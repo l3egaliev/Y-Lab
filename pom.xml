@@ -28,7 +28,8 @@
         <modalMapper.version>3.2.0</modalMapper.version>
         <mapStruct.version>1.5.5.FINAL</mapStruct.version>
         <aspectj.version>1.9.20.1</aspectj.version>
-        <jacarta.el-api.version>6.0.0-M2</jacarta.el-api.version>
+        <jakarta.el-api.version>6.0.0-M2</jakarta.el-api.version>
+        <tomcat-el-api.version>11.0.0-M16</tomcat-el-api.version>
     </properties>
     <dependencies>
         <dependency>
@@ -99,7 +100,6 @@
             <version>${jakarta.servlet.verion}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -153,9 +153,13 @@
         <dependency>
             <groupId>jakarta.el</groupId>
             <artifactId>jakarta.el-api</artifactId>
-            <version>${jacarta.el-api.version}</version>
+            <version>${jakarta.el-api.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-el-api</artifactId>
+            <version>${tomcat-el-api.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

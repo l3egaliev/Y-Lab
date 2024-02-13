@@ -37,7 +37,8 @@ public class ReadingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(resp, req);
         resp.setContentType("application/json");
-        if (req.getParameter("month") == null || req.getParameter("month").isEmpty()){
+        if (req.getParameter("month") == null ||
+                req.getParameter("month").isEmpty()){
             ResponseSender.sendReadingResponse(resp, userActions.viewActualReadings(req.getParameter("username")));
         }else{
             int month = Integer.parseInt(req.getParameter("month"));

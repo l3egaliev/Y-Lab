@@ -28,4 +28,8 @@ public class MeterReadingRepositoryImpl implements MeterReadingRepository {
     public void save(MeterReading e) {
         meterReadingDAO.save(e);
     }
+
+    public List<MeterReading> findByUsername(String username) {
+        return meterReadingDAO.getByUser(username);
+    }
 }

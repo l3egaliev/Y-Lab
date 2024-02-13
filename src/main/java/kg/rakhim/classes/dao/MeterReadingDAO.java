@@ -1,9 +1,7 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
-import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.MeterReading;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -110,5 +108,22 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
         meterReading.setDate(resultSet.getTimestamp("date_time").toLocalDateTime());
         meterReading.setValue(resultSet.getInt("value"));
         meterReading.setUser(userDAO.get(resultSet.getInt("user_id")).get());
+    }
+
+    public List<MeterReading> getByUser(String username) {
+        List<MeterReading> readings = new ArrayList<>();
+        try {
+            PreparedStatement p = connection.prepareStatement("select * from entities.meter_readings where user_id=?");
+             p.setInt(1,userDAO.userId(username));
+             ResultSet resultSet = p.executeQuery();
+            while (resultSet.next()) {
+                MeterReading meterReading = new MeterReading();
+                readingFromSql(resultSet, meterReading);
+                readings.add(meterReading);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return readings;
     }
 }

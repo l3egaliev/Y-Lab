@@ -1,15 +1,10 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.MeterReadingDAO;
-import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.models.MeterReading;
-import kg.rakhim.classes.models.MeterType;
-import kg.rakhim.classes.out.ConsoleOut;
-import kg.rakhim.classes.repository.MeterReadingRepository;
 import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 //import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
@@ -36,5 +31,8 @@ public class MeterReadingService {
 
     public void save(MeterReading e) {
         meterReadingRepository.save(e);
+    }
+    public List<MeterReading> findByUsername(String username){
+        return meterReadingRepository.findByUsername(username);
     }
 }

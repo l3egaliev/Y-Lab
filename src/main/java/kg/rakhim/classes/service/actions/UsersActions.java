@@ -1,5 +1,6 @@
 package kg.rakhim.classes.service.actions;
 
+import kg.rakhim.classes.annotations.Auditable;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.service.AuditService;
@@ -10,13 +11,16 @@ import kg.rakhim.classes.service.actions.users.ReadingHistoryViewer;
 import kg.rakhim.classes.service.actions.users.ReadingSender;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 //import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
 /**
  * Класс {@code UsersActions} предоставляет методы для действий пользователей в отношении показаний счетчиков.
  */
+@Auditable
 public class UsersActions {
     private static final Scanner scanner = new Scanner(System.in);
     private final UserService userService;

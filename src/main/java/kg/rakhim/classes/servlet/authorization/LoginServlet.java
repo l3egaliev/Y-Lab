@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kg.rakhim.classes.annotations.Auditable;
 import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.service.RegisterService;
@@ -26,7 +25,6 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    @Auditable
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AuthorizeDTO dto = jsonMapper.readValue(req.getInputStream(), AuthorizeDTO.class);
         boolean status = ResponseSender.sendValidationResp(dto, resp, jsonMapper);
