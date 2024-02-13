@@ -1,7 +1,7 @@
 <aspectj>
     <aspects>
         <aspect name="kg.rakhim.classes.aspects.TestAspect"/>
-        <aspect name="kg.rakhim.classes.aspects.AuditAspect"/>
+        <aspect name="kg.rakhim.classes.aspects.AuditAuthorizationAspect"/>
         <!-- Добавьте другие аспекты здесь при необходимости -->
     </aspects>
     <weaver options="-verbose">

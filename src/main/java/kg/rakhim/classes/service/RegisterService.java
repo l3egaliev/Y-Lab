@@ -14,7 +14,7 @@
  */
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.Auditable;
+import kg.rakhim.classes.annotations.AuditableForAuth;
 import kg.rakhim.classes.context.UserContext;
 import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.User;
@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Класс {@code RegisterService} предоставляет сервис для регистрации и авторизации пользователей.
  */
-@Auditable
+@AuditableForAuth
 public class RegisterService {
     private final UserService userService;
     private final AuditService auditService;

@@ -1,5 +1,8 @@
 package kg.rakhim.classes.service.actions.users;
 
+import kg.rakhim.classes.annotations.AuditableAction;
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;
@@ -11,7 +14,7 @@ import org.json.JSONObject;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-
+@AuditableAction
 public class ReadingSender {
     private final UserService userService;
     private final MeterReadingService meterReadingService;
@@ -45,6 +48,8 @@ public class ReadingSender {
                    meterReadingService.save(meterReading);
                    message.put("message", "Показание успешно отправлено");
                    key = true;
+                   UserDetails userDetails = UserContext.getCurrentUser();
+                   userDetails.setAction(Map.of("sendCounterReading", "Подача показания"));
                } else {
                    message.put("message", "Вы в этом месяце уже отправляли показание: " + meterReading.getMeterType());
                    key = false;
@@ -52,7 +57,6 @@ public class ReadingSender {
            }
            return Map.of(key, message);
     }
-
     private boolean isEmptyUser(MeterReading meterReading) {
         String username = meterReading.getUser().getUsername();
         Optional<User> userOptional = userService.findByUsername(username);

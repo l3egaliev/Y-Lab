@@ -5,25 +5,23 @@ import kg.rakhim.classes.context.UserContext;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.service.AuditService;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 
 import java.util.Arrays;
 
 @Aspect
-public class AuditAspect {
+public class AuditAuthorizationAspect {
     private final AuditService auditService;
 
-    public AuditAspect() {
+    public AuditAuthorizationAspect() {
         this.auditService = (AuditService) ApplicationContext.getContext("auditsService");
     }
 
-    @Pointcut("within(@kg.rakhim.classes.annotations.Auditable *) && execution(* * (..))")
-    public void annotatedByAuditable() {}
+    @Pointcut("within(@kg.rakhim.classes.annotations.AuditableForAuth *) && execution(* * (..))")
+    public void annotatedByAuditableForAuth() {}
 
-    @AfterReturning("annotatedByAuditable()")
-    public void auditCall(JoinPoint joinPoint) throws Throwable {
+    @AfterReturning("annotatedByAuditableForAuth()")
+    public void auditCall(JoinPoint joinPoint) {
         String method = joinPoint.getSignature().getName();
         String userName = getCurrentUserName();
         String action = getAction(method);

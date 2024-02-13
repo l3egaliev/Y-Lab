@@ -1,6 +1,6 @@
 package kg.rakhim.classes.service.actions.users;
 
-import kg.rakhim.classes.annotations.Auditable;
+import kg.rakhim.classes.annotations.AuditableAction;
 import kg.rakhim.classes.context.UserContext;
 import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.MeterReading;
@@ -8,8 +8,11 @@ import kg.rakhim.classes.service.MeterReadingService;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
-import java.util.*;
-@Auditable
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+@AuditableAction
 public class ReadingHistoryViewer {
     private final MeterReadingService mService;
 

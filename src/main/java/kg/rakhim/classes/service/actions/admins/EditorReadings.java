@@ -1,14 +1,14 @@
 package kg.rakhim.classes.service.actions.admins;
 
-import kg.rakhim.classes.models.Audit;
-import kg.rakhim.classes.out.ConsoleOut;
+import kg.rakhim.classes.annotations.AuditableAction;
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.service.MeterTypesService;
 import kg.rakhim.classes.service.UserService;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
 import java.util.Map;
-
+@AuditableAction
 public class EditorReadings {
     private final UserService userService;
     private final MeterTypesService typesService;
@@ -29,6 +29,8 @@ public class EditorReadings {
             if(typesService.saveType(newType)){
                 message.put("message", "Новый тип успешно добавлен");
                 status = true;
+                UserDetails userDetails = UserContext.getCurrentUser();
+                userDetails.setAction(Map.of("setNewType", "Добавление нового тип счетчика"));
             }else if(typesService.isExistsType(newType)){
                 message.put("message", "Такой тип уже существует");
                 status = false;

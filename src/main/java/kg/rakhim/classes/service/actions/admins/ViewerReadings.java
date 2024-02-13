@@ -1,15 +1,18 @@
 package kg.rakhim.classes.service.actions.admins;
 
-import kg.rakhim.classes.models.Audit;
+import kg.rakhim.classes.annotations.AuditableAction;
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.MeterReading;
-import kg.rakhim.classes.out.ConsoleOut;
 import kg.rakhim.classes.service.MeterReadingService;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+@AuditableAction
 public class ViewerReadings {
     private final MeterReadingService mService;
 
@@ -18,7 +21,7 @@ public class ViewerReadings {
     }
 
     /**
-     * Выводит на экран актуальные показания всех пользователей для текущего месяца.
+     * Просмотр актуальных показаний всех пользователей для текущего месяца.
      */
     public List<JSONObject> viewActualReadingsOfUsers() {
         List<JSONObject> res = new ArrayList<>();
@@ -29,11 +32,14 @@ public class ViewerReadings {
                     res.add(message);
                 }
             }
+        UserDetails userDetails = UserContext.getCurrentUser();
+        userDetails.setAction(Map.of("viewActualReadingsOfUsers", "Просмотр актуальных показаний всех " +
+                "пользователей для текущего месяца."));
         return res;
     }
 
     /**
-     * Выводит на экран историю показаний пользователей за указанный месяц.
+     * Просмотр историю показаний пользователей за указанный месяц.
      *
      * @param month    номер месяца
      */
@@ -46,10 +52,13 @@ public class ViewerReadings {
                 res.add(message);
             }
         }
+        UserDetails userDetails = UserContext.getCurrentUser();
+        userDetails.setAction(Map.of("viewReadingsHistoryForMonth", "Просмотр историю показаний" +
+                " пользователей за указанный месяц"));
         return res;
     }
     /**
-     * Выводит на экран историю показаний конкретного пользователя.
+     * Просмотр всю историю показаний конкретного пользователя.
      *
      * @param username    имя пользователя, чьи показания нужно просмотреть
      */
@@ -62,6 +71,9 @@ public class ViewerReadings {
                 res.add(message);
             }
         }
+        UserDetails userDetails = UserContext.getCurrentUser();
+        userDetails.setAction(Map.of("viewReadingsHistoryOfUser", "Просмотр всю историю показаний" +
+                " конкретного пользователя"));
         return res;
     }
 }
