@@ -1,8 +1,9 @@
 package kg.rakhim.classes.context;
 
-import kg.rakhim.classes.dao.*;
-import kg.rakhim.classes.dao.migration.ConnectionLoader;
-import kg.rakhim.classes.dao.migration.LoadProperties;
+import kg.rakhim.classes.dao.AuditDAO;
+import kg.rakhim.classes.dao.MeterReadingDAO;
+import kg.rakhim.classes.dao.MeterTypesDAO;
+import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
 import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
 import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
@@ -28,8 +29,7 @@ public class ApplicationContext {
         CONTEXT.put("auditsService", new AuditService(new AuditRepositoryImpl(new AuditDAO())));
         CONTEXT.put("userService", new UserService(new UserRepositoryImpl(new UserDAO())));
         CONTEXT.put("meterTypeService", new MeterTypesService(new MeterTypeRepositoryImpl(new MeterTypesDAO())));
-        CONTEXT.put("registerService", new RegisterService((UserService) getContext("userService"),
-                (AuditService) getContext("auditsService")));
+        CONTEXT.put("registerService", new RegisterService((UserService) getContext("userService")));
         CONTEXT.put("meterReadingService",
                 new MeterReadingService(new MeterReadingRepositoryImpl(new MeterReadingDAO())));
     }

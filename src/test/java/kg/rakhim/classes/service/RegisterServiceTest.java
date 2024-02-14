@@ -1,9 +1,6 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
-import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +12,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +25,7 @@ class RegisterServiceTest {
     private RegisterService registerService;
 
     @Mock
-    private UserRepositoryImpl userRepository;
-
-    @Mock
-    private AuditDAO auditDAO;
+    private UserService userService;
 
     @Container
     private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
@@ -46,10 +41,7 @@ class RegisterServiceTest {
         String username = postgresContainer.getUsername();
         String password = postgresContainer.getPassword();
 
-        UserService userService = new UserService(userRepository);
-        AuditService auditService = new AuditService(new AuditRepositoryImpl(auditDAO));
-
-        registerService = new RegisterService(userService, auditService);
+        registerService = new RegisterService(userService);
     }
 
     @Test
@@ -57,20 +49,19 @@ class RegisterServiceTest {
     void testRegisterUser() {
         User newUser = new User("test", "testPassword", "USER");
         Map<Boolean, JSONObject> result = registerService.registerUser(newUser);
-        when(registerService.registerUser(newUser)).thenReturn(Map.of(true, new JSONObject()));
         assertThat(result).containsKey(true);
     }
 
-//    @Test
-//    @DisplayName("Testing method loginUser()")
-//    void testLoginUser() {
-//        // Arrange
-//        User existingUser = new User("existing_user", "existingPassword", "USER");
-//        when(userRepository.findByUsernameAndPassword("existing_user", "existingPassword")).thenReturn(existingUser);
-//        when(userRepository.findByUsernameAndPassword("nonexistentUser", "password")).thenReturn(null);
-//
-//        // Act & Assert
-//        assertTrue(registerService.loginUser("existing_user", "existingPassword"));
-//        assertFalse(registerService.loginUser("nonexistentUser", "password"));
-//    }
+    @Test
+    @DisplayName("Testing method loginUser()")
+    void testLoginUser() {
+        User existingUser = new User("existing_user", "existingPassword", "USER");
+        when(userService.findAll()).thenReturn(Collections.singletonList(existingUser));
+        Map<Boolean, JSONObject> result1 = registerService.loginUser("existing_user", "existingPassword");
+        Map<Boolean, JSONObject> result2 = registerService.loginUser("nonexistentUser", "password");
+//        when(userService.findAll()).thenReturn(Collections.singletonList(existingUser));
+
+        assertThat(result1).containsKey(true);
+        assertThat(result2).containsKey(false);
+    }
 }

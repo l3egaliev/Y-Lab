@@ -30,14 +30,11 @@ import java.util.Map;
 @AuditableForAuth
 public class RegisterService {
     private final UserService userService;
-    private final AuditService auditService;
-
     /**
      * Конструктор для создания экземпляра класса {@code RegisterService}.
      */
-    public RegisterService(UserService userService, AuditService auditService) {
+    public RegisterService(UserService userService) {
         this.userService = userService;
-        this.auditService = auditService;
     }
     /**
      * Регистрация нового пользователя.
