@@ -37,6 +37,7 @@
 1. https://github.com/l3egaliev/Y-Lab/pull/2 - HM1
 2. https://github.com/l3egaliev/Y-Lab/pull/3 - HM2
 3. https://github.com/l3egaliev/Y-Lab/pull/4 - HM3
+4. https://github.com/l3egaliev/Y-Lab/pull/5 - HM4
 
 ## Связь с разработчиком
 
