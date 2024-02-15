@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Класс для загрузки настроек из файла application.properties.
+ * Класс для загрузки настроек из файла application.yml
  */
 public class LoadProperties {
     private String url;
@@ -14,16 +14,16 @@ public class LoadProperties {
     private String liquibasePath;
 
     /**
-     * Конструктор класса, загружает настройки из файла application.properties.
+     * Конструктор класса, загружает настройки из файла application.yml
      */
     public LoadProperties() {
         Properties properties = new Properties();
         InputStream input;
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            input = classLoader.getResourceAsStream("application.properties");
+            input = classLoader.getResourceAsStream("application.yml");
             if (input == null) {
-                System.out.println("Не удается найти файл application.properties");
+                System.out.println("Не удается найти файл application.yml");
                 return;
             }
             properties.load(input);

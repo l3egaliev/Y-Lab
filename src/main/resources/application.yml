@@ -1,0 +1,9 @@
+# DB configuration
+db:
+  url: jdbc:postgresql://localhost:5432/ylab
+  username: postgres
+  password: postgres
+
+# Liquibase Configuration
+liquibase:
+  changelog: /db/changelog/changelog-master.yml
