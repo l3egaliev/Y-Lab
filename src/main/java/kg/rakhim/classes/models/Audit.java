@@ -13,36 +13,60 @@
  */
 package kg.rakhim.classes.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /**
  * Класс {@code Audit} представляет аудитовую запись о действиях пользователей в системе.
  */
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Audit {
     private int id;
     private String username;
     private String action;
     private Timestamp time;
 
-    public Audit(String username, String action, LocalDateTime now) {
+    public Audit(String username, String action) {
         this.username = username;
         this.action = action;
-        this.time = Timestamp.valueOf(now);
     }
 
     public Audit(int auditId, String testAction) {
         this.id = auditId;
         this.action = testAction;
+    }
+
+    public Audit() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 
     /**

@@ -14,107 +14,49 @@
  */
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.models.Audit;
+import kg.rakhim.classes.annotations.AuditableForAuth;
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.out.ConsoleOut;
+import org.json.JSONObject;
 
-import java.time.LocalDateTime;
-import java.util.Scanner;
+import java.util.Map;
 
-import static kg.rakhim.classes.in.ConsoleIn.start;
+//import static kg.rakhim.classes.in.ConsoleIn.start;
 
 /**
  * Класс {@code RegisterService} предоставляет сервис для регистрации и авторизации пользователей.
  */
+@AuditableForAuth
 public class RegisterService {
     private final UserService userService;
-    private final AuditService auditService;
-
     /**
      * Конструктор для создания экземпляра класса {@code RegisterService}.
      */
-    public RegisterService(UserService userService, AuditService auditService) {
+    public RegisterService(UserService userService) {
         this.userService = userService;
-        this.auditService = auditService;
     }
-
-    /**
-     * Регистрация нового пользователя.
-     *
-     * @return имя зарегистрированного пользователя
-     */
-    public String registration() {
-        Scanner scanner = new Scanner(System.in);
-        String res = "";
-        ConsoleOut.printLine("Ваше имя: ");
-        String username = scanner.next();
-        ConsoleOut.printLine("Пароль: ");
-        String pass = scanner.next();
-        User user = new User(username, pass, "USER");
-        int reg = registerUser(user);
-        if (reg == 0){
-            start();
-            return res;
-        }
-        else {
-            res = username;
-            ConsoleOut.printLine("Вы успешно зарегистрировались");
-        }
-        return res;
-    }
-
     /**
      * Регистрация нового пользователя.
      *
      * @param user объект User для регистрации
      * @return true, если регистрация успешна; false, если пользователь уже существует
      */
-    public int registerUser(User user) {
+    public Map<Boolean, JSONObject> registerUser(User user) {
+        JSONObject message = new JSONObject();
         // Проверка - не существует ли такого пользователя
         for (User u : userService.findAll()){
             if (u.getUsername().equals(user.getUsername())) {
-                ConsoleOut.printLine("Такой пользователь уже существует");
-                return 0;
-            }if (user.getUsername().length()<3 || user.getPassword().length()<5) {
-                ConsoleOut.printLine("Вы ввели не корректные данные");
-                ConsoleOut.printLine("Username - должно быть не менее 3 символов");
-                ConsoleOut.printLine("Password - должно быть не менее 5 символов\n");
-                return 0;
+                message.put("message: ", "Такой пользователь уже существует");
+                return Map.of(false, message);
             }
         }
         userService.save(user);
-        Audit audit = new Audit(user.getUsername(), "Регистрация", LocalDateTime.now());
-        auditService.save(audit);
-        return 1;
+        UserDetails userDetails = new UserDetails(user.getUsername(), Map.of("registerUser", "Регистрация"));
+        UserContext.setCurrentUser(userDetails);
+        message.put("message: ", "Регистрация успешна");
+        return Map.of(true, message);
     }
-
-    /**
-     * Вход в систему существующего пользователя.
-     *
-     * @return имя вошедшего в систему пользователя
-     */
-    public String authorization() {
-        Scanner scanner = new Scanner(System.in);
-        String res = "";
-        ConsoleOut.printLine("Введите имя: ");
-        String username = scanner.next();
-        ConsoleOut.printLine("Пароль: ");
-        String pass = scanner.next();
-        if (username.isEmpty() || pass.isEmpty()) {
-            ConsoleOut.printLine("Вы ввели не корректные данные");
-        }
-        boolean log = loginUser(username, pass);
-        if (!log) {
-            ConsoleOut.printLine("Что пошло не так попробуйте снова\n");
-            start();
-        }
-        else {
-            res = username;
-            ConsoleOut.printLine("Вы вошли в систему");
-        }
-        return res;
-    }
-
     /**
      * Авторизация пользователя.
      *
@@ -122,15 +64,19 @@ public class RegisterService {
      * @param password пароль пользователя
      * @return true, если пользователь аутентифицирован; false, если не найден или пароль неверен
      */
-    public boolean loginUser(String username, String password) {
-        boolean res = false;
+    public Map<Boolean, JSONObject> loginUser(String username, String password) {
+        JSONObject message = new JSONObject();
         for (User u : userService.findAll()) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
-                res = true;
-                auditService.save(new Audit(username,"Вход", LocalDateTime.now()));
-                break;
+                message.put("message:", "Вы успешно вошли в систему");
+                UserDetails userDetails = new UserDetails(username, Map.of("loginUser", "Вход в систему"));
+                UserContext.setCurrentUser(userDetails);
+                return Map.of(true, message);
             }
         }
-        return res;
+        UserDetails error = new UserDetails("null", Map.of("loginUser", "Не получилось войти"));
+        UserContext.setCurrentUser(error);
+        message.put("message:", "Некорректные данные");
+        return Map.of(false, message);
     }
 }

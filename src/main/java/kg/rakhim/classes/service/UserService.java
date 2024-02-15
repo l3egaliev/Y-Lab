@@ -1,8 +1,8 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.dao.UserDAO;
+import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.repository.UserRepository;
+import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,16 +11,17 @@ import java.util.Optional;
  * Сервисный класс для работы с пользователями.
  * Реализует интерфейс UserRepository.
  */
-public class UserService implements UserRepository {
-    private final UserDAO userDAO;
+@Loggable
+public class UserService  {
+    private final UserRepositoryImpl userRepository;
 
     /**
      * Конструктор для создания экземпляра класса UserService.
      *
-     * @param dao объект класса UserDAO для взаимодействия с данными о пользователях
+     * @param userRepository объект класса UserRepository для взаимодействия с данными о пользователях
      */
-    public UserService(UserDAO dao) {
-        this.userDAO = dao;
+    public UserService(UserRepositoryImpl userRepository) {
+        this.userRepository = userRepository;
     }
 
     /**
@@ -29,9 +30,8 @@ public class UserService implements UserRepository {
      * @param id идентификатор пользователя
      * @return объект Optional, содержащий пользователя, если он найден; пустой объект, если пользователь не найден
      */
-    @Override
     public Optional<User> findById(int id) {
-        return Optional.of(userDAO.get(id));
+        return userRepository.findById(id);
     }
 
     /**
@@ -40,9 +40,8 @@ public class UserService implements UserRepository {
      * @param username имя пользователя
      * @return объект User, соответствующий переданному имени пользователя
      */
-    @Override
-    public User findByUsername(String username) {
-        return userDAO.getUser(username);
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     /**
@@ -50,9 +49,8 @@ public class UserService implements UserRepository {
      *
      * @return список объектов User, представляющих всех пользователей в системе
      */
-    @Override
     public List<User> findAll() {
-        return userDAO.getAll();
+        return userRepository.findAll();
     }
 
     /**
@@ -61,10 +59,8 @@ public class UserService implements UserRepository {
      * @param username имя пользователя
      * @return true, если пользователь имеет роль ADMIN; false в противном случае
      */
-    @Override
     public boolean isAdmin(String username) {
-        User user = userDAO.getUser(username);
-        return user.getRole().equals("ADMIN");
+        return userRepository.isAdmin(username);
     }
 
     /**
@@ -72,9 +68,9 @@ public class UserService implements UserRepository {
      *
      * @param user объект User, который необходимо сохранить
      */
-    @Override
-    public void save(Object user) {
-        userDAO.save((User) user);
+    public void save(User user) {
+        user.setRole("USER");
+        userRepository.save(user);
     }
 
     /**
@@ -84,6 +80,6 @@ public class UserService implements UserRepository {
      * @return идентификатор пользователя
      */
     public int getUserId(User user) {
-        return userDAO.getUser(user.getUsername()).getId();
+        return userRepository.findByUsername(user.getUsername()).get().getId();
     }
 }

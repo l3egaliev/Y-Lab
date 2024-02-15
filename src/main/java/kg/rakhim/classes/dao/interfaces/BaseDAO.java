@@ -1,6 +1,7 @@
 package kg.rakhim.classes.dao.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -8,7 +9,7 @@ import java.util.List;
  * @param <U> Идентификатор класса
  */
 public interface BaseDAO <T, U>{
-    T get(int id);
+    Optional<T> get(int id);
     List<T> getAll();
     void save(T t);
 }

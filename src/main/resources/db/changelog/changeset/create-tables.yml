@@ -181,7 +181,7 @@ databaseChangeLog:
                     referencedColumnNames: type_id
                     deleteCascade: true
               - column:
-                  name: date
+                  name: date_time
                   type: TIMESTAMP
               - column:
                   name: value

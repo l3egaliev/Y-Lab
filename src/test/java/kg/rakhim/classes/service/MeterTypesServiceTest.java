@@ -1,7 +1,9 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.dao.MeterTypesDAO;
 import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.models.MeterType;
+import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -9,6 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +34,7 @@ class MeterTypesServiceTest {
         String password = postgresContainer.getPassword();
 
         fakeMeterTypesDAO = new FakeMeterTypesDAO(); // Фиктивная реализация DAO
-        meterTypesService = new MeterTypesService(fakeMeterTypesDAO);
+        meterTypesService = new MeterTypesService(new MeterTypeRepositoryImpl(new MeterTypesDAO()));
     }
 
     @Test
@@ -39,8 +42,8 @@ class MeterTypesServiceTest {
     void testSaveType_NonExistingType() {
         String newType = "newType";
         assertThat(fakeMeterTypesDAO.isExists(newType)).isFalse();
-        int result = meterTypesService.saveType(newType);
-        assertThat(result).isEqualTo(1);
+        boolean result = meterTypesService.saveType(newType);
+        assertThat(result).isTrue();
         assertThat(fakeMeterTypesDAO.getSavedTypes()).contains(new MeterType(newType));
     }
 
@@ -50,8 +53,8 @@ class MeterTypesServiceTest {
         // Arrange
         String existingType = "existingType";
         fakeMeterTypesDAO.save(new MeterType(existingType)); // Добавляем существующий тип
-        int result = meterTypesService.saveType(existingType);
-        assertThat(result).isEqualTo(0);
+        boolean result = meterTypesService.saveType(existingType);
+        assertThat(result).isFalse();
         assertThat(fakeMeterTypesDAO.isExists(existingType)).isTrue();
         assertThat(fakeMeterTypesDAO.getSavedTypes()).containsExactly(new MeterType(existingType));
     }
@@ -65,8 +68,8 @@ class MeterTypesServiceTest {
         }
 
         @Override
-        public MeterType get(int id) {
-            return savedTypes.get(id);
+        public Optional<MeterType> get(int id) {
+            return Optional.ofNullable(savedTypes.get(id));
         }
 
         @Override

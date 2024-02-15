@@ -1,14 +1,14 @@
-version: 'v2.23.3-desktop.2'
+version: '3.8'
 
 services:
   postgres:
     image: postgres:latest
-    container_name: y_lab
+    container_name: y-lab
     environment:
-      POSTGRES_DB: ylab
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: "ylab"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
     ports:
       - "5432:5432"
     volumes:
-      - ./pg_data:/var/lib/postgresql/data
+      - ./pg_data:/var/lib/postgres/data/pg_data
