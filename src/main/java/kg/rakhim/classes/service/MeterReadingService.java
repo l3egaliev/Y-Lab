@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,15 +23,15 @@ import java.util.Optional;
 @Service
 public class MeterReadingService {
     private final MeterReadingDAO meterReadingDAO;
-    private final MeterTypesService typesService;
+    private final UserService userService;
     /**
      * Создает экземпляр класса MeterReadingService с указанным DAO и сервисом типов счетчиков.
      *
      * @param meterReadingDAO     Repository для работы с данными о показаниях счетчиков
      */
-    public MeterReadingService(MeterReadingDAO meterReadingDAO, MeterTypesService typesService) {
+    public MeterReadingService(MeterReadingDAO meterReadingDAO, UserService userService) {
         this.meterReadingDAO = meterReadingDAO;
-        this.typesService = typesService;
+        this.userService = userService;
     }
     public Optional<MeterReading> findById(int id) {
         return meterReadingDAO.get(id);
@@ -75,5 +76,49 @@ public class MeterReadingService {
             }
         }
         return res;
+    }
+
+    public List<MeterReading> historyOfUserReadings(String username){
+        String admin = UserContext.getCurrentUser().getUsername();
+        if (userService.isAdmin(admin)) {
+            return meterReadingDAO.getByUser(username);
+        }
+        return Collections.emptyList();
+    }
+
+    public List<MeterReading> readingsOfOneUserForMonth(String username, int month){
+        List<MeterReading> result = new ArrayList<>();
+        if (userService.isAdmin(UserContext.getCurrentUser().getUsername())){
+            for (MeterReading m : meterReadingDAO.getByUser(username)){
+                if (m.getDateTime().getMonthValue() == month){
+                    result.add(m);
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<MeterReading> readingsOfAllUsersForMonth(int month){
+        List<MeterReading> result = new ArrayList<>();
+        if (userService.isAdmin(UserContext.getCurrentUser().getUsername())) {
+            for (MeterReading m : meterReadingDAO.getAll()) {
+                if (m.getDateTime().getMonthValue() == month) {
+                    result.add(m);
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<MeterReading> actualReadingsOfAllUsers(){
+        List<MeterReading> result = new ArrayList<>();
+        if (userService.isAdmin(UserContext.getCurrentUser().getUsername())) {
+            for (MeterReading m : meterReadingDAO.getAll()) {
+                if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
+                    result.add(m);
+                }
+            }
+        }
+        return result;
     }
 }

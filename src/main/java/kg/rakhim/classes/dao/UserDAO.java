@@ -2,7 +2,6 @@ package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,8 +47,12 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("Select * from entities.users",
+        List<User> users = jdbcTemplate.query("Select * from entities.users",
                 new BeanPropertyRowMapper<>(User.class));
+        for (User u : users){
+            u.setRole(role(Integer.parseInt(u.getRole())));
+        }
+        return users;
     }
 
     /**
@@ -60,7 +63,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
     @Override
     public void save(User user) {
         jdbcTemplate.update("INSERT INTO entities.users(username, password, role) VALUES (?, ?, ?)",
-                user.getUsername(), user.getPassword(), role(user.getRole()));
+                user.getUsername(), user.getPassword(), roleId(user.getRole()));
     }
 
     /**
@@ -73,6 +76,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
         String sql = "SELECT * FROM entities.users WHERE username=?";
         User user = jdbcTemplate.query(sql, new Object[]{username} ,new BeanPropertyRowMapper<>(User.class))
                 .stream().findAny().orElse(null);
+        user.setRole(role(Integer.parseInt(user.getRole())));
         if (user == null){
             return Optional.empty();
         }
@@ -87,8 +91,12 @@ public class UserDAO implements BaseDAO<User, Integer> {
     public Integer userId(String user){
         return jdbcTemplate.queryForObject("SELECT id FROM entities.users WHERE username = ?", Integer.class, user);
     }
-    private Integer role(String role){
+    private Integer roleId(String role){
         String sql = "select role_id from entities.users_role where role=?";
         return jdbcTemplate.queryForObject(sql, Integer.class, role);
+    }
+    private String role(int role){
+        String sql = "select role from entities.users_role where role_id=?";
+        return jdbcTemplate.queryForObject(sql, String.class, role);
     }
 }
