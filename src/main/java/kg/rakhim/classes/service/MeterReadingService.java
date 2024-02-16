@@ -3,6 +3,8 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.repository.impl.MeterReadingRepositoryImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,7 @@ import java.util.Optional;
 /**
  * Сервис для работы с показаниями счетчиков.
  */
-@Loggable
+@Service
 public class MeterReadingService {
     private final MeterReadingRepositoryImpl meterReadingRepository;
     /**

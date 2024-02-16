@@ -1,6 +1,5 @@
 package kg.rakhim.classes.service.actions;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.service.MeterReadingService;
 import kg.rakhim.classes.service.MeterTypesService;
@@ -8,6 +7,7 @@ import kg.rakhim.classes.service.UserService;
 import kg.rakhim.classes.service.actions.users.ReadingHistoryViewer;
 import kg.rakhim.classes.service.actions.users.ReadingSender;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * Класс {@code UsersActions} предоставляет методы для действий пользователей в отношении показаний счетчиков.
  */
+@Component
 public class UsersActions {
     private final UserService userService;
     private final MeterReadingService mService;
@@ -28,10 +29,10 @@ public class UsersActions {
      * Конструирует экземпляр {@code UsersActions}.
      *
      */
-    public UsersActions() {
-        this.userService = (UserService) ApplicationContext.getContext("userService");
-        this.mService = (MeterReadingService) ApplicationContext.getContext("meterReadingService");
-        this.typesService = (MeterTypesService) ApplicationContext.getContext("meterTypeService");
+    public UsersActions(UserService userService, MeterReadingService mService, MeterTypesService typesService) {
+        this.userService = userService;
+        this.mService = mService;
+        this.typesService = typesService;
         this.readingSender = new ReadingSender(userService, mService, typesService);
         viewer = new ReadingHistoryViewer(mService);
     }

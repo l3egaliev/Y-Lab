@@ -6,6 +6,7 @@ import kg.rakhim.classes.models.MeterReading;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ import java.util.Optional;
 /**
  * Класс для взаимодействия с таблицей показаний счетчиков в базе данных.
  */
-@NoArgsConstructor
+@Component
 public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     @Getter
     @Setter
@@ -29,8 +30,14 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     private String password;
 
     private final Connection connection = ConnectionLoader.getConnection();
-    private final UserDAO userDAO = new UserDAO();
-    private final MeterTypesDAO meterTypesDAO = new MeterTypesDAO();
+    private final UserDAO userDAO;
+    private final MeterTypesDAO meterTypesDAO;
+
+    public MeterReadingDAO(UserDAO userDAO, MeterTypesDAO meterTypesDAO) {
+        this.userDAO = userDAO;
+        this.meterTypesDAO = meterTypesDAO;
+    }
+
     /**
      * Получает показания счетчика по заданному идентификатору.
      *

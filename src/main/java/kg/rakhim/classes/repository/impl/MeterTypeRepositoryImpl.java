@@ -3,10 +3,12 @@ package kg.rakhim.classes.repository.impl;
 import kg.rakhim.classes.dao.MeterTypesDAO;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.repository.MeterTypesRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class MeterTypeRepositoryImpl implements MeterTypesRepository {
     private final MeterTypesDAO meterTypesDAO;
 

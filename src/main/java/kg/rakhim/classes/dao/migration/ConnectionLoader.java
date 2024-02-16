@@ -1,9 +1,5 @@
 package kg.rakhim.classes.dao.migration;
 
-import kg.rakhim.classes.context.ApplicationContext;
-import kg.rakhim.classes.dao.migration.LoadProperties;
-
-import javax.swing.text.html.HTMLDocument;
 import java.sql.*;
 
 /**

@@ -1,12 +1,8 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
-import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.Audit;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -19,7 +15,6 @@ import java.util.Optional;
  */
 public class AuditDAO implements BaseDAO<Audit, Integer> {
     private final Connection connection = ConnectionLoader.getConnection();
-    private final UserDAO userDAO = (UserDAO) ApplicationContext.getContext("userDAO");
 
     /**
      * Получает аудит по заданному идентификатору.

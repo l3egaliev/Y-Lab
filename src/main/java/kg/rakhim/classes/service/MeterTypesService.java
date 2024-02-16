@@ -3,6 +3,7 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.Optional;
 /**
  * Сервис для работы с типами счетчиков.
  */
-@Loggable
+@Service
 public class MeterTypesService {
     private final MeterTypeRepositoryImpl meterTypesRepository;
 

@@ -1,13 +1,12 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.dao.migration.ConnectionLoader;
-import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.MeterType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +21,7 @@ import java.util.Optional;
  */
 @Getter
 @NoArgsConstructor
+@Component
 public class MeterTypesDAO implements MeterTypesDAOIn {
 
     /**

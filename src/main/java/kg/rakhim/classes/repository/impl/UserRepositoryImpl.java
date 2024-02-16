@@ -3,10 +3,12 @@ package kg.rakhim.classes.repository.impl;
 import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.repository.UserRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class UserRepositoryImpl implements UserRepository {
     private final UserDAO userDAO;
 

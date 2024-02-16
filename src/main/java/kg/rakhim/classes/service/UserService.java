@@ -3,6 +3,7 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.models.User;
 import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.Optional;
  * Сервисный класс для работы с пользователями.
  * Реализует интерфейс UserRepository.
  */
-@Loggable
+@Service
 public class UserService  {
     private final UserRepositoryImpl userRepository;
 
