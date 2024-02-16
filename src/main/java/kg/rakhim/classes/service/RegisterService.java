@@ -14,6 +14,9 @@
  */
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.context.UserDetails;
+import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,8 @@ public class RegisterService {
     public void registerUser(User user) {
         user.setRole("USER");
         userService.save(user);
+        UserDetails userDetails = new UserDetails(user.getUsername());
+        UserContext.setCurrentUser(userDetails);
     }
 
     /**
@@ -53,6 +58,8 @@ public class RegisterService {
         boolean res;
         Optional<User> u = userService.findByUsername(user.getUsername());
         res = u.isPresent() && u.get().getPassword().equals(user.getPassword());
+        UserDetails userDetails = new UserDetails(user.getUsername());
+        UserContext.setCurrentUser(userDetails);
         return res;
     }
 }

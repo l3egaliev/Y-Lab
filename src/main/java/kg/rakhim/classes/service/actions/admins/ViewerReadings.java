@@ -26,7 +26,7 @@ public class ViewerReadings {
     public List<JSONObject> viewActualReadingsOfUsers() {
         List<JSONObject> res = new ArrayList<>();
         for (MeterReading m : mService.findAll()){
-                if (m.getDate().getMonthValue() == LocalDateTime.now().getMonthValue()) {
+                if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
                     JSONObject message = new JSONObject();
                     message.put("Показание", m);
                     res.add(message);
@@ -46,7 +46,7 @@ public class ViewerReadings {
     public List<JSONObject> viewReadingsHistoryForMonth(int month) {
         List<JSONObject> res = new ArrayList<>();
         for(MeterReading meterReading : mService.findAll()){
-            if (meterReading.getDate().getMonthValue() == month) {
+            if (meterReading.getDateTime().getMonthValue() == month) {
                 JSONObject message = new JSONObject();
                 message.put("Показание", meterReading);
                 res.add(message);

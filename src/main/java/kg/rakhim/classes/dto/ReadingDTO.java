@@ -1,18 +1,20 @@
 package kg.rakhim.classes.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
 
 public class ReadingDTO {
-    @NotNull(message = "Имя пользователя не может быть пустым")
-    private String username;
-    @Size(min=4, max=4, message="Формат значение счетчика - 4 цифр нап. 1234")
+
+    @Min(value = 1000, message = "Формат значение счетчика - 4 цифр, нап. 1234")
+    @Max(value = 9999, message = "Формат значение счетчика - 4 цифр, нап. 1234")
     private int value;
     @NotNull(message = "Тип счетчика не может быть пустым")
     private String meterType;
 
-    public ReadingDTO(String username, int value, String meterType) {
-        this.username = username;
+    public ReadingDTO(int value, String meterType) {
         this.value = value;
         this.meterType = meterType;
     }
@@ -20,13 +22,6 @@ public class ReadingDTO {
     public ReadingDTO() {
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public int getValue() {
         return value;

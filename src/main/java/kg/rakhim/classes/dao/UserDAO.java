@@ -71,8 +71,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     public Optional<User> getUser(String username){
         String sql = "SELECT * FROM entities.users WHERE username=?";
-        User user = jdbcTemplate.query("SELECT * from entities.users where username = ?",
-                        new Object[]{username} ,new BeanPropertyRowMapper<>(User.class))
+        User user = jdbcTemplate.query(sql, new Object[]{username} ,new BeanPropertyRowMapper<>(User.class))
                 .stream().findAny().orElse(null);
         if (user == null){
             return Optional.empty();
@@ -83,19 +82,13 @@ public class UserDAO implements BaseDAO<User, Integer> {
     /**
      * Получение идентификатора пользователя по его имени.
      *
-     * @param username имя пользователя
      * @return идентификатор пользователя
      */
-    public Integer userId(String username){
-        return jdbcTemplate.query("SELECT id FROM entities.users WHERE username = ?",
-                new Object[]{username}, new BeanPropertyRowMapper<>(Integer.class))
-                .stream().findAny().orElse(null);
+    public Integer userId(String user){
+        return jdbcTemplate.queryForObject("SELECT id FROM entities.users WHERE username = ?", Integer.class, user);
     }
     private Integer role(String role){
-        if (role.equals("USER")){
-            return 2;
-        }else {
-            return 1;
-        }
+        String sql = "select role_id from entities.users_role where role=?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, role);
     }
 }
