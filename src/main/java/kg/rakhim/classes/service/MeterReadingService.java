@@ -1,5 +1,6 @@
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.annotations.AuditableAction;
 import kg.rakhim.classes.context.UserContext;
 import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.dao.MeterReadingDAO;
@@ -10,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 //import static kg.rakhim.classes.in.ConsoleIn.commandList;
 
@@ -21,6 +19,7 @@ import java.util.Optional;
  * Сервис для работы с показаниями счетчиков.
  */
 @Service
+@AuditableAction
 public class MeterReadingService {
     private final MeterReadingDAO meterReadingDAO;
     private final UserService userService;
@@ -57,10 +56,12 @@ public class MeterReadingService {
     public List<MeterReading> findByUsername(){
         return meterReadingDAO.getByUser(UserContext.getCurrentUser().getUsername());
     }
+
     public List<MeterReading> findActualReadings(){
-        String username = UserContext.getCurrentUser().getUsername();
+        UserDetails userDetails = UserContext.getCurrentUser();
+        userDetails.setAction(Map.of("findActualReadings", "Просмотр актуальных показаний"));
         List<MeterReading> res = new ArrayList<>();
-        for (MeterReading m : meterReadingDAO.getByUser(username)){
+        for (MeterReading m : meterReadingDAO.getByUser(userDetails.getUsername())){
             if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()){
                 res.add(m);
             }
@@ -68,9 +69,10 @@ public class MeterReadingService {
         return res;
     }
     public List<MeterReading> findForMonth(int month){
-        String username = UserContext.getCurrentUser().getUsername();
+        UserDetails userDetails = UserContext.getCurrentUser();
+        userDetails.setAction(Map.of("findForMonth", "Просмотр показаний за указанный месяц"));
         List<MeterReading> res = new ArrayList<>();
-        for (MeterReading m : meterReadingDAO.getByUser(username)){
+        for (MeterReading m : meterReadingDAO.getByUser(userDetails.getUsername())){
             if (m.getDateTime().getMonthValue() == month){
                 res.add(m);
             }
@@ -79,6 +81,8 @@ public class MeterReadingService {
     }
 
     public List<MeterReading> historyOfUserReadings(String username){
+        UserDetails userDetails = UserContext.getCurrentUser();
+        userDetails.setAction(Map.of("historyOfUserReadings", "Просмотр всю историю показаний"));
         String admin = UserContext.getCurrentUser().getUsername();
         if (userService.isAdmin(admin)) {
             return meterReadingDAO.getByUser(username);

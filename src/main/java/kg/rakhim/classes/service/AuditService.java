@@ -1,9 +1,11 @@
 package kg.rakhim.classes.service;
 
 import kg.rakhim.classes.annotations.Loggable;
+import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.repository.AuditRepository;
 import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,16 +14,17 @@ import java.util.Optional;
  * Сервис для работы с аудитом, реализующий интерфейс {@link AuditRepository}.
  */
 @Loggable
+@Service
 public class AuditService {
-    private final AuditRepositoryImpl auditRepository;
+    private final AuditDAO auditDAO;
 
     /**
      * Конструктор, принимающий объект доступа к данным аудита.
      *
-     * @param auditRepository объект доступа к данным аудита
+     * @param auditDAO объект доступа к данным аудита
      */
-    public AuditService(AuditRepositoryImpl auditRepository) {
-        this.auditRepository = auditRepository;
+    public AuditService(AuditDAO auditDAO) {
+        this.auditDAO = auditDAO;
     }
 
     /**
@@ -31,7 +34,7 @@ public class AuditService {
      * @return объект аудита, обернутый в Optional
      */
     public Optional<Audit> findById(int id) {
-        return auditRepository.findById(id);
+        return auditDAO.get(id);
     }
 
     /**
@@ -40,7 +43,7 @@ public class AuditService {
      * @return список объектов аудита
      */
     public List<Audit> findAll() {
-        return auditRepository.findAll();
+        return auditDAO.getAll();
     }
 
     /**
@@ -49,6 +52,6 @@ public class AuditService {
      * @param e объект аудита для сохранения
      */
     public void save(Audit e) {
-        auditRepository.save(e);
+        auditDAO.save(e);
     }
 }

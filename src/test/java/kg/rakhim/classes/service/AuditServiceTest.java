@@ -24,7 +24,7 @@ public class AuditServiceTest {
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
         when(mockAuditDAO.get(auditId)).thenReturn(Optional.of(expectedAudit));
 
-        AuditService auditService = new AuditService(new AuditRepositoryImpl(mockAuditDAO));
+        AuditService auditService = new AuditService(mockAuditDAO);
 
         Optional<Audit> result = auditService.findById(auditId);
 
@@ -41,7 +41,7 @@ public class AuditServiceTest {
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
         when(mockAuditDAO.getAll()).thenReturn(expectedAudits);
 
-        AuditService auditService = new AuditService(new AuditRepositoryImpl(mockAuditDAO));
+        AuditService auditService = new AuditService(mockAuditDAO);
 
         List<Audit> result = auditService.findAll();
 
@@ -53,7 +53,7 @@ public class AuditServiceTest {
     public void testSave() {
         Audit auditToSave = new Audit(1, "Test");
         AuditDAO mockAuditDAO = mock(AuditDAO.class);
-        AuditService auditService = new AuditService(new AuditRepositoryImpl(mockAuditDAO));
+        AuditService auditService = new AuditService(mockAuditDAO);
         auditService.save(auditToSave);
         verify(mockAuditDAO, times(1)).save(auditToSave);
     }

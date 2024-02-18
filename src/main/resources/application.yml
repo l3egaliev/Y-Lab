@@ -1,10 +1,16 @@
 # DB configuration
-dataSource:
-  driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/ylab
-  user: postgres
-  password: postgres
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ylab
+    user: postgres
+    password: postgres
+  liquibase:
+    change-log: /db/changelog/changelog-master.yml
 
-# Liquibase Configuration
-liquibase:
-  changelog: /db/changelog/changelog-master.yml
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  packagesToScan: kg.rakhim.classes.controller

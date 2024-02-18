@@ -14,12 +14,15 @@
  */
 package kg.rakhim.classes.service;
 
+import kg.rakhim.classes.annotations.AuditableForAuth;
+import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.context.UserContext;
 import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -27,6 +30,8 @@ import java.util.Optional;
  * Класс {@code RegisterService} предоставляет сервис для регистрации и авторизации пользователей.
  */
 @Service
+@AuditableForAuth
+@Loggable
 public class RegisterService {
     private final UserService userService;
 
@@ -58,7 +63,7 @@ public class RegisterService {
         boolean res;
         Optional<User> u = userService.findByUsername(user.getUsername());
         res = u.isPresent() && u.get().getPassword().equals(user.getPassword());
-        UserDetails userDetails = new UserDetails(user.getUsername());
+        UserDetails userDetails = new UserDetails(user.getUsername(), Map.of("loginUser","Вход в систему"));
         UserContext.setCurrentUser(userDetails);
         return res;
     }

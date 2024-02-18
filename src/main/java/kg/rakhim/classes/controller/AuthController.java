@@ -7,8 +7,6 @@ import kg.rakhim.classes.service.RegisterService;
 import kg.rakhim.classes.utils.ErrorSender;
 import kg.rakhim.classes.utils.MapToUser;
 import kg.rakhim.classes.utils.UserValidator;
-import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+//@Tag(name = "Test Swagger")
 @RequestMapping("/auth")
 public class AuthController {
     private final RegisterService registerService;
