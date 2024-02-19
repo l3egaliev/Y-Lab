@@ -1,5 +1,7 @@
 package kg.rakhim.classes.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Tag;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.models.User;
@@ -20,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-//@Tag(name = "Test Swagger")
 @RequestMapping("/auth")
+@Api
 public class AuthController {
     private final RegisterService registerService;
     private final UserValidator validator;

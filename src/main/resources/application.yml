@@ -8,9 +8,4 @@ spring:
   liquibase:
     change-log: /db/changelog/changelog-master.yml
 
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-  packagesToScan: kg.rakhim.classes.controller
+

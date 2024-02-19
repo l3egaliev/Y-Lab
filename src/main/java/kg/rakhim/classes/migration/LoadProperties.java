@@ -1,4 +1,4 @@
-package kg.rakhim.classes.dao.migration;
+package kg.rakhim.classes.migration;
 
 import java.io.IOException;
 import java.io.InputStream;

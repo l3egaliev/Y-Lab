@@ -20,7 +20,7 @@
         <pSql.version>42.7.1</pSql.version>
         <liquibase.version>4.25.1</liquibase.version>
         <testContainers.version>1.19.4</testContainers.version>
-        <jakarta.servlet.verion>6.1.0-M1</jakarta.servlet.verion>
+        <jakarta.servlet.verion>6.0.0</jakarta.servlet.verion>
         <jackson.version>2.16.1</jackson.version>
         <jakarta.validation.version>3.1.0-M1</jakarta.validation.version>
         <hibernate.validator>8.0.1.Final</hibernate.validator>
@@ -30,10 +30,16 @@
         <aspectj.version>1.9.20.1</aspectj.version>
         <jakarta.el-api.version>6.0.0-M2</jakarta.el-api.version>
         <tomcat-el-api.version>11.0.0-M16</tomcat-el-api.version>
-        <spring.verison>6.1.3</spring.verison>
-<!--        <swagger.version>2.9.2</swagger.version>-->
+        <spring.verison>5.3.20</spring.verison>
+        <swagger.version>2.9.2</swagger.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -189,19 +195,20 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.7.0</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>3.0.0</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>swagger-ui</artifactId>
-            <version>5.10.3</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

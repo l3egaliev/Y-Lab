@@ -1,16 +1,13 @@
 package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
-import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

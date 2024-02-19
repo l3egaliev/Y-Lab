@@ -3,4 +3,15 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>
+            org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+        </param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>kg.rakhim.classes.config.SwaggerConfig</param-value>
+    </context-param>
 </web-app>
