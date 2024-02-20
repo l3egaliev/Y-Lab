@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,15 +81,21 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
 
     public List<MeterReading> getByUser(String username) {
         String sql = "select id, reading_value from entities.meter_readings where user_id=?";
-        User user = userDAO.getUser(username).get();
-        List<MeterReading> result = jdbcTemplate.query(sql, new Object[]{user.getId()},
-                new BeanPropertyRowMapper<>(MeterReading.class));
-        for (MeterReading m : result){
-            m.setMeterType(meterTypeByReadingId(m.getId()));
-            m.setUser(userByReadingId(m.getId()));
-            m.setDateTime(dateByReadingId(m.getId()));
+        User user;
+        List<MeterReading> res = new ArrayList<>();
+        if (userDAO.getUser(username).isPresent()){
+            user = userDAO.getUser(username).get();
+            List<MeterReading> req = jdbcTemplate.query(sql, new Object[]{user.getId()},
+                    new BeanPropertyRowMapper<>(MeterReading.class));
+            for (MeterReading m : req){
+                m.setMeterType(meterTypeByReadingId(m.getId()));
+                m.setUser(userByReadingId(m.getId()));
+                m.setDateTime(dateByReadingId(m.getId()));
+                res.add(m);
+            }
         }
-        return result;
+
+        return res;
     }
     private MeterType meterTypeByReadingId(int reading){
         String sql = "select meter_type from entities.meter_readings where id=?";

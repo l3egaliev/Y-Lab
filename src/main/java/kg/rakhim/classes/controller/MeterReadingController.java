@@ -1,5 +1,7 @@
 package kg.rakhim.classes.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.ReadingDTO;
 import kg.rakhim.classes.models.MeterReading;
@@ -17,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/readings")
+@Api(value = "/readings", tags = "Контроллер для действий обычных пользователей")
 public class MeterReadingController {
     private final MeterReadingService mService;
     private final ReadingValidator validator;
@@ -28,6 +31,12 @@ public class MeterReadingController {
     }
 
     @GetMapping("/actual")
+    @ApiOperation(
+            value = "Посмотреть показания текущего месяца",
+            httpMethod = "GET",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<List<MeterReading>> actualReadings(){
         if (mService.findActualReadings().isEmpty()){
             return ResponseEntity.noContent().build();
@@ -36,6 +45,12 @@ public class MeterReadingController {
     }
 
     @GetMapping()
+    @ApiOperation(
+            value = "Посмотреть показания за конкретный месяц или всю историю показаний",
+            httpMethod = "GET",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<List<MeterReading>> readings(@RequestParam(value = "month", required = false) Integer month){
         if (month == null){
             return ResponseEntity.ok().body(mService.allHistoryOfUser());
@@ -46,6 +61,12 @@ public class MeterReadingController {
     }
 
     @PostMapping
+    @ApiOperation(
+            value = "Отправить новое показание",
+            httpMethod = "POST",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<Map<String, Object>> addReading(@RequestBody @Valid ReadingDTO dto,
                                           BindingResult b) {
         MeterReading meterReading = ReadingMapper.convertFromDto(dto);

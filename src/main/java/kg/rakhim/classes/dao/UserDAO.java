@@ -74,12 +74,16 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     public Optional<User> getUser(String username){
         String sql = "SELECT * FROM entities.users WHERE username=?";
-        User user = jdbcTemplate.query(sql, new Object[]{username} ,new BeanPropertyRowMapper<>(User.class))
-                .stream().findAny().orElse(null);
-        user.setRole(role(Integer.parseInt(user.getRole())));
-        if (user == null){
+        if  (username == null || username.isEmpty()) {
             return Optional.empty();
         }
+        User user = jdbcTemplate.query(sql, new Object[]{username}, new BeanPropertyRowMapper<>(User.class))
+                .stream().findAny().orElse(null);
+        if(user == null){
+            return Optional.empty();
+        }
+        user.setRole(role(Integer.parseInt(user.getRole())));
+
         return Optional.of(user);
     }
 

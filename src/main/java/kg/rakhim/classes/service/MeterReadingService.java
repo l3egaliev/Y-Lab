@@ -44,6 +44,9 @@ public class MeterReadingService {
         return meterReadingDAO.getAll();
     }
     public List<MeterReading> findByUsername(String username){
+        if (meterReadingDAO.getByUser(username).isEmpty()){
+            return Collections.emptyList();
+        }
         return meterReadingDAO.getByUser(username);
     }
 

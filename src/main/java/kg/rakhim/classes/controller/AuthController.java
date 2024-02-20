@@ -1,6 +1,8 @@
 package kg.rakhim.classes.controller;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.models.User;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@Api(value = "/auth", tags = "Контроллер для Авторизации/Регистрации пользователей")
 public class AuthController {
     private final RegisterService registerService;
     private final UserValidator validator;
@@ -29,6 +32,12 @@ public class AuthController {
         this.validator = validator;
     }
     @PostMapping("/login")
+    @ApiOperation(
+            value = "Авторизация",
+            httpMethod = "POST",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<Map<String, Object>> login(@RequestBody @Valid AuthorizeDTO dto,
                                                      BindingResult b){
         User user = mapToUser.dtoToUser(dto);
@@ -43,6 +52,12 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
+    @ApiOperation(
+            value = "Регистрация",
+            httpMethod = "POST",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<Map<String, Object>> register(@RequestBody @Valid AuthorizeDTO dto,
                                                         BindingResult br){
         User user = mapToUser.dtoToUser(dto);

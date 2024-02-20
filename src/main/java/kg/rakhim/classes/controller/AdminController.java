@@ -1,5 +1,7 @@
 package kg.rakhim.classes.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.TypeDTO;
 import kg.rakhim.classes.models.MeterReading;
@@ -17,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
+@Api(value = "/admin", tags = "Контроллер для действий админа")
 public class AdminController {
     private final MeterTypesService typesService;
     private final AdminService adminService;
@@ -28,6 +31,12 @@ public class AdminController {
     }
 
     @PostMapping("/newType")
+    @ApiOperation(
+            value = "Добавить новый тип для счетчика",
+            httpMethod = "POST",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<Map<String, Object>> addType(@RequestBody @Valid TypeDTO dto,
                                                        BindingResult b){
         if (b.hasErrors()){
@@ -43,6 +52,12 @@ public class AdminController {
     }
 
     @GetMapping("/readings")
+    @ApiOperation(
+            value = "Получение показаний пользователей из БД",
+            httpMethod = "GET",
+            produces = "application/json",
+            response = ResponseEntity.class
+    )
     public ResponseEntity<List<MeterReading>> readings(@RequestParam(value = "month", required = false) Integer month,
                                                        @RequestParam(value = "username", required = false) String username){
         if ((username==null || username.isEmpty()) && month==null){
