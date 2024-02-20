@@ -7,10 +7,3 @@ spring:
     password: postgres
   liquibase:
     change-log: /db/changelog/changelog-master.yml
-#springdoc:
-#  api-docs:
-#    path: /swagger-ui
-#    enabled: true
-#    groups:
-#      enabled: true
-#  packages-to-scan: kg.rakhim.classes.controller

@@ -1,7 +1,6 @@
 package kg.rakhim.classes.controller;
 
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.models.User;
