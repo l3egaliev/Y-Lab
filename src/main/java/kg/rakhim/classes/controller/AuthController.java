@@ -1,6 +1,7 @@
 package kg.rakhim.classes.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.models.User;
@@ -28,13 +29,6 @@ public class AuthController {
         this.registerService = registerService;
         this.validator = validator;
     }
-
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test(){
-        return ResponseEntity.ok("Ok");
-    }
-
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody @Valid AuthorizeDTO dto,
                                                      BindingResult b){
