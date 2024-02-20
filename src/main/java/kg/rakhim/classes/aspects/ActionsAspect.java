@@ -6,17 +6,18 @@ import kg.rakhim.classes.service.AuditService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 
 @Aspect
 @Component
 public class ActionsAspect {
     private final AuditService auditService;
-    public ActionsAspect(AuditService auditService) {
+    private final UserContext userContext;
+    @Autowired
+    public ActionsAspect(AuditService auditService, UserContext userContext) {
         this.auditService = auditService;
+        this.userContext = userContext;
     }
     @AfterReturning(pointcut = "within(@kg.rakhim.classes.annotations.AuditableAction *) && execution(* * (..))")
     public void auditActionsCall(JoinPoint joinPoint) {
@@ -29,21 +30,21 @@ public class ActionsAspect {
         }else {
             auditService.save(new Audit(userName, action));
             System.out.println("Аудит успешно сохранен");
+            System.out.println(action);
         }
-        System.out.println(Arrays.toString(joinPoint.getArgs()));
     }
 
     private String getCurrentUserName() {
-        if (UserContext.getCurrentUser() == null || UserContext.getCurrentUser().getUsername() == null){
+        if (userContext.getCurrentUser() == null || userContext.getCurrentUser().getUsername() == null){
             return "";
         }
-        return UserContext.getCurrentUser().getUsername();
+        return userContext.getCurrentUser().getUsername();
     }
     private String getAction(String method){
-        if (UserContext.getCurrentUser() == null || UserContext.getCurrentUser().getAction() == null
-                || !UserContext.getCurrentUser().getAction().containsKey(method)){
+        if (userContext.getCurrentUser() == null || userContext.getCurrentUser().getAction() == null
+                || !userContext.getCurrentUser().getAction().containsKey(method)){
             return "";
         }
-        return UserContext.getCurrentUser().getAction().get(method);
+        return userContext.getCurrentUser().getAction().get(method);
     }
 }

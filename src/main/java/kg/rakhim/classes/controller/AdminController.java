@@ -3,7 +3,7 @@ package kg.rakhim.classes.controller;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.TypeDTO;
 import kg.rakhim.classes.models.MeterReading;
-import kg.rakhim.classes.service.MeterReadingService;
+import kg.rakhim.classes.service.AdminService;
 import kg.rakhim.classes.service.MeterTypesService;
 import kg.rakhim.classes.utils.ErrorSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,12 @@ import java.util.Map;
 @RequestMapping("/admin")
 public class AdminController {
     private final MeterTypesService typesService;
-    private final MeterReadingService mService;
+    private final AdminService adminService;
 
     @Autowired
-    public AdminController(MeterTypesService typesService, MeterReadingService mService) {
+    public AdminController(MeterTypesService typesService, AdminService adminService) {
         this.typesService = typesService;
-        this.mService = mService;
+        this.adminService = adminService;
     }
 
     @PostMapping("/newType")
@@ -46,13 +46,13 @@ public class AdminController {
     public ResponseEntity<List<MeterReading>> readings(@RequestParam(value = "month", required = false) Integer month,
                                                        @RequestParam(value = "username", required = false) String username){
         if ((username==null || username.isEmpty()) && month==null){
-            return ResponseEntity.ok(mService.actualReadingsOfAllUsers());
+            return ResponseEntity.ok(adminService.actualReadingsOfAllUsers());
         }else if(username == null || username.isEmpty()){
-            return ResponseEntity.ok(mService.readingsOfAllUsersForMonth(month));
+            return ResponseEntity.ok(adminService.readingsOfAllUsersForMonth(month));
         }else if(month == null){
-           return ResponseEntity.ok(mService.historyOfUserReadings(username));
+           return ResponseEntity.ok(adminService.historyOfUserReadings(username));
         } else {
-            return ResponseEntity.ok(mService.readingsOfOneUserForMonth(username, month));
+            return ResponseEntity.ok(adminService.readingsOfOneUserForMonth(username, month));
         }
     }
 }

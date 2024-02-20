@@ -30,7 +30,7 @@
         <aspectj.version>1.9.20.1</aspectj.version>
         <jakarta.el-api.version>6.0.0-M2</jakarta.el-api.version>
         <tomcat-el-api.version>11.0.0-M16</tomcat-el-api.version>
-        <spring.verison>5.3.20</spring.verison>
+        <spring.verison>6.0.0</spring.verison>
         <swagger.version>2.9.2</swagger.version>
     </properties>
     <dependencies>

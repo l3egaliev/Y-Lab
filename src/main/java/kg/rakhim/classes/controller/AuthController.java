@@ -1,7 +1,6 @@
 package kg.rakhim.classes.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Tag;
+
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.AuthorizeDTO;
 import kg.rakhim.classes.models.User;
@@ -13,17 +12,13 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@Api
 public class AuthController {
     private final RegisterService registerService;
     private final UserValidator validator;
@@ -32,6 +27,12 @@ public class AuthController {
     public AuthController(RegisterService registerService, UserValidator validator) {
         this.registerService = registerService;
         this.validator = validator;
+    }
+
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test(){
+        return ResponseEntity.ok("Ok");
     }
 
     @PostMapping("/login")

@@ -15,10 +15,12 @@ import org.springframework.stereotype.Component;
 public class AuditAuthorizationAspect {
 
     private final AuditService auditService;
+    private final UserContext userContext;
 
     @Autowired
-    public AuditAuthorizationAspect(AuditService auditService) {
+    public AuditAuthorizationAspect(AuditService auditService, UserContext userContext) {
         this.auditService = auditService;
+        this.userContext = userContext;
     }
 
     @Pointcut("@within(kg.rakhim.classes.annotations.AuditableForAuth) && execution(* *(..))")
@@ -41,17 +43,17 @@ public class AuditAuthorizationAspect {
     }
 
     private String getCurrentUserName() {
-        if (UserContext.getCurrentUser() == null || UserContext.getCurrentUser().getUsername() == null) {
+        if (userContext.getCurrentUser() == null || userContext.getCurrentUser().getUsername() == null) {
             return "";
         }
-        return UserContext.getCurrentUser().getUsername();
+        return userContext.getCurrentUser().getUsername();
     }
 
     private String getAction(String method) {
-        if (UserContext.getCurrentUser() == null || UserContext.getCurrentUser().getAction() == null
-                || !UserContext.getCurrentUser().getAction().containsKey(method)) {
+        if (userContext.getCurrentUser() == null || userContext.getCurrentUser().getAction() == null
+                || !userContext.getCurrentUser().getAction().containsKey(method)) {
             return "";
         }
-        return UserContext.getCurrentUser().getAction().get(method);
+        return userContext.getCurrentUser().getAction().get(method);
     }
 }
