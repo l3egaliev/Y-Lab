@@ -4,7 +4,6 @@ import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.models.Audit;
 import kg.rakhim.classes.repository.AuditRepository;
-import kg.rakhim.classes.repository.impl.AuditRepositoryImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
