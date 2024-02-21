@@ -85,11 +85,11 @@ public class MeterReadingService {
         UserDetails userDetails = userContext.getCurrentUser();
         userDetails.setAction(Map.of("findForMonth", "Просмотр показаний за указанный месяц"));
         List<MeterReading> res = new ArrayList<>();
-        for (MeterReading m : meterReadingDAO.getByUser(userDetails.getUsername())){
+        meterReadingDAO.getByUser(userDetails.getUsername()).forEach(m -> {
             if (m.getDateTime().getMonthValue() == month){
                 res.add(m);
             }
-        }
+        });
         return res;
     }
 }

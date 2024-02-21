@@ -1,8 +1,12 @@
 package kg.rakhim.classes.context;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 import java.util.Map;
-
+@Setter
+@Getter
 public class UserDetails {
     private String username;
     private Map<String, String> actions = new HashMap<>();
@@ -17,14 +21,6 @@ public class UserDetails {
     public UserDetails(String username, Map<String, String> actions) {
         this.username = username;
         this.actions = actions;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public Map<String, String> getAction() {

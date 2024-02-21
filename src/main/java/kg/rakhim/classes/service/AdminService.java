@@ -38,30 +38,30 @@ public class AdminService {
         return Collections.emptyList();
     }
 
-    public List<MeterReading> readingsOfOneUserForMonth(String username, int month){
+    public List<MeterReading> readingsOfOneUserForMonth(String username, Integer month){
         UserDetails userDetails = userContext.getCurrentUser();
         List<MeterReading> result = new ArrayList<>();
         if (userService.isAdmin(userDetails.getUsername())){
-            for (MeterReading m : meterReadingService.findByUsername(username)){
-                if (m.getDateTime().getMonthValue() == month){
-                    result.add(m);
+            meterReadingService.findByUsername(username).forEach(v -> {
+                if (v.getDateTime().getMonthValue() == month){
+                    result.add(v);
                 }
-            }
+            });
         }
         userDetails.setAction(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
                 "пользователя за указанный месяц"));
         return result;
     }
 
-    public List<MeterReading> readingsOfAllUsersForMonth(int month){
+    public List<MeterReading> readingsOfAllUsersForMonth(Integer month){
         UserDetails userDetails = userContext.getCurrentUser();
         List<MeterReading> result = new ArrayList<>();
         if (userService.isAdmin(userDetails.getUsername())) {
-            for (MeterReading m : meterReadingService.findAll()) {
-                if (m.getDateTime().getMonthValue() == month) {
-                    result.add(m);
+            meterReadingService.findAll().forEach(v -> {
+                if(v.getDateTime().getMonthValue() == month){
+                    result.add(v);
                 }
-            }
+            });
         }
         userDetails.setAction(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
                 " пользователей за указанный месяц"));
@@ -72,11 +72,11 @@ public class AdminService {
         UserDetails userDetails = userContext.getCurrentUser();
         List<MeterReading> result = new ArrayList<>();
         if (userService.isAdmin(userDetails.getUsername())) {
-            for (MeterReading m : meterReadingService.findAll()) {
-                if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
-                    result.add(m);
+            meterReadingService.findAll().forEach(v -> {
+                if (v.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
+                    result.add(v);
                 }
-            }
+            });
         }
         userDetails.setAction(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
                 "показаний всех пользователей"));
