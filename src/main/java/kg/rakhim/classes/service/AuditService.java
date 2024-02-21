@@ -3,15 +3,11 @@ package kg.rakhim.classes.service;
 import kg.rakhim.classes.annotations.Loggable;
 import kg.rakhim.classes.dao.AuditDAO;
 import kg.rakhim.classes.models.Audit;
-import kg.rakhim.classes.repository.AuditRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Сервис для работы с аудитом, реализующий интерфейс {@link AuditRepository}.
- */
 @Loggable
 @Service
 public class AuditService {
