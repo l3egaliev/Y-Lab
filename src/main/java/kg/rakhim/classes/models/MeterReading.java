@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 public class MeterReading {
     private Integer id;
     private User user;
-    private int value;
+    private int readingValue;
     private MeterType meterType;
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
 
-    public MeterReading(User user, int value, MeterType meterType){
+    public MeterReading(User user, int readingValue, MeterType meterType){
         this.user = user;
-        this.value = value;
+        this.readingValue = readingValue;
         this.meterType = meterType;
     }
 
@@ -51,12 +51,12 @@ public class MeterReading {
         this.user = user;
     }
 
-    public int getValue() {
-        return value;
+    public int getReadingValue() {
+        return readingValue;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setReadingValue(int readingValue) {
+        this.readingValue = readingValue;
     }
 
     public MeterType getMeterType() {
@@ -67,12 +67,12 @@ public class MeterReading {
         this.meterType = meterType;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     /**
@@ -84,9 +84,9 @@ public class MeterReading {
     public String toString() {
         return "{" +
                 "Пользователь = " + user +
-                ", значение = " + value +
+                ", значение = " + readingValue +
                 ", тип показания = " + meterType +
-                ", дата подачи = " + date +
+                ", дата подачи = " + dateTime +
                 "}";
     }
 }

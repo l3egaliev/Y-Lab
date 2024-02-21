@@ -1,8 +1,8 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.Loggable;
+import kg.rakhim.classes.dao.UserDAO;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,17 +11,17 @@ import java.util.Optional;
  * Сервисный класс для работы с пользователями.
  * Реализует интерфейс UserRepository.
  */
-@Loggable
+@Service
 public class UserService  {
-    private final UserRepositoryImpl userRepository;
+    private final UserDAO userDAO;
 
     /**
      * Конструктор для создания экземпляра класса UserService.
      *
-     * @param userRepository объект класса UserRepository для взаимодействия с данными о пользователях
+     * @param userDAO объект класса UserRepository для взаимодействия с данными о пользователях
      */
-    public UserService(UserRepositoryImpl userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     /**
@@ -31,7 +31,7 @@ public class UserService  {
      * @return объект Optional, содержащий пользователя, если он найден; пустой объект, если пользователь не найден
      */
     public Optional<User> findById(int id) {
-        return userRepository.findById(id);
+        return userDAO.get(id);
     }
 
     /**
@@ -41,7 +41,7 @@ public class UserService  {
      * @return объект User, соответствующий переданному имени пользователя
      */
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userDAO.getUser(username);
     }
 
     /**
@@ -50,7 +50,7 @@ public class UserService  {
      * @return список объектов User, представляющих всех пользователей в системе
      */
     public List<User> findAll() {
-        return userRepository.findAll();
+        return userDAO.getAll();
     }
 
     /**
@@ -60,7 +60,8 @@ public class UserService  {
      * @return true, если пользователь имеет роль ADMIN; false в противном случае
      */
     public boolean isAdmin(String username) {
-        return userRepository.isAdmin(username);
+        Optional<User> user = userDAO.getUser(username);
+        return user.map(value -> value.getRole().equals("ADMIN")).orElse(false);
     }
 
     /**
@@ -70,16 +71,6 @@ public class UserService  {
      */
     public void save(User user) {
         user.setRole("USER");
-        userRepository.save(user);
-    }
-
-    /**
-     * Возвращает идентификатор пользователя.
-     *
-     * @param user объект User
-     * @return идентификатор пользователя
-     */
-    public int getUserId(User user) {
-        return userRepository.findByUsername(user.getUsername()).get().getId();
+        userDAO.save(user);
     }
 }

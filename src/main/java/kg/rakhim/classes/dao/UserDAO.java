@@ -1,32 +1,28 @@
 package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
-import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.User;
-import kg.rakhim.classes.models.UserRole;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Класс для работы с пользователями в базе данных.
  */
-@NoArgsConstructor
+@Component
 public class UserDAO implements BaseDAO<User, Integer> {
 
-    /**
-     * Соединение с базой данных.
-     */
-    private final Connection connection = ConnectionLoader.getConnection();
-    private String jdbcUrl;
-    private String username;
-    private String password;
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public UserDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     /**
      * Получение пользователя по его идентификатору.
      *
@@ -35,23 +31,13 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     @Override
     public Optional<User> get(int id) {
-        String sql = "SELECT * FROM entities.users WHERE id=?";
-        PreparedStatement p = null;
-        User user = new User();
-        try {
-            p = connection.prepareStatement(sql);
-            p.setInt(1, id);
-            ResultSet resultSet = p.executeQuery();
-            while (resultSet.next()){
-                user.setId(resultSet.getInt("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setPassword(resultSet.getString("password"));
-                user.setRole(getRole(resultSet.getInt("role")).getRole());
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        User result = jdbcTemplate.query("SELECT * from entities.users where id = ?",
+                        new Object[]{id} ,new BeanPropertyRowMapper<>(User.class))
+                .stream().findAny().orElse(null);
+        if (result == null){
+            return Optional.empty();
         }
-        return Optional.of(user);
+        return Optional.of(result);
     }
 
     /**
@@ -61,23 +47,12 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     @Override
     public List<User> getAll() {
-        List<User> res = new ArrayList<>();
-        PreparedStatement p = null;
-        try {
-            p = connection.prepareStatement("SELECT * FROM entities.users");
-            ResultSet resultSet = p.executeQuery();
-            while (resultSet.next()){
-                User user = new User();
-                user.setId(resultSet.getInt("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setRole(getRole(resultSet.getInt("role")).getRole());
-                user.setPassword(resultSet.getString("password"));
-                res.add(user);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<User> users = jdbcTemplate.query("Select * from entities.users",
+                new BeanPropertyRowMapper<>(User.class));
+        for (User u : users){
+            u.setRole(role(Integer.parseInt(u.getRole())));
         }
-        return res;
+        return users;
     }
 
     /**
@@ -87,20 +62,8 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     @Override
     public void save(User user) {
-        PreparedStatement p = null;
-        try{
-            p = connection.prepareStatement("INSERT INTO entities.users(username, password, role) VALUES (?,?,?)");
-            p.setString(1,user.getUsername());
-            p.setString(2, user.getPassword());
-            if (user.getRole().equals("ADMIN")){
-                p.setInt(3, 1);
-            }else{
-                p.setInt(3, 2);
-            }
-            p.executeUpdate();
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+        jdbcTemplate.update("INSERT INTO entities.users(username, password, role) VALUES (?, ?, ?)",
+                user.getUsername(), user.getPassword(), roleId(user.getRole()));
     }
 
     /**
@@ -111,87 +74,33 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     public Optional<User> getUser(String username){
         String sql = "SELECT * FROM entities.users WHERE username=?";
-        PreparedStatement p = null;
-        User user = new User();
-        try {
-            p = connection.prepareStatement(sql);
-            p.setString(1, username);
-            ResultSet r = p.executeQuery();
-            while (r.next()){
-                user.setId(r.getInt("id"));
-                user.setUsername(r.getString("username"));
-                user.setPassword(r.getString("password"));
-                user.setRole(getRole(r.getInt("role")).getRole());
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (user.getUsername() == null){
+        if  (username == null || username.isEmpty()) {
             return Optional.empty();
         }
+        User user = jdbcTemplate.query(sql, new Object[]{username}, new BeanPropertyRowMapper<>(User.class))
+                .stream().findAny().orElse(null);
+        if(user == null){
+            return Optional.empty();
+        }
+        user.setRole(role(Integer.parseInt(user.getRole())));
+
         return Optional.of(user);
     }
 
     /**
      * Получение идентификатора пользователя по его имени.
      *
-     * @param username имя пользователя
      * @return идентификатор пользователя
      */
-    public Integer userId(String username){
-        try{
-            PreparedStatement p = connection.prepareStatement("SELECT id FROM entities.users WHERE username = ?");
-            p.setString(1, username);
-            ResultSet resultSet = p.executeQuery();
-            while(resultSet.next()){
-                return resultSet.getInt("id");
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
+    public Integer userId(String user){
+        return jdbcTemplate.queryForObject("SELECT id FROM entities.users WHERE username = ?", Integer.class, user);
     }
-
-    /**
-     * Получение роли пользователя по её идентификатору.
-     *
-     * @param role_id идентификатор роли
-     * @return объект UserRole
-     * @throws SQLException если возникает ошибка при выполнении SQL-запроса
-     */
-    private UserRole getRole(int role_id) throws SQLException {
-        UserRole userRole = new UserRole();
-        PreparedStatement p = connection.prepareStatement("SELECT * FROM entities.users_role WHERE role_id = ?");
-        p.setInt(1,role_id);
-        ResultSet resultSet = p.executeQuery();
-        while (resultSet.next()){
-            userRole.setRole(resultSet.getString("role"));
-            userRole.setId(resultSet.getInt("role_id"));
-        }
-        return userRole;
+    private Integer roleId(String role){
+        String sql = "select role_id from entities.users_role where role=?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, role);
     }
-
-    public String getJdbcUrl() {
-        return jdbcUrl;
-    }
-
-    public void setJdbcUrl(String jdbcUrl) {
-        this.jdbcUrl = jdbcUrl;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    private String role(int role){
+        String sql = "select role from entities.users_role where role_id=?";
+        return jdbcTemplate.queryForObject(sql, String.class, role);
     }
 }

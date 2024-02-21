@@ -1,19 +1,22 @@
 package kg.rakhim.classes.context;
 
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.atomic.AtomicReference;
 
+@Component
 public class UserContext {
-    private static final AtomicReference<UserDetails> currentUser = new AtomicReference<>();
+    private final AtomicReference<UserDetails> currentUser = new AtomicReference<>();
 
-    public static void setCurrentUser(UserDetails userDetails) {
+    public void setCurrentUser(UserDetails userDetails) {
         currentUser.set(userDetails);
     }
 
-    public static UserDetails getCurrentUser() {
+    public UserDetails getCurrentUser() {
         return currentUser.get();
     }
 
-    public static void clear() {
+    public void clear() {
         currentUser.set(null);
     }
 }

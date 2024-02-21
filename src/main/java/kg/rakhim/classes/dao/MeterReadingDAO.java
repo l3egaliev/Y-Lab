@@ -1,14 +1,17 @@
 package kg.rakhim.classes.dao;
 
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
-import kg.rakhim.classes.dao.migration.ConnectionLoader;
 import kg.rakhim.classes.models.MeterReading;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import kg.rakhim.classes.models.MeterType;
+import kg.rakhim.classes.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,21 +19,19 @@ import java.util.Optional;
 /**
  * Класс для взаимодействия с таблицей показаний счетчиков в базе данных.
  */
-@NoArgsConstructor
+@Component
 public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
-    @Getter
-    @Setter
-    private String jdbcUrl;
-    @Getter
-    @Setter
-    private String username;
-    @Getter
-    @Setter
-    private String password;
+    private final JdbcTemplate jdbcTemplate;
+    private final UserDAO userDAO;
+    private final MeterTypesDAO meterTypesDAO;
 
-    private final Connection connection = ConnectionLoader.getConnection();
-    private final UserDAO userDAO = new UserDAO();
-    private final MeterTypesDAO meterTypesDAO = new MeterTypesDAO();
+    @Autowired
+    public MeterReadingDAO(JdbcTemplate jdbcTemplate, UserDAO userDAO, MeterTypesDAO meterTypesDAO) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.userDAO = userDAO;
+        this.meterTypesDAO = meterTypesDAO;
+    }
+
     /**
      * Получает показания счетчика по заданному идентификатору.
      *
@@ -40,19 +41,12 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     @Override
     public Optional<MeterReading> get(int id) {
         String sql = "select * from entities.meter_readings where id = ?";
-        try (PreparedStatement p = connection.prepareStatement(sql)) {
-            p.setInt(1, id);
-            try (ResultSet r = p.executeQuery()) {
-                MeterReading meterReading = new MeterReading();
-                while (r.next()) {
-                    readingFromSql(r, meterReading);
-                }
-                return Optional.of(meterReading);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        MeterReading res = jdbcTemplate.query(sql, new Object[]{id},
+                new BeanPropertyRowMapper<>(MeterReading.class)).stream().findAny().orElse(null);
+        if (res == null) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        return Optional.of(res);
     }
 
     /**
@@ -62,20 +56,15 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
      */
     @Override
     public List<MeterReading> getAll() {
-        List<MeterReading> readings = new ArrayList<>();
-        try (PreparedStatement p = connection.prepareStatement("select * from entities.meter_readings");
-             ResultSet resultSet = p.executeQuery()) {
-            while (resultSet.next()) {
-                MeterReading meterReading = new MeterReading();
-                readingFromSql(resultSet, meterReading);
-                readings.add(meterReading);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        String sql = "select id, reading_value from entities.meter_readings";
+        List<MeterReading> meterReadings =  jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(MeterReading.class));
+        for (MeterReading m : meterReadings){
+            m.setUser(userByReadingId(m.getId()));
+            m.setMeterType(meterTypeByReadingId(m.getId()));
+            m.setDateTime(dateByReadingId(m.getId()));
         }
-        return readings;
+        return meterReadings;
     }
-
     /**
      * Сохраняет показания счетчика в базе данных.
      *
@@ -83,47 +72,47 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
      */
     @Override
     public void save(MeterReading meterReading) {
-        String sql = "INSERT INTO entities.meter_readings(meter_type, user_id, value, date_time) VALUES (?,?,?,?)";
-        try (PreparedStatement p = connection.prepareStatement(sql)) {
-            p.setInt(1, meterTypesDAO.typeId(meterReading.getMeterType()));
-            p.setInt(2, userDAO.userId(meterReading.getUser().getUsername()));
-            p.setInt(3, meterReading.getValue());
-            p.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
-            p.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Заполняет объект показаний счетчика данными из ResultSet.
-     *
-     * @param resultSet    ResultSet с данными из базы данных
-     * @param meterReading объект показаний счетчика
-     * @throws SQLException если возникает ошибка при доступе к данным ResultSet
-     */
-    private void readingFromSql(ResultSet resultSet, MeterReading meterReading) throws SQLException {
-        meterReading.setMeterType(meterTypesDAO.get(resultSet.getInt("meter_type")).get());
-        meterReading.setId(resultSet.getInt("id"));
-        meterReading.setDate(resultSet.getTimestamp("date_time").toLocalDateTime());
-        meterReading.setValue(resultSet.getInt("value"));
-        meterReading.setUser(userDAO.get(resultSet.getInt("user_id")).get());
+        String sql = "INSERT INTO entities.meter_readings(meter_type, user_id, reading_value, date_time) VALUES (?,?,?,?)";
+        jdbcTemplate.update(sql, meterTypesDAO.typeId(meterReading.getMeterType()),
+                userDAO.userId(meterReading.getUser().getUsername()),
+                meterReading.getReadingValue(), Timestamp.valueOf(LocalDateTime.now()));
+        System.out.println(meterTypesDAO.typeId(meterReading.getMeterType()));
     }
 
     public List<MeterReading> getByUser(String username) {
-        List<MeterReading> readings = new ArrayList<>();
-        try {
-            PreparedStatement p = connection.prepareStatement("select * from entities.meter_readings where user_id=?");
-             p.setInt(1,userDAO.userId(username));
-             ResultSet resultSet = p.executeQuery();
-            while (resultSet.next()) {
-                MeterReading meterReading = new MeterReading();
-                readingFromSql(resultSet, meterReading);
-                readings.add(meterReading);
+        String sql = "select id, reading_value from entities.meter_readings where user_id=?";
+        User user;
+        List<MeterReading> res = new ArrayList<>();
+        if (userDAO.getUser(username).isPresent()){
+            user = userDAO.getUser(username).get();
+            List<MeterReading> req = jdbcTemplate.query(sql, new Object[]{user.getId()},
+                    new BeanPropertyRowMapper<>(MeterReading.class));
+            for (MeterReading m : req){
+                m.setMeterType(meterTypeByReadingId(m.getId()));
+                m.setUser(userByReadingId(m.getId()));
+                m.setDateTime(dateByReadingId(m.getId()));
+                res.add(m);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return readings;
+
+        return res;
+    }
+    private MeterType meterTypeByReadingId(int reading){
+        String sql = "select meter_type from entities.meter_readings where id=?";
+        Integer typeId = jdbcTemplate.queryForObject(sql, Integer.class, reading);
+        Optional<MeterType> type = meterTypesDAO.get(typeId);
+        return type.orElse(null);
+    }
+    private User userByReadingId(int reading){
+        String sql = "select user_id from entities.meter_readings where id=?";
+        Integer typeId = jdbcTemplate.queryForObject(sql, Integer.class, reading);
+        Optional<User> type = userDAO.get(typeId);
+        return type.orElse(null);
+    }
+    private LocalDateTime dateByReadingId(int reading){
+        String sql = "select date_time from entities.meter_readings where id = ?";
+        Timestamp date = jdbcTemplate.queryForObject(sql, Timestamp.class, reading);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        return localDateTime;
     }
 }

@@ -1,25 +1,27 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.context.ApplicationContext;
 import kg.rakhim.classes.dao.interfaces.BaseDAO;
-import kg.rakhim.classes.dao.migration.ConnectionLoader;
-import kg.rakhim.classes.dao.migration.LoadProperties;
 import kg.rakhim.classes.models.Audit;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
-import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Класс для взаимодействия с таблицей аудита в базе данных.
  */
+@Component
 public class AuditDAO implements BaseDAO<Audit, Integer> {
-    private final Connection connection = ConnectionLoader.getConnection();
-    private final UserDAO userDAO = (UserDAO) ApplicationContext.getContext("userDAO");
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public AuditDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     /**
      * Получает аудит по заданному идентификатору.
@@ -30,22 +32,11 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
     @Override
     public Optional<Audit> get(int id) {
         String sql = "select * from entities.audits where id=?";
-        try (PreparedStatement p = connection.prepareStatement(sql)) {
-            p.setInt(1, id);
-            try (ResultSet resultSet = p.executeQuery()) {
-                if (resultSet.next()) {
-                    Audit audit = new Audit();
-                    audit.setId(resultSet.getInt("id"));
-                    audit.setAction(resultSet.getString("action"));
-                    audit.setUsername(resultSet.getString("username"));
-                    audit.setTime(resultSet.getTimestamp("time"));
-                    return Optional.of(audit);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        Audit audit = jdbcTemplate.queryForObject(sql, Audit.class, id);
+        if (audit == null){
+            return Optional.empty();
         }
-        return Optional.empty();
+        return Optional.of(audit);
     }
 
     /**
@@ -55,21 +46,8 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
      */
     @Override
     public List<Audit> getAll() {
-        List<Audit> res = new ArrayList<>();
-        try (PreparedStatement p = connection.prepareStatement("select * from entities.audits");
-             ResultSet resultSet = p.executeQuery()) {
-            while (resultSet.next()) {
-                Audit audit = new Audit();
-                audit.setId(resultSet.getInt("id"));
-                audit.setAction(resultSet.getString("action"));
-                audit.setUsername(resultSet.getString("username"));
-                audit.setTime(resultSet.getTimestamp("time"));
-                res.add(audit);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
+        String sql = "select * from entities.audits";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Audit.class));
     }
 
     /**
@@ -79,13 +57,7 @@ public class AuditDAO implements BaseDAO<Audit, Integer> {
      */
     @Override
     public void save(Audit audit) {
-        try (PreparedStatement p = connection.prepareStatement("INSERT INTO entities.audits(username, action, time) VALUES (?,?,?)")) {
-            p.setString(1, audit.getUsername());
-            p.setString(2, audit.getAction());
-            p.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-            p.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        String sql = "INSERT INTO entities.audits(username, action, time) VALUES (?,?,?)";
+        jdbcTemplate.update(sql, audit.getUsername(), audit.getAction(), LocalDateTime.now());
     }
 }

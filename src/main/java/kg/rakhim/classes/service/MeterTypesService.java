@@ -1,60 +1,68 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.Loggable;
+import kg.rakhim.classes.annotations.AuditableAction;
+import kg.rakhim.classes.context.UserContext;
+import kg.rakhim.classes.dao.MeterTypesDAO;
 import kg.rakhim.classes.models.MeterType;
-import kg.rakhim.classes.repository.impl.MeterTypeRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * Сервис для работы с типами счетчиков.
  */
-@Loggable
+@Service
+@AuditableAction
 public class MeterTypesService {
-    private final MeterTypeRepositoryImpl meterTypesRepository;
-
+    private final MeterTypesDAO meterTypesDAO;
+    private final UserService userService;
+    private final UserContext userContext;
     /**
      * Создает экземпляр класса MeterTypesService с указанным DAO для типов счетчиков.
      *
-     * @param meterTypesRepository Repository для работы с данными о типах счетчиков
+     * @param meterTypesDAO Repository для работы с данными о типах счетчиков
      */
-    public MeterTypesService(MeterTypeRepositoryImpl meterTypesRepository) {
-        this.meterTypesRepository = meterTypesRepository;
+    @Autowired
+    public MeterTypesService(MeterTypesDAO meterTypesDAO, UserService userService, UserContext userContext) {
+        this.meterTypesDAO = meterTypesDAO;
+        this.userService = userService;
+        this.userContext = userContext;
     }
     public Optional<MeterType> findById(int id) {
-        return meterTypesRepository.findById(id);
+        return meterTypesDAO.get(id);
     }
 
     public List<MeterType> findAll() {
-        return meterTypesRepository.findAll();
+        return meterTypesDAO.getAll();
     }
 
     public void save(MeterType type) {
-        meterTypesRepository.save(type);
+        meterTypesDAO.save(type);
     }
 
     /**
      * Сохраняет новый тип счетчика.
      *
      * @param newType новый тип счетчика
-     * @return 1, если тип успешно сохранен; 0, если тип уже существует
+     * @param err     Ошибки для ответа
+     * @return true, если тип успешно сохранен; false, если тип уже существует или user'а нет прав
      */
-    public boolean saveType(String newType) {
-        if (!newType.isEmpty()) {
-            if (meterTypesRepository.isExists(newType)) {
-                return false;
-            } else {
-                save(new MeterType(newType));
-                return  true;
-            }
+    public boolean saveType(String newType, List<String> err) {
+        if (isExistsType(newType)) {
+            err.add("Такой тип уже существует");
+            return false;
+        }else if (userService.isAdmin(userContext.getCurrentUser().getUsername())){
+            save(new MeterType(newType));
+            userContext.getCurrentUser().setAction(Map.of("saveType", "Добавление нового счетчика"));
+            return true;
         }
+        err.add("У вас нет прав для добавления счетчика");
         return false;
     }
     public boolean isExistsType(String type){
-        return meterTypesRepository.isExists(type);
-    }
-    public Integer getTypeId(MeterType type){
-        return meterTypesRepository.getTypeId(type);
+        return meterTypesDAO.isExists(type);
     }
 }

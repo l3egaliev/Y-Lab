@@ -1,10 +1,11 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.repository.impl.UserRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceTest {
     private UserService service;
+    @Mock
     private UserDAO mockUserDAO;
 
     @Container
@@ -34,17 +36,8 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp(){
-        String jdbcUrl = postgresContainer.getJdbcUrl();
-        String username = postgresContainer.getUsername();
-        String password = postgresContainer.getPassword();
-
-        // Создаем mockUserDAO и передаем подключение к контейнеру PostgreSQL
-        mockUserDAO = mock(UserDAO.class);
-        when(mockUserDAO.getJdbcUrl()).thenReturn(jdbcUrl);
-        when(mockUserDAO.getUsername()).thenReturn(username);
-        when(mockUserDAO.getPassword()).thenReturn(password);
-
-        service = new UserService(new UserRepositoryImpl(mockUserDAO));
+        MockitoAnnotations.openMocks(this);
+        service = new UserService(mockUserDAO);
     }
 
     @DisplayName("Testing method findByUsername()")
@@ -69,7 +62,7 @@ public class UserServiceTest {
 
         when(mockUserDAO.getAll()).thenReturn(expectedUsers);
 
-        UserService userService = new UserService(new UserRepositoryImpl(mockUserDAO));
+        UserService userService = new UserService(mockUserDAO);
         List<User> result = userService.findAll();
         assertThat(result).containsExactlyElementsOf(expectedUsers);
         verify(mockUserDAO, times(1)).getAll();
