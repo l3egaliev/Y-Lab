@@ -38,7 +38,7 @@
 2. https://github.com/l3egaliev/Y-Lab/pull/3 - HM2
 3. https://github.com/l3egaliev/Y-Lab/pull/4 - HM3
 4. https://github.com/l3egaliev/Y-Lab/pull/5 - HM4
-
+5. https://github.com/l3egaliev/Y-Lab/pull/6 - HM5
 ## Связь с разработчиком
 
 - [Рахим] - rahimbekabdumomunov@gmail.com
