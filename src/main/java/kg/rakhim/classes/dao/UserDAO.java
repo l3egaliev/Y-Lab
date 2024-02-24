@@ -1,6 +1,5 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

@@ -1,6 +1,5 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;

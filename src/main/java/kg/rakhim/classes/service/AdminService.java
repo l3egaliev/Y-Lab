@@ -1,12 +1,11 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.AuditableAction;
-import kg.rakhim.classes.annotations.Loggable;
-import kg.rakhim.classes.context.UserContext;
-import kg.rakhim.classes.context.UserDetails;
 import kg.rakhim.classes.models.MeterReading;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.auditable.annotations.EnableXXX;
+import ru.auditable.data.UserContext;
+import ru.auditable.data.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@AuditableAction
-@Loggable
+@EnableXXX
 public class AdminService {
     private final UserService userService;
     private final UserContext userContext;
@@ -31,10 +29,10 @@ public class AdminService {
 
     public List<MeterReading> historyOfUserReadings(String username){
         UserDetails userDetails = userContext.getCurrentUser();
-        userDetails.setAction(Map.of("historyOfUserReadings", "Просмотр всю историю показаний конкретного пользователя"));
         if (userService.isAdmin(userDetails.getUsername())) {
             return meterReadingService.findByUsername(username);
         }
+        userDetails.setActions(Map.of("historyOfUserReadings", "Просмотр всю историю показаний конкретного пользователя"));
         return Collections.emptyList();
     }
 
@@ -48,7 +46,7 @@ public class AdminService {
                 }
             });
         }
-        userDetails.setAction(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
+        userDetails.setActions(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
                 "пользователя за указанный месяц"));
         return result;
     }
@@ -63,7 +61,7 @@ public class AdminService {
                 }
             });
         }
-        userDetails.setAction(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
+        userDetails.setActions(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
                 " пользователей за указанный месяц"));
         return result;
     }
@@ -78,7 +76,7 @@ public class AdminService {
                 }
             });
         }
-        userDetails.setAction(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
+        userDetails.setActions(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
                 "показаний всех пользователей"));
         return result;
     }

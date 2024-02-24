@@ -1,11 +1,11 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.AuditableAction;
-import kg.rakhim.classes.context.UserContext;
+import ru.auditable.data.UserContext;
 import kg.rakhim.classes.dao.MeterTypesDAO;
 import kg.rakhim.classes.models.MeterType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.auditable.annotations.EnableXXX;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * Сервис для работы с типами счетчиков.
  */
 @Service
-@AuditableAction
+@EnableXXX
 public class MeterTypesService {
     private final MeterTypesDAO meterTypesDAO;
     private final UserService userService;
@@ -56,7 +56,7 @@ public class MeterTypesService {
             return false;
         }else if (userService.isAdmin(userContext.getCurrentUser().getUsername())){
             save(new MeterType(newType));
-            userContext.getCurrentUser().setAction(Map.of("saveType", "Добавление нового счетчика"));
+            userContext.getCurrentUser().setActions(Map.of("saveType", "Добавление нового счетчика"));
             return true;
         }
         err.add("У вас нет прав для добавления счетчика");

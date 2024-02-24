@@ -8,4 +8,6 @@ spring:
   liquibase:
     change-log: /db/changelog/changelog-master.yml
     enabled: false
-
+loggable:
+  starter:
+    enabled: true
