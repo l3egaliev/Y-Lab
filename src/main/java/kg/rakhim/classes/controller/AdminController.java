@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import kg.rakhim.classes.dto.ReadingResponseDTO;
 import kg.rakhim.classes.dto.TypeDTO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.service.AdminService;
@@ -67,7 +68,7 @@ public class AdminController {
     }
 
     public ResponseEntity<Map<String, Object>> actualReadings() {
-        List<MeterReading> res = adminService.actualReadingsOfAllUsers();
+        List<ReadingResponseDTO> res = adminService.actualReadingsOfAllUsers();
         if (res.isEmpty()) {
             return new ResponseEntity<>(Map.of("response", Collections.emptyList()), HttpStatus.NO_CONTENT);
         }
@@ -75,7 +76,7 @@ public class AdminController {
     }
 
     public ResponseEntity<Map<String, Object>> readingsForMonth(Integer month){
-        List<MeterReading> res = adminService.readingsOfAllUsersForMonth(month);
+        List<ReadingResponseDTO> res = adminService.readingsOfAllUsersForMonth(month);
         if (res.isEmpty()){
             return new ResponseEntity<>(Map.of("response", Collections.emptyList()), HttpStatus.NO_CONTENT);
         }
@@ -83,7 +84,7 @@ public class AdminController {
     }
 
     public ResponseEntity<Map<String, Object>> userHistoryReadings(String username){
-        List<MeterReading> res = adminService.historyOfUserReadings(username);
+        List<ReadingResponseDTO> res = adminService.historyOfUserReadings(username);
         if (res.isEmpty()){
             return new ResponseEntity<>(Map.of("response", Collections.emptyList()), HttpStatus.NO_CONTENT);
         }
@@ -91,7 +92,7 @@ public class AdminController {
     }
 
     public ResponseEntity<Map<String, Object>> userReadingsForMonth(String username, Integer month){
-        List<MeterReading> res = adminService.readingsOfOneUserForMonth(username, month);
+        List<ReadingResponseDTO> res = adminService.readingsOfOneUserForMonth(username, month);
         if (res.isEmpty()){
             return new ResponseEntity<>(Map.of("response", Collections.emptyList()), HttpStatus.NO_CONTENT);
         }

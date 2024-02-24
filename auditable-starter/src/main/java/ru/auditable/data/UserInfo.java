@@ -11,7 +11,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDetails {
+public class UserInfo {
     private String username;
     private Map<String, String> actions;
 }

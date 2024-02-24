@@ -104,8 +104,8 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     }
     private User userByReadingId(int reading){
         String sql = "select user_id from entities.meter_readings where id=?";
-        Integer typeId = jdbcTemplate.queryForObject(sql, Integer.class, reading);
-        Optional<User> type = userDAO.get(typeId);
+        Integer userId = jdbcTemplate.queryForObject(sql, Integer.class, reading);
+        Optional<User> type = userDAO.get(userId);
         return type.orElse(null);
     }
     private LocalDateTime dateByReadingId(int reading){

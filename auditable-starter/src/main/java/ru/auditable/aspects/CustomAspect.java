@@ -1,13 +1,10 @@
 package ru.auditable.aspects;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import ru.auditable.data.UserContext;
+import ru.auditable.data.UserData;
 import ru.auditable.model.Audit;
 import ru.auditable.service.AuditService;
 
@@ -15,9 +12,9 @@ import ru.auditable.service.AuditService;
 @Component
 public class CustomAspect {
     private final AuditService auditService;
-    private final UserContext context;
+    private final UserData context;
 
-    public CustomAspect(AuditService auditService, UserContext context) {
+    public CustomAspect(AuditService auditService, UserData context) {
         this.auditService = auditService;
         this.context = context;
     }

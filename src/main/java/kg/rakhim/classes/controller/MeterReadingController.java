@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.ReadingDTO;
+import kg.rakhim.classes.dto.ReadingResponseDTO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.service.MeterReadingService;
 import kg.rakhim.classes.utils.ErrorSender;
@@ -32,7 +33,7 @@ public class MeterReadingController {
 
     @GetMapping("/actual")
     @Operation(description = "Посмотреть показания текущего месяца")
-    public ResponseEntity<List<MeterReading>> actualReadings(){
+    public ResponseEntity<List<ReadingResponseDTO>> actualReadings(){
         if (mService.findActualReadings().isEmpty()){
             return ResponseEntity.noContent().build();
         }
@@ -41,7 +42,7 @@ public class MeterReadingController {
 
     @GetMapping()
     @Operation(description = "Посмотреть показания за конкретный месяц или всю историю показаний")
-    public ResponseEntity<List<MeterReading>> readings(@RequestParam(value = "month", required = false) Integer month){
+    public ResponseEntity<List<ReadingResponseDTO>> readings(@RequestParam(value = "month", required = false) Integer month){
         if (month == null){
             return ResponseEntity.ok().body(mService.allHistoryOfUser());
         }else if (mService.findForMonth(month).isEmpty()){

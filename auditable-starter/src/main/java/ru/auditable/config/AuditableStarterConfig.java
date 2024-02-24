@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import ru.auditable.dao.AuditDAO;
-import ru.auditable.data.UserContext;
-import ru.auditable.data.UserDetails;
+import ru.auditable.data.UserData;
+import ru.auditable.data.UserInfo;
 import ru.auditable.properties.DbProperties;
 import ru.auditable.service.AuditService;
 
@@ -57,13 +57,13 @@ public class AuditableStarterConfig {
     }
 
     @Bean
-    public UserContext userContext(){
-        return new UserContext();
+    public UserData userData(){
+        return new UserData();
     }
 
     @Bean
-    @ConditionalOnBean(name = "userContext")
-    public UserDetails userDetails(){
-        return new UserDetails();
+    @ConditionalOnBean(name = "userData")
+    public UserInfo userInfo(){
+        return new UserInfo();
     }
 }
