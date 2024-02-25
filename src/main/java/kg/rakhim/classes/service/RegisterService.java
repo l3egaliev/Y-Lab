@@ -35,7 +35,6 @@ public class RegisterService {
      * @param user объект User для регистрации
      */
     public void registerUser(User user) {
-        user.setRole("USER");
         userService.save(user);
         userData.setCurrentUser(new UserInfo(user.getUsername(),
                 Map.of("registerUser", "Регистрация")));

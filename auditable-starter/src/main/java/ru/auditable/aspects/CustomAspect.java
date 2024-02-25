@@ -1,7 +1,7 @@
 package ru.auditable.aspects;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import ru.auditable.data.UserData;
@@ -19,8 +19,8 @@ public class CustomAspect {
         this.context = context;
     }
 
-    @Around("within(@ru.auditable.annotations.EnableXXX *) && execution(* * (..))")
-    public Object enable(ProceedingJoinPoint joinPoint) throws Throwable {
+    @AfterReturning("within(@ru.auditable.annotations.EnableXXX *) && execution(* * (..))")
+    public void enable(JoinPoint joinPoint) {
         String method = joinPoint.getSignature().getName();
         String userName = getCurrentUserName();
         String action = getAction(method);
@@ -32,7 +32,6 @@ public class CustomAspect {
             System.out.println("Аудит успешно сохранен");
             System.out.println(action);
         }
-        return joinPoint.proceed();
     }
 
     private String getCurrentUserName() {

@@ -19,7 +19,6 @@ public class LoggableAspect {
         Object[] args = joinPoint.getArgs();
         Instant startTime = Instant.now();
         System.out.println("Method " + className + "." + methodName + " called with arguments: " + Arrays.toString(args));
-        System.out.println("Method " + className + "." + methodName + " returned: " + joinPoint.proceed());
         Instant endTime = Instant.now();
         Duration duration = Duration.between(startTime, endTime);
         System.out.println("Method "+className+"."+methodName+" executed in: "+duration.toMillis()+"ms");
