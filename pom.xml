@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.0</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,6 +20,10 @@
         <liquibase.version>4.25.1</liquibase.version>
         <mapStruct.version>1.5.5.FINAL</mapStruct.version>
         <openapi.starter.version>2.3.0</openapi.starter.version>
+        <testcontainers.version>1.19.4</testcontainers.version>
+        <spring.test.version>6.1.4</spring.test.version>
+        <auditable.version>0.0.1-SNAPSHOT</auditable.version>
+        <loggable.version>1.0.0</loggable.version>
     </properties>
     <dependencies>
         <dependency>
@@ -86,13 +90,13 @@
         <dependency>
             <groupId>ru.auditable</groupId>
             <artifactId>auditable-starter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${auditable.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ru.loggable</groupId>
             <artifactId>loggable-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
+            <version>${loggable.version}</version>
         </dependency>
 
         <dependency>
@@ -128,14 +132,27 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.19.4</version>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.4</version>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.test.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

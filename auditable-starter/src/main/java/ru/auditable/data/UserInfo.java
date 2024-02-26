@@ -14,4 +14,7 @@ import java.util.Map;
 public class UserInfo {
     private String username;
     private Map<String, String> actions;
+    public UserInfo(String username){
+        this.username = username;
+    }
 }

@@ -13,6 +13,7 @@ import kg.rakhim.classes.utils.MapToUser;
 import kg.rakhim.classes.utils.UserValidator;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class AuthController {
     private final RegisterService registerService;
     private final UserValidator validator;
     private final MapToUser mapToUser = Mappers.getMapper(MapToUser.class);
+
     @Autowired
     public AuthController(RegisterService registerService, UserValidator validator) {
         this.registerService = registerService;
@@ -44,7 +46,7 @@ public class AuthController {
         }else if(!result){
             return ResponseEntity.badRequest().body(Map.of("message", "Некорректные данные"));
         }
-        return ResponseEntity.ok(Map.of("message", "Вы успешно вошли в систему"));
+        return ResponseEntity.ok().body(Map.of("message", "Вы успешно вошли в систему"));
     }
 
     @PostMapping("/registration")
@@ -58,6 +60,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("message", errors));
         }
         registerService.registerUser(user);
-        return ResponseEntity.ok(Map.of("message", "Регистрация успешна"));
+        return ResponseEntity.ok().body(Map.of("message", "Регистрация успешна"));
     }
 }

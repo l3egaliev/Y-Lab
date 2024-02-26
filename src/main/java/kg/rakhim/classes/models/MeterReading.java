@@ -30,13 +30,19 @@ public class MeterReading {
     private User user;
     private int readingValue;
     private MeterType meterType;
-    @DateTimeFormat(pattern = "DD.MM.YYYY:hh.mm")
     private LocalDateTime dateTime;
 
     public MeterReading(User user, int readingValue, MeterType meterType){
         this.user = user;
         this.readingValue = readingValue;
         this.meterType = meterType;
+    }
+
+    public MeterReading(User user, int readingValue, MeterType meterType, LocalDateTime time){
+        this.user = user;
+        this.readingValue = readingValue;
+        this.meterType = meterType;
+        this.dateTime = time;
     }
 
     /**
