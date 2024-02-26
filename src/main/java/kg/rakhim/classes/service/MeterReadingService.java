@@ -45,63 +45,79 @@ public class MeterReadingService {
         return meterReadingDAO.getByUser(username);
     }
 
-    public boolean saveReading(MeterReading e) {
+    public Map<String, Object> saveReading(MeterReading e) {
         UserInfo userInfo = userData.getCurrentUser();
-        List<MeterReading> readings = meterReadingDAO.getByUser(userInfo.getUsername());
-        for (MeterReading r : readings){
-            if (r.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()
-            && r.getMeterType().getType().equals(e.getMeterType().getType())){
-                return false;
+        if(userInfo != null && !userInfo.getUsername().isEmpty()){
+            List<MeterReading> readings = meterReadingDAO.getByUser(userInfo.getUsername());
+            for (MeterReading r : readings){
+                if (r.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()
+                && r.getMeterType().getType().equals(e.getMeterType().getType())){
+                    return Map.of("message", "Вы в этом месяце уже отправляли показание за - "+e.getMeterType().getType());
+                }
             }
+            e.setUser(new User(userInfo.getUsername()));
+            meterReadingDAO.save(e);
+            userInfo.setActions(Map.of("saveReading", "Подача показания"));
+            return Map.of("message", "Успешно");
+        }else{
+            return Map.of("message", "Войдите в систему");
         }
-        e.setUser(new User(userInfo.getUsername()));
-        meterReadingDAO.save(e);
-        userInfo.setActions(Map.of("saveReading", "Подача показания"));
-        return true;
     }
     public List<ReadingResponseDTO> allHistoryOfUser(){
         UserInfo userInfo = userData.getCurrentUser();
-        userInfo.setActions(Map.of("allHistoryOfUser", "Просмотр всю историю показаний"));
         List<ReadingResponseDTO> response = new ArrayList<>();
-        meterReadingDAO.getByUser(userInfo.getUsername()).forEach(v -> {
-            response.add(ReadingResponseDTO.builder()
-                    .user(v.getUser().getUsername())
-                    .value(v.getReadingValue())
-                    .type(v.getMeterType().getType())
-                    .dateTime(v.getDateTime()).build());
-        });
+       if (userInfo != null && !userInfo.getUsername().isEmpty()) {
+           meterReadingDAO.getByUser(userInfo.getUsername()).forEach(v -> {
+               response.add(ReadingResponseDTO.builder()
+                       .user(v.getUser().getUsername())
+                       .value(v.getReadingValue())
+                       .type(v.getMeterType().getType())
+                       .dateTime(v.getDateTime()).build());
+           });
+           userInfo.setActions(Map.of("allHistoryOfUser", "Просмотр всю историю показаний"));
+       }else{
+           response.add(ReadingResponseDTO.builder().errorMessage("Войдите в систему").build());
+       }
         return response;
     }
 
     public List<ReadingResponseDTO> findActualReadings(){
         UserInfo userInfo = userData.getCurrentUser();
         List<ReadingResponseDTO> res = new ArrayList<>();
-        for (MeterReading m : meterReadingDAO.getByUser(userInfo.getUsername())){
-            if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()){
-                res.add(ReadingResponseDTO.builder()
-                        .user(m.getUser().getUsername())
-                        .value(m.getReadingValue())
-                        .type(m.getMeterType().getType())
-                        .dateTime(m.getDateTime()).build());
+        if (userInfo != null && !userInfo.getUsername().isEmpty()) {
+            for (MeterReading m : meterReadingDAO.getByUser(userInfo.getUsername())) {
+                if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
+                    res.add(ReadingResponseDTO.builder()
+                            .user(m.getUser().getUsername())
+                            .value(m.getReadingValue())
+                            .type(m.getMeterType().getType())
+                            .dateTime(m.getDateTime()).build());
+                }
             }
+            userInfo.setActions(Map.of("findActualReadings", "Просмотр актуальных показаний"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("Войдите в систему").build());
         }
-        userInfo.setActions(Map.of("findActualReadings", "Просмотр актуальных показаний"));
         return res;
     }
     public List<ReadingResponseDTO> findForMonth(int month){
         UserInfo userInfo = userData.getCurrentUser();
         List<ReadingResponseDTO> res = new ArrayList<>();
-        meterReadingDAO.getByUser(userInfo.getUsername()).forEach(m -> {
-            if (m.getDateTime().getMonthValue() == month){
-                res.add(ReadingResponseDTO.builder()
-                        .user(m.getUser().getUsername())
-                        .value(m.getReadingValue())
-                        .type(m.getMeterType().getType())
-                        .dateTime(m.getDateTime())
-                        .build());
-            }
-        });
-        userInfo.setActions(Map.of("findForMonth", "Просмотр показаний за указанный месяц"));
+        if (userInfo != null && !userInfo.getUsername().isEmpty()) {
+            meterReadingDAO.getByUser(userInfo.getUsername()).forEach(m -> {
+                if (m.getDateTime().getMonthValue() == month) {
+                    res.add(ReadingResponseDTO.builder()
+                            .user(m.getUser().getUsername())
+                            .value(m.getReadingValue())
+                            .type(m.getMeterType().getType())
+                            .dateTime(m.getDateTime())
+                            .build());
+                }
+            });
+            userInfo.setActions(Map.of("findForMonth", "Просмотр показаний за указанный месяц"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("Войдите в систему").build());
+        }
         return res;
     }
 }

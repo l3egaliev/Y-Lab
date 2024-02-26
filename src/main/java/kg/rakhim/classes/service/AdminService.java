@@ -39,8 +39,11 @@ public class AdminService {
                         .type(m.getMeterType().getType())
                         .dateTime(m.getDateTime()).build());
             });
+            userInfo.setActions(Map.of("historyOfUserReadings",
+                    "Просмотр всю историю показаний конкретного пользователя"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userInfo.setActions(Map.of("historyOfUserReadings", "Просмотр всю историю показаний конкретного пользователя"));
         return res;
     }
 
@@ -57,9 +60,11 @@ public class AdminService {
                             .dateTime(v.getDateTime()).build());
                 }
             });
+            userInfo.setActions(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
+                    "пользователя за указанный месяц"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userInfo.setActions(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
-                "пользователя за указанный месяц"));
         return res;
     }
 
@@ -76,9 +81,11 @@ public class AdminService {
                             .dateTime(v.getDateTime()).build());
                 }
             });
+            userInfo.setActions(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
+                    " пользователей за указанный месяц"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userInfo.setActions(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
-                " пользователей за указанный месяц"));
         return res;
     }
 
@@ -95,9 +102,11 @@ public class AdminService {
                             .dateTime(v.getDateTime()).build());
                 }
             });
+            userInfo.setActions(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
+                    "показаний всех пользователей"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userInfo.setActions(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
-                "показаний всех пользователей"));
         return res;
     }
 }

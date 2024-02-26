@@ -72,7 +72,7 @@ public class AdminController {
         if (res.isEmpty()) {
             return new ResponseEntity<>(Map.of("response", Collections.emptyList()), HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(Map.of("Актуальные показания пользователей", adminService.actualReadingsOfAllUsers()));
+        return ResponseEntity.ok(Map.of("Актуальные показания пользователей", res));
     }
 
     public ResponseEntity<Map<String, Object>> readingsForMonth(Integer month){

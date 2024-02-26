@@ -12,4 +12,5 @@ public class ReadingResponseDTO {
     private Integer value;
     private String type;
     private LocalDateTime dateTime;
+    private String errorMessage;
 }

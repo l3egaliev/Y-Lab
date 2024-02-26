@@ -45,8 +45,6 @@ public class MeterReadingController {
     public ResponseEntity<List<ReadingResponseDTO>> readings(@RequestParam(value = "month", required = false) Integer month){
         if (month == null){
             return ResponseEntity.ok().body(mService.allHistoryOfUser());
-        }else if (mService.findForMonth(month).isEmpty()){
-            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(mService.findForMonth(month));
     }
@@ -61,11 +59,7 @@ public class MeterReadingController {
             return ResponseEntity.badRequest().body(Map.of("message",
                     ErrorSender.returnErrorsToClient(b)));
         }
-        boolean res = mService.saveReading(meterReading);
-        if (!res){
-            return ResponseEntity.badRequest().body(Map.of("message",
-                    "Вы в этом месяце уже отправляли показание за - "+meterReading.getMeterType().getType()));
-        }
-        return ResponseEntity.ok(Map.of("message", "Успешно"));
+        Map<String, Object> res = mService.saveReading(meterReading);
+        return ResponseEntity.ok(res);
     }
 }
