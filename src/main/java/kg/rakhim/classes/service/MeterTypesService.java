@@ -1,11 +1,11 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.AuditableAction;
-import kg.rakhim.classes.context.UserContext;
+import ru.auditable.data.UserData;
 import kg.rakhim.classes.dao.MeterTypesDAO;
 import kg.rakhim.classes.models.MeterType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.auditable.annotations.EnableXXX;
 
 import java.util.List;
 import java.util.Map;
@@ -15,21 +15,21 @@ import java.util.Optional;
  * Сервис для работы с типами счетчиков.
  */
 @Service
-@AuditableAction
+@EnableXXX
 public class MeterTypesService {
     private final MeterTypesDAO meterTypesDAO;
     private final UserService userService;
-    private final UserContext userContext;
+    private final UserData userData;
     /**
      * Создает экземпляр класса MeterTypesService с указанным DAO для типов счетчиков.
      *
      * @param meterTypesDAO Repository для работы с данными о типах счетчиков
      */
     @Autowired
-    public MeterTypesService(MeterTypesDAO meterTypesDAO, UserService userService, UserContext userContext) {
+    public MeterTypesService(MeterTypesDAO meterTypesDAO, UserService userService, UserData userData) {
         this.meterTypesDAO = meterTypesDAO;
         this.userService = userService;
-        this.userContext = userContext;
+        this.userData = userData;
     }
     public Optional<MeterType> findById(int id) {
         return meterTypesDAO.get(id);
@@ -54,9 +54,9 @@ public class MeterTypesService {
         if (isExistsType(newType)) {
             err.add("Такой тип уже существует");
             return false;
-        }else if (userService.isAdmin(userContext.getCurrentUser().getUsername())){
+        }else if (userService.isAdmin(userData.getCurrentUser().getUsername())){
             save(new MeterType(newType));
-            userContext.getCurrentUser().setAction(Map.of("saveType", "Добавление нового счетчика"));
+            userData.getCurrentUser().setActions(Map.of("saveType", "Добавление нового счетчика"));
             return true;
         }
         err.add("У вас нет прав для добавления счетчика");

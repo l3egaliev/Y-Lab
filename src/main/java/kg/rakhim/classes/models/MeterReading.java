@@ -14,11 +14,17 @@
  */
 package kg.rakhim.classes.models;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 /**
  * Класс {@code MeterReading} представляет объект, содержащий информацию о показаниях счетчика.
  */
+@Data
+@NoArgsConstructor
 public class MeterReading {
     private Integer id;
     private User user;
@@ -32,47 +38,11 @@ public class MeterReading {
         this.meterType = meterType;
     }
 
-    public MeterReading() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
+    public MeterReading(User user, int readingValue, MeterType meterType, LocalDateTime time){
         this.user = user;
-    }
-
-    public int getReadingValue() {
-        return readingValue;
-    }
-
-    public void setReadingValue(int readingValue) {
         this.readingValue = readingValue;
-    }
-
-    public MeterType getMeterType() {
-        return meterType;
-    }
-
-    public void setMeterType(MeterType meterType) {
         this.meterType = meterType;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+        this.dateTime = time;
     }
 
     /**

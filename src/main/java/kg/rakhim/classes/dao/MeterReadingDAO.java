@@ -1,6 +1,5 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.models.MeterType;
 import kg.rakhim.classes.models.User;
@@ -105,8 +104,8 @@ public class MeterReadingDAO implements BaseDAO<MeterReading, Integer> {
     }
     private User userByReadingId(int reading){
         String sql = "select user_id from entities.meter_readings where id=?";
-        Integer typeId = jdbcTemplate.queryForObject(sql, Integer.class, reading);
-        Optional<User> type = userDAO.get(typeId);
+        Integer userId = jdbcTemplate.queryForObject(sql, Integer.class, reading);
+        Optional<User> type = userDAO.get(userId);
         return type.orElse(null);
     }
     private LocalDateTime dateByReadingId(int reading){

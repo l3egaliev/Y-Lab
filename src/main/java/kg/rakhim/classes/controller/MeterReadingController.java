@@ -1,9 +1,10 @@
 package kg.rakhim.classes.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.rakhim.classes.dto.ReadingDTO;
+import kg.rakhim.classes.dto.ReadingResponseDTO;
 import kg.rakhim.classes.models.MeterReading;
 import kg.rakhim.classes.service.MeterReadingService;
 import kg.rakhim.classes.utils.ErrorSender;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/readings")
-@Api(value = "/readings", tags = "Контроллер для действий обычных пользователей")
+@Tag(name = "Контроллер для действий обычных пользователей")
 public class MeterReadingController {
     private final MeterReadingService mService;
     private final ReadingValidator validator;
@@ -31,13 +32,8 @@ public class MeterReadingController {
     }
 
     @GetMapping("/actual")
-    @ApiOperation(
-            value = "Посмотреть показания текущего месяца",
-            httpMethod = "GET",
-            produces = "application/json",
-            response = ResponseEntity.class
-    )
-    public ResponseEntity<List<MeterReading>> actualReadings(){
+    @Operation(description = "Посмотреть показания текущего месяца")
+    public ResponseEntity<List<ReadingResponseDTO>> actualReadings(){
         if (mService.findActualReadings().isEmpty()){
             return ResponseEntity.noContent().build();
         }
@@ -45,28 +41,16 @@ public class MeterReadingController {
     }
 
     @GetMapping()
-    @ApiOperation(
-            value = "Посмотреть показания за конкретный месяц или всю историю показаний",
-            httpMethod = "GET",
-            produces = "application/json",
-            response = ResponseEntity.class
-    )
-    public ResponseEntity<List<MeterReading>> readings(@RequestParam(value = "month", required = false) Integer month){
+    @Operation(description = "Посмотреть показания за конкретный месяц или всю историю показаний")
+    public ResponseEntity<List<ReadingResponseDTO>> readings(@RequestParam(value = "month", required = false) Integer month){
         if (month == null){
             return ResponseEntity.ok().body(mService.allHistoryOfUser());
-        }else if (mService.findForMonth(month).isEmpty()){
-            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(mService.findForMonth(month));
     }
 
     @PostMapping
-    @ApiOperation(
-            value = "Отправить новое показание",
-            httpMethod = "POST",
-            produces = "application/json",
-            response = ResponseEntity.class
-    )
+    @Operation(description = "Подача показания")
     public ResponseEntity<Map<String, Object>> addReading(@RequestBody @Valid ReadingDTO dto,
                                           BindingResult b) {
         MeterReading meterReading = ReadingMapper.convertFromDto(dto);
@@ -75,11 +59,7 @@ public class MeterReadingController {
             return ResponseEntity.badRequest().body(Map.of("message",
                     ErrorSender.returnErrorsToClient(b)));
         }
-        boolean res = mService.saveReading(meterReading);
-        if (!res){
-            return ResponseEntity.badRequest().body(Map.of("message",
-                    "Вы в этом месяце уже отправляли показание за - "+meterReading.getMeterType().getType()));
-        }
-        return ResponseEntity.ok(Map.of("message", "Успешно"));
+        Map<String, Object> res = mService.saveReading(meterReading);
+        return ResponseEntity.ok(res);
     }
 }

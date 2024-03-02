@@ -1,6 +1,5 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.interfaces.BaseDAO;
 import kg.rakhim.classes.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -37,6 +36,7 @@ public class UserDAO implements BaseDAO<User, Integer> {
         if (result == null){
             return Optional.empty();
         }
+        result.setRole(role(Integer.parseInt(result.getRole())));
         return Optional.of(result);
     }
 
@@ -74,9 +74,6 @@ public class UserDAO implements BaseDAO<User, Integer> {
      */
     public Optional<User> getUser(String username){
         String sql = "SELECT * FROM entities.users WHERE username=?";
-        if  (username == null || username.isEmpty()) {
-            return Optional.empty();
-        }
         User user = jdbcTemplate.query(sql, new Object[]{username}, new BeanPropertyRowMapper<>(User.class))
                 .stream().findAny().orElse(null);
         if(user == null){
@@ -100,7 +97,10 @@ public class UserDAO implements BaseDAO<User, Integer> {
         return jdbcTemplate.queryForObject(sql, Integer.class, role);
     }
     private String role(int role){
-        String sql = "select role from entities.users_role where role_id=?";
-        return jdbcTemplate.queryForObject(sql, String.class, role);
+        if (role == 1) {
+            return "ADMIN";
+        }else {
+            return "USER";
+        }
     }
 }

@@ -1,6 +1,5 @@
 package kg.rakhim.classes.dao;
 
-import kg.rakhim.classes.dao.interfaces.MeterTypesDAOIn;
 import kg.rakhim.classes.models.MeterType;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import java.util.Optional;
  */
 @Getter
 @Component
-public class MeterTypesDAO implements MeterTypesDAOIn {
+public class MeterTypesDAO implements BaseDAO<MeterType, Integer> {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -80,7 +79,6 @@ public class MeterTypesDAO implements MeterTypesDAOIn {
      * @param type тип счетчика
      * @return true, если тип счетчика существует; в противном случае - false
      */
-    @Override
     public boolean isExists(String type){
        String sql = "SELECT * FROM entities.meter_types WHERE type=?";
         MeterType meterType = jdbcTemplate.query(sql, new Object[]{type}, new BeanPropertyRowMapper<>(MeterType.class))

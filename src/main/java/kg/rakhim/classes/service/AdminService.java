@@ -1,12 +1,12 @@
 package kg.rakhim.classes.service;
 
-import kg.rakhim.classes.annotations.AuditableAction;
-import kg.rakhim.classes.annotations.Loggable;
-import kg.rakhim.classes.context.UserContext;
-import kg.rakhim.classes.context.UserDetails;
+import kg.rakhim.classes.dto.ReadingResponseDTO;
 import kg.rakhim.classes.models.MeterReading;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.auditable.annotations.EnableXXX;
+import ru.auditable.data.UserData;
+import ru.auditable.data.UserInfo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,71 +15,98 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@AuditableAction
-@Loggable
+@EnableXXX
 public class AdminService {
     private final UserService userService;
-    private final UserContext userContext;
+    private final UserData userData;
     private final MeterReadingService meterReadingService;
 
     @Autowired
-    public AdminService(UserService userService, UserContext userContext, MeterReadingService meterReadingService) {
+    public AdminService(UserService userService, UserData userData, MeterReadingService meterReadingService) {
         this.userService = userService;
-        this.userContext = userContext;
+        this.userData = userData;
         this.meterReadingService = meterReadingService;
     }
 
-    public List<MeterReading> historyOfUserReadings(String username){
-        UserDetails userDetails = userContext.getCurrentUser();
-        userDetails.setAction(Map.of("historyOfUserReadings", "Просмотр всю историю показаний конкретного пользователя"));
-        if (userService.isAdmin(userDetails.getUsername())) {
-            return meterReadingService.findByUsername(username);
+    public List<ReadingResponseDTO> historyOfUserReadings(String username){
+        UserInfo userInfo = userData.getCurrentUser();
+        List<ReadingResponseDTO> res = new ArrayList<>();
+        if (userService.isAdmin(userInfo.getUsername())) {
+            meterReadingService.findByUsername(username).forEach(m -> {
+                res.add(ReadingResponseDTO.builder()
+                        .user(m.getUser().getUsername())
+                        .value(m.getReadingValue())
+                        .type(m.getMeterType().getType())
+                        .dateTime(m.getDateTime()).build());
+            });
+            userInfo.setActions(Map.of("historyOfUserReadings",
+                    "Просмотр всю историю показаний конкретного пользователя"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        return Collections.emptyList();
+        return res;
     }
 
-    public List<MeterReading> readingsOfOneUserForMonth(String username, int month){
-        UserDetails userDetails = userContext.getCurrentUser();
-        List<MeterReading> result = new ArrayList<>();
-        if (userService.isAdmin(userDetails.getUsername())){
-            for (MeterReading m : meterReadingService.findByUsername(username)){
-                if (m.getDateTime().getMonthValue() == month){
-                    result.add(m);
+    public List<ReadingResponseDTO> readingsOfOneUserForMonth(String username, Integer month){
+        UserInfo userInfo = userData.getCurrentUser();
+        List<ReadingResponseDTO> res = new ArrayList<>();
+        if (userService.isAdmin(userInfo.getUsername())){
+            meterReadingService.findByUsername(username).forEach(v -> {
+                if (v.getDateTime().getMonthValue() == month){
+                    res.add(ReadingResponseDTO.builder()
+                            .user(v.getUser().getUsername())
+                            .value(v.getReadingValue())
+                            .type(v.getMeterType().getType())
+                            .dateTime(v.getDateTime()).build());
                 }
-            }
+            });
+            userInfo.setActions(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
+                    "пользователя за указанный месяц"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userDetails.setAction(Map.of("readingsOfOneUserForMonth", "Просмотр показаний " +
-                "пользователя за указанный месяц"));
-        return result;
+        return res;
     }
 
-    public List<MeterReading> readingsOfAllUsersForMonth(int month){
-        UserDetails userDetails = userContext.getCurrentUser();
-        List<MeterReading> result = new ArrayList<>();
-        if (userService.isAdmin(userDetails.getUsername())) {
-            for (MeterReading m : meterReadingService.findAll()) {
-                if (m.getDateTime().getMonthValue() == month) {
-                    result.add(m);
+    public List<ReadingResponseDTO> readingsOfAllUsersForMonth(Integer month){
+        UserInfo userInfo = userData.getCurrentUser();
+        List<ReadingResponseDTO> res = new ArrayList<>();
+        if (userService.isAdmin(userInfo.getUsername())) {
+            meterReadingService.findAll().forEach(v -> {
+                if(v.getDateTime().getMonthValue() == month){
+                    res.add(ReadingResponseDTO.builder()
+                            .user(v.getUser().getUsername())
+                            .value(v.getReadingValue())
+                            .type(v.getMeterType().getType())
+                            .dateTime(v.getDateTime()).build());
                 }
-            }
+            });
+            userInfo.setActions(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
+                    " пользователей за указанный месяц"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userDetails.setAction(Map.of("readingsOfAllUsersForMonth", "Просмотр показаний всех" +
-                " пользователей за указанный месяц"));
-        return result;
+        return res;
     }
 
-    public List<MeterReading> actualReadingsOfAllUsers(){
-        UserDetails userDetails = userContext.getCurrentUser();
-        List<MeterReading> result = new ArrayList<>();
-        if (userService.isAdmin(userDetails.getUsername())) {
-            for (MeterReading m : meterReadingService.findAll()) {
-                if (m.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
-                    result.add(m);
+    public List<ReadingResponseDTO> actualReadingsOfAllUsers(){
+        UserInfo userInfo = userData.getCurrentUser();
+        List<ReadingResponseDTO> res = new ArrayList<>();
+        if (userService.isAdmin(userInfo.getUsername())) {
+            meterReadingService.findAll().forEach(v -> {
+                if (v.getDateTime().getMonthValue() == LocalDateTime.now().getMonthValue()) {
+                    res.add(ReadingResponseDTO.builder()
+                            .user(v.getUser().getUsername())
+                            .value(v.getReadingValue())
+                            .type(v.getMeterType().getType())
+                            .dateTime(v.getDateTime()).build());
                 }
-            }
+            });
+            userInfo.setActions(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
+                    "показаний всех пользователей"));
+        }else{
+            res.add(ReadingResponseDTO.builder().errorMessage("У вас нет прав доступа.").build());
         }
-        userDetails.setAction(Map.of("actualReadingsOfAllUsers", "Просмотр актуальных " +
-                "показаний всех пользователей"));
-        return result;
+        return res;
     }
 }
